@@ -1,0 +1,46 @@
+ML Laboratuvarı / ML Lab
+Copyright (c) 2026 Prof. Dr. Mehmet Songur. All rights reserved except as stated below.
+Telif hakkı (c) 2026 Prof. Dr. Mehmet Songur. Aşağıda belirtilenler dışında tüm hakları saklıdır.
+
+Bu depo iki ayrı lisansla sunulur. / This repository is offered under two licences.
+
+1. YAZILIM / SOFTWARE  →  PolyForm Strict License 1.0.0  (LICENSE-CODE.md)
+
+   Kapsam / Scope: platformun yapısı ve kodu: index.html, giris.html, 404.html,
+   assets/ (app.js, auth.js, playgrounds*.js, style.css), content/concept-kit.js,
+   content/*/m*-pg.js (oyun alanları / playgrounds), tools/, tests/, .github/.
+
+   TR (özet, bağlayıcı olan İngilizce metindir): Kodu ticari olmayan amaçlarla
+   (kişisel çalışma, eğitim, araştırma) okuyabilir ve çalıştırabilirsiniz.
+   Kopyasını dağıtamaz, değiştiremez, üzerine yeni bir çalışma kuramaz ve ticari
+   amaçla kullanamazsınız. Platformun kendisini başka bir yerde yayımlamak için
+   yazılı izin gerekir.
+   EN (summary; the licence text governs): you may read and run the code for
+   noncommercial purposes (personal study, teaching, research). You may not
+   distribute it, change it, build new works on it, or use it commercially.
+   Hosting the platform elsewhere requires written permission.
+
+2. İÇERİK / CONTENT  →  Creative Commons BY-NC-SA 4.0  (LICENSE-CONTENT.txt)
+   https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+   Kapsam / Scope: ders metinleri, alıştırmalar, testler, kavram şekilleri ve
+   açıklamaları (content/ altındaki diğer dosyalar) ve notebooks/ altındaki
+   Colab defterleri. / Lesson texts, exercises, quizzes, concept figures and
+   explanations (the other files under content/) and the Colab notebooks under
+   notebooks/.
+
+   TR: Ad vererek, ticari olmayan amaçlarla paylaşabilir ve uyarlayabilirsiniz;
+   uyarlamaları aynı lisansla paylaşmalısınız. Ticari kullanım yasaktır.
+   EN: You may share and adapt with attribution for noncommercial purposes;
+   adaptations must use the same licence. Commercial use is not permitted.
+
+3. ÜÇÜNCÜ TARAF / THIRD PARTY (kendi lisanslarıyla / under their own licences)
+   - data/: her klasördeki README'de belirtilen kaynak lisansları (FRED,
+     Dünya Bankası CC BY 4.0, FOMC açıklamaları ABD kamu malı, UCI veri setleri).
+     / source licences stated in each folder's README.
+   - assets/vendor/: CodeMirror 5 (MIT, assets/vendor/CODEMIRROR_LICENSE).
+   - Pyodide çalışma anında jsDelivr'den yüklenir (MPL-2.0). / Pyodide is loaded
+     at runtime from jsDelivr (MPL-2.0).
+
+Ticari kullanım ve diğer izinler için / For commercial use and other permissions:
+https://www.songurmehmet.com/iletisim.html
