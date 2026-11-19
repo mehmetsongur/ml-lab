@@ -397,8 +397,8 @@
         lines.push(res + " = " + res + '.sort_values("' + cols[sCol] + '", ascending=' + (asc ? "True" : "False") + ")");
       }
       const sel = cols.map((c, i) => i).filter((i) => show[i]);
-      if (sel.length === cols.length) lines.push(res);
-      else lines.push(res + "[" + JSON.stringify(sel.map((i) => cols[i])).replace(/,/g, ", ") + "]");
+      if (sel.length < cols.length) lines.push(res + " = " + res + "[" + JSON.stringify(sel.map((i) => cols[i])).replace(/,/g, ", ") + "]");
+      lines.push(res);   // gösterilen tablo ve .shape aynı nesneden / the table shown and .shape come from the same object
       code.innerHTML = ""; code.append(codeBlock(ctx, lines.join("\n")));
       let html = '<table class="df"><thead><tr><th></th>' + sel.map((i) => "<th>" + LAB.esc(cols[i]) + "</th>").join("") + "</tr></thead><tbody>";
       rows.forEach((x) => { html += "<tr><th>" + x.i + "</th>" + sel.map((i) => "<td>" + x.r[i] + "</td>").join("") + "</tr>"; });

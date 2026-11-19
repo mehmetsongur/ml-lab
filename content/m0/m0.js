@@ -85,7 +85,7 @@
       steps: [
         { line: 0, out: { tr: "Merhaba, iktisat!", en: "Hello, economics!" }, note: { tr: "Python ilk satırı okudu ve tırnak içindeki metni olduğu gibi yazdı.", en: "Python read the first line and printed the text inside the quotes as it is." } },
         { line: 1, note: { tr: "<code>#</code> ile başlayan satır yorumdur. Python bu satırı atladı, çıktıda hiçbir şey değişmedi.", en: "A line starting with <code>#</code> is a comment. Python skipped it; the output did not change." } },
-        { line: 2, out: "250", note: { tr: "Tırnak yoksa Python bunu bir hesap olarak görür: 2026 − 1776 = 250. (Adam Smith'in <i>Ulusların Zenginliği</i> 1776'da yayımlandı.)", en: "Without quotes Python treats it as a calculation: 2026 − 1776 = 250. (Adam Smith's <i>Wealth of Nations</i> came out in 1776.)" } },
+        { line: 2, out: "250", note: { tr: "Python önce parantezin içindeki <code>2026 - 1776</code> ifadesini hesapladı (250), sonra <code>print</code> bu sonucu yazdı. Tırnak içinde yazsaydık (<code>\"2026 - 1776\"</code>) bir metin olurdu ve olduğu gibi yazılırdı. (Adam Smith'in <i>Ulusların Zenginliği</i> 1776'da yayımlandı.)", en: "Python first evaluated the expression <code>2026 - 1776</code> inside the brackets (250), then <code>print</code> wrote the result. Had we written it in quotes (<code>\"2026 - 1776\"</code>), it would be text and printed as it is. (Adam Smith's <i>Wealth of Nations</i> came out in 1776.)" } },
         { line: 3, out: { tr: "Fiyat artışı (%): 25.0", en: "Price increase (%): 25.0" }, note: { tr: "<code>print</code> virgülle ayrılmış birden fazla şeyi yan yana yazar. Bölme işlemi sonucu ondalıklı (25.0) verir.", en: "<code>print</code> writes several items separated by commas side by side. Division gives a decimal result (25.0)." } }
       ],
       takeaway: { tr: "Python kodu yukarıdan aşağıya, satır satır çalıştırır; yorumları atlar.", en: "Python runs code from top to bottom, line by line, and skips comments." }
@@ -132,18 +132,21 @@
         q: { tr: "Bir hücredeki satırlar hangi sırayla çalışır?", en: "In what order do the lines in a cell run?" },
         options: { tr: ["Rastgele", "Yukarıdan aşağıya", "Aşağıdan yukarıya"], en: ["Randomly", "Top to bottom", "Bottom to top"] },
         answer: 1,
+        hints: { tr: ["Oyun alanında satırların hangi sırayla vurgulandığını hatırla: hep aynı sıra mıydı?", null, "Python kitap okur gibi okur: ilk satırdan başlar."], en: ["Remember the order in which the playground highlighted the lines: was it always the same?", null, "Python reads like a book: it starts at the first line."] },
         explain: { tr: "Python satırları yazıldığı sırayla, yukarıdan aşağıya çalıştırır.", en: "Python runs lines in the order they are written, top to bottom." }
       },
       {
         q: { tr: "<code># fiyat</code> satırı çalıştırılınca ne olur?", en: "What happens when the line <code># price</code> runs?" },
         options: { tr: ["“fiyat” yazdırılır", "Hata verir", "Hiçbir şey olmaz, yorumdur"], en: ["“price” is printed", "It gives an error", "Nothing, it is a comment"] },
         answer: 2,
+        hints: { tr: ["Yazdırmak için <code>print</code> gerekir; bu satırda <code>print</code> yok ve satır <code>#</code> ile başlıyor.", "<code>#</code> ile başlayan satırlar hataya yol açmaz; Python onları okumaz.", null], en: ["Printing needs <code>print</code>; this line has none and it starts with <code>#</code>.", "Lines starting with <code>#</code> do not cause errors; Python does not read them.", null] },
         explain: { tr: "<code>#</code> ile başlayan satırlar yorumdur ve Python tarafından atlanır.", en: "Lines starting with <code>#</code> are comments and Python skips them." }
       },
       {
         q: { tr: "<code>print(3 ** 2)</code> ne yazdırır?", en: "What does <code>print(3 ** 2)</code> print?" },
         options: { tr: ["6", "9", "32"], en: ["6", "9", "32"] },
         answer: 1,
+        hints: { tr: ["6, 3 × 2 olurdu; <code>**</code> çarpma değil, üs almadır.", null, "32, sayıları yan yana yazmak olurdu; <code>**</code> üs almadır: 3 × 3."], en: ["6 would be 3 × 2; <code>**</code> is a power, not multiplication.", null, "32 would be writing the digits side by side; <code>**</code> is a power: 3 × 3."] },
         explain: { tr: "<code>**</code> üs almadır: 3² = 9.", en: "<code>**</code> is a power: 3² = 9." }
       }
     ]
@@ -182,8 +185,8 @@
       type: "tracer",
       intro: { tr: "Değişken kutularının her satırda nasıl değiştiğini izle. Son iki satırda şaşırtıcı bir şey olacak.", en: "Watch how the variable boxes change at each line. Something surprising happens in the last two lines." },
       code: {
-        tr: ["gsyh_2024 = 1000", "gsyh_2025 = 1050", "buyume = (gsyh_2025 - gsyh_2024) / gsyh_2024 * 100", "print(buyume)", "gsyh_2024 = 1020", "print(buyume)"],
-        en: ["gdp_2024 = 1000", "gdp_2025 = 1050", "growth = (gdp_2025 - gdp_2024) / gdp_2024 * 100", "print(growth)", "gdp_2024 = 1020", "print(growth)"]
+        tr: ["gsyh_2024 = 1000", "gsyh_2025 = 1050", "buyume = (gsyh_2025 - gsyh_2024) / gsyh_2024 * 100", "print(buyume)", "gsyh_2024 = 1020", "print(buyume)", "buyume = (gsyh_2025 - gsyh_2024) / gsyh_2024 * 100", "print(round(buyume, 2))"],
+        en: ["gdp_2024 = 1000", "gdp_2025 = 1050", "growth = (gdp_2025 - gdp_2024) / gdp_2024 * 100", "print(growth)", "gdp_2024 = 1020", "print(growth)", "growth = (gdp_2025 - gdp_2024) / gdp_2024 * 100", "print(round(growth, 2))"]
       },
       names: { tr: ["gsyh_2024", "gsyh_2025", "buyume"], en: ["gdp_2024", "gdp_2025", "growth"] },
       steps: [
@@ -192,7 +195,9 @@
         { line: 2, vals: [1000, 1050, "5.0"], note: { tr: "Sağ taraf hesaplandı: (1050 − 1000) / 1000 × 100 = 5.0. Kutuya formül değil, <b>sonuç</b> kondu.", en: "The right side was computed: (1050 − 1000) / 1000 × 100 = 5.0. The box holds the <b>result</b>, not the formula." } },
         { line: 3, vals: [1000, 1050, "5.0"], out: "5.0", note: { tr: "Büyüme oranı yazdırıldı.", en: "The growth rate was printed." } },
         { line: 4, vals: [1020, 1050, "5.0"], note: { tr: "Revizyon geldi: 2024 GSYH 1020 oldu. Kutunun içeriği değişti.", en: "A revision arrived: 2024 GDP is now 1020. The box's content changed." } },
-        { line: 5, vals: [1020, 1050, "5.0"], out: "5.0", note: { tr: "<b>Dikkat:</b> <code>buyume</code> hâlâ 5.0! Python formülü hatırlamaz. Yeni büyümeyi görmek için 3. satırı yeniden çalıştırman gerekir.", en: "<b>Watch out:</b> <code>growth</code> is still 5.0! Python does not remember the formula. To get the new growth rate you must run line 3 again." } }
+        { line: 5, vals: [1020, 1050, "5.0"], out: "5.0", note: { tr: "<b>Dikkat:</b> <code>buyume</code> hâlâ 5.0! Python formülü hatırlamaz; kutuda eski sonuç duruyor.", en: "<b>Watch out:</b> <code>growth</code> is still 5.0! Python does not remember the formula; the box still holds the old result." } },
+        { line: 6, vals: [1020, 1050, "2.94…"], note: { tr: "Hesap satırını yeniden yazdık: (1050 − 1020) / 1020 × 100 ≈ 2.94. Kutuya yeni sonuç kondu.", en: "We wrote the calculation line again: (1050 − 1020) / 1020 × 100 ≈ 2.94. The box now holds the new result." } },
+        { line: 7, vals: [1020, 1050, "2.94…"], out: "2.94", note: { tr: "Revize veriyle büyüme yaklaşık %2,94. Girdi değişince hesabı yeniden yapmak gerekir. (<code>round(x, 2)</code> sonucu iki ondalığa yuvarlar.)", en: "With the revised data, growth is about 2.94%. When an input changes, the calculation must be redone. (<code>round(x, 2)</code> rounds the result to two decimals.)" } }
       ],
       takeaway: { tr: "Değişken bir sonucu saklar; girdiler değişirse hesabı yeniden yapmak gerekir.", en: "A variable stores a result; if the inputs change, the calculation must be redone." }
     },
@@ -364,10 +369,11 @@
         explain: { tr: "Negatif indeks sondan sayar; −1 son elemandır.", en: "Negative indexes count from the end; −1 is the last element." }
       },
       {
-        q: { tr: "<code>seri[2:5]</code> kaç eleman içerir?", en: "How many elements does <code>s[2:5]</code> contain?" },
+        q: { tr: "<code>seri = [10, 20, 30, 40, 50, 60]</code> için <code>seri[2:5]</code> kaç eleman içerir?", en: "For <code>s = [10, 20, 30, 40, 50, 60]</code>, how many elements does <code>s[2:5]</code> contain?" },
         options: { tr: ["2", "3", "4"], en: ["2", "3", "4"] },
         answer: 1,
-        explain: { tr: "5 − 2 = 3: indeks 2, 3 ve 4.", en: "5 − 2 = 3: indexes 2, 3 and 4." }
+        hints: { tr: ["Bitiş indeksi (5) hariç ama başlangıç (2) dahil. İndeksleri tek tek say: 2, 3, 4.", null, "Dilim b'ye kadar gider ama b'yi almaz: indeks 5 dahil değil."], en: ["The end index (5) is excluded but the start (2) is included. Count the indexes: 2, 3, 4.", null, "A slice goes up to b but does not include it: index 5 is not included."] },
+        explain: { tr: "5 − 2 = 3: indeks 2, 3 ve 4, yani <code>[30, 40, 50]</code>. <b>b − a</b> kuralı liste yeterince uzunsa geçerlidir: dilim listenin sonunu aşarsa Python hata vermez, olan kadarını verir. Örneğin <code>[10, 20, 30, 40][2:5]</code> yalnızca <code>[30, 40]</code> döndürür.", en: "5 − 2 = 3: indexes 2, 3 and 4, i.e. <code>[30, 40, 50]</code>. The <b>b − a</b> rule holds when the list is long enough: if the slice runs past the end, Python does not raise an error but returns what exists. For example <code>[10, 20, 30, 40][2:5]</code> returns only <code>[30, 40]</code>." }
       }
     ]
   });
@@ -393,7 +399,7 @@ elif deger &gt;= 2:
 else:
     print("düşük")</code></pre>
 <ul>
-<li>Satır sonundaki <code>:</code> ve alttaki <b>4 boşluklu girinti</b> zorunludur. Girinti, hangi satırların döngüye ya da koşula ait olduğunu gösterir.</li>
+<li>Satır sonundaki <code>:</code> ve alttaki satırların <b>girintili</b> yazılması zorunludur. Girinti, hangi satırların döngüye ya da koşula ait olduğunu gösterir. Standart biçim <b>4 boşluktur</b>; bir bloktaki tüm satırlar aynı miktarda içeride olmalıdır.</li>
 <li>Karşılaştırmalar: <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>==</code> (eşit mi?), <code>!=</code> (farklı mı?). Sonuç <code>True</code> ya da <code>False</code>'tur.</li>
 <li><b>Biriktirme kalıbı:</b> döngüden önce <code>toplam = 0</code>, döngü içinde <code>toplam = toplam + deger</code>.</li>
 </ul>
@@ -409,7 +415,7 @@ elif value &gt;= 2:
 else:
     print("low")</code></pre>
 <ul>
-<li>The <code>:</code> at the end of the line and the <b>4-space indentation</b> below it are required. Indentation shows which lines belong to the loop or condition.</li>
+<li>The <code>:</code> at the end of the line and <b>indenting</b> the lines below it are required. Indentation shows which lines belong to the loop or condition. The standard is <b>4 spaces</b>; all lines in a block must be indented by the same amount.</li>
 <li>Comparisons: <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>==</code> (equal?), <code>!=</code> (different?). The result is <code>True</code> or <code>False</code>.</li>
 <li><b>Accumulator pattern:</b> before the loop <code>total = 0</code>, inside it <code>total = total + value</code>.</li>
 </ul>
@@ -453,7 +459,7 @@ else:
       },
       {
         id: "m0-l4-c4", kind: "fill",
-        task: { tr: "Her ayı etiketle: 3'ten büyükse <code>\"yüksek\"</code>, 2 ile 3 arasındaysa <code>\"orta\"</code>, değilse <code>\"düşük\"</code>. İki boşluğu doldur.", en: "Label each month: above 3 is <code>\"high\"</code>, between 2 and 3 is <code>\"medium\"</code>, otherwise <code>\"low\"</code>. Fill the two blanks." },
+        task: { tr: "Her ayı etiketle: 3'ten büyükse <code>\"yüksek\"</code>, 2 ile 3 arasındaysa (2 ≤ değer ≤ 3) <code>\"orta\"</code>, değilse <code>\"düşük\"</code>. İki boşluğu doldur.", en: "Label each month: above 3 is <code>\"high\"</code>, between 2 and 3 (2 ≤ value ≤ 3) is <code>\"medium\"</code>, otherwise <code>\"low\"</code>. Fill the two blanks." },
         code: { tr: 'etiketler = []\nfor deger in aylik_enf:\n    if deger > 3:\n        etiketler.append("yüksek")\n    elif deger >= 2:\n        etiketler.append(___)\n    else:\n        etiketler.append(___)\nprint(etiketler)', en: 'labels = []\nfor value in monthly_inf:\n    if value > 3:\n        labels.append("high")\n    elif value >= 2:\n        labels.append(___)\n    else:\n        labels.append(___)\nprint(labels)' },
         solution: { tr: 'etiketler = []\nfor deger in aylik_enf:\n    if deger > 3:\n        etiketler.append("yüksek")\n    elif deger >= 2:\n        etiketler.append("orta")\n    else:\n        etiketler.append("düşük")\nprint(etiketler)', en: 'labels = []\nfor value in monthly_inf:\n    if value > 3:\n        labels.append("high")\n    elif value >= 2:\n        labels.append("medium")\n    else:\n        labels.append("low")\nprint(labels)' },
         hints: [{ tr: "Metinler tırnak içinde yazılır: <code>\"orta\"</code>.", en: "Text goes inside quotes: <code>\"medium\"</code>." }],
@@ -478,7 +484,8 @@ else:
         explain: { tr: "Python'da bloklar girintiyle belirlenir; döngüye ait satırlar aynı miktarda içeride yazılır.", en: "In Python, blocks are defined by indentation; lines in the loop are indented by the same amount." }
       },
       {
-        q: { tr: "<code>toplam = 0</code>; <code>for x in [1, 2, 3]: toplam = toplam + x</code>. Sonunda <code>toplam</code> kaçtır?", en: "<code>total = 0</code>; <code>for x in [1, 2, 3]: total = total + x</code>. What is <code>total</code> at the end?" },
+        q: { tr: "Aşağıdaki kod çalıştıktan sonra <code>toplam</code> kaçtır?", en: "What is <code>total</code> after the code below runs?" },
+        code: { tr: "toplam = 0\nfor x in [1, 2, 3]:\n    toplam = toplam + x", en: "total = 0\nfor x in [1, 2, 3]:\n    total = total + x" },
         options: { tr: ["3", "6", "0"], en: ["3", "6", "0"] },
         answer: 1,
         explain: { tr: "0 + 1 + 2 + 3 = 6. Bu, biriktirme kalıbıdır.", en: "0 + 1 + 2 + 3 = 6. This is the accumulator pattern." }
@@ -588,7 +595,7 @@ growth_rate(1000, 1050)   # 5.0</code></pre>
       },
       {
         id: "m0-l5-c4", kind: "fill",
-        task: { tr: "Bir listenin ortalamasını döndüren <code>ortalama</code> fonksiyonunu yaz. (İpucu: toplam bölü eleman sayısı.)", en: "Write a function <code>mean</code> that returns the average of a list. (Hint: total divided by the number of elements.)" },
+        task: { tr: "Bir listenin ortalamasını döndüren <code>ortalama</code> fonksiyonunu yaz. (İpucu: toplam bölü eleman sayısı.) Giriş koşulu: liste <b>boş olmamalı</b>; boş listede <code>len</code> 0 olur ve sıfıra bölme hatası (<code>ZeroDivisionError</code>) alırsın.", en: "Write a function <code>mean</code> that returns the average of a list. (Hint: total divided by the number of elements.) Precondition: the list must <b>not be empty</b>; for an empty list <code>len</code> is 0 and you get a division-by-zero error (<code>ZeroDivisionError</code>)." },
         code: { tr: "def ortalama(liste):\n    return ___\n\nprint(ortalama([2, 4, 6]))\nprint(ortalama([3.2, 4.5, 2.9]))", en: "def mean(values):\n    return ___\n\nprint(mean([2, 4, 6]))\nprint(mean([3.2, 4.5, 2.9]))" },
         solution: { tr: "def ortalama(liste):\n    return sum(liste) / len(liste)\n\nprint(ortalama([2, 4, 6]))\nprint(ortalama([3.2, 4.5, 2.9]))", en: "def mean(values):\n    return sum(values) / len(values)\n\nprint(mean([2, 4, 6]))\nprint(mean([3.2, 4.5, 2.9]))" },
         hints: [{ tr: "Listeler dersinde kullandığın iki fonksiyonu hatırla: <code>sum</code> ve <code>len</code>.", en: "Remember the two functions from the lists lesson: <code>sum</code> and <code>len</code>." }, { tr: "<code>return sum(liste) / len(liste)</code>", en: "<code>return sum(values) / len(values)</code>" }],
@@ -695,11 +702,11 @@ growth_rate(1000, 1050)   # 5.0</code></pre>
       {
         id: "m0-l6-c4", kind: "edit",
         task: { tr: "250 günlük getiri simüle ediliyor (gerçek ortalama 0.5). <code>size</code>'ı <b>20000</b> yap ve çalıştır. Örneklem büyüyünce hesaplanan ortalama 0.5'e yaklaşıyor mu?", en: "We simulate 250 daily returns (true mean 0.5). Change <code>size</code> to <b>20000</b> and run. Does the computed mean get closer to 0.5 as the sample grows?" },
-        code: { tr: "rng = np.random.default_rng(42)     # sabit tohum: hep aynı sayılar\ngetiriler = rng.normal(loc=0.5, scale=2.0, size=250)\n\nprint(len(getiriler))\nprint(\"Ortalama:\", round(getiriler.mean(), 3))\nprint(\"Std. sapma:\", round(getiriler.std(), 3))", en: "rng = np.random.default_rng(42)     # fixed seed: same numbers every time\nreturns = rng.normal(loc=0.5, scale=2.0, size=250)\n\nprint(len(returns))\nprint(\"Mean:\", round(returns.mean(), 3))\nprint(\"Std. dev.:\", round(returns.std(), 3))" },
-        solution: { tr: "rng = np.random.default_rng(42)     # sabit tohum: hep aynı sayılar\ngetiriler = rng.normal(loc=0.5, scale=2.0, size=20000)\n\nprint(len(getiriler))\nprint(\"Ortalama:\", round(getiriler.mean(), 3))\nprint(\"Std. sapma:\", round(getiriler.std(), 3))", en: "rng = np.random.default_rng(42)     # fixed seed: same numbers every time\nreturns = rng.normal(loc=0.5, scale=2.0, size=20000)\n\nprint(len(returns))\nprint(\"Mean:\", round(returns.mean(), 3))\nprint(\"Std. dev.:\", round(returns.std(), 3))" },
+        code: { tr: "rng = np.random.default_rng(42)     # sabit tohum: hep aynı sayılar\ngetiriler = rng.normal(loc=0.5, scale=2.0, size=250)\n\nprint(len(getiriler))\nprint(\"Ortalama:\", round(getiriler.mean(), 3))\nprint(\"Std. sapma:\", round(getiriler.std(), 3))\n\n# karşılaştırma için hep 250 günlük örneklem\nilk_250 = np.random.default_rng(42).normal(loc=0.5, scale=2.0, size=250)\nprint(\"250 günle ortalama:\", round(ilk_250.mean(), 3))", en: "rng = np.random.default_rng(42)     # fixed seed: same numbers every time\nreturns = rng.normal(loc=0.5, scale=2.0, size=250)\n\nprint(len(returns))\nprint(\"Mean:\", round(returns.mean(), 3))\nprint(\"Std. dev.:\", round(returns.std(), 3))\n\n# a 250-day sample, kept for comparison\nfirst_250 = np.random.default_rng(42).normal(loc=0.5, scale=2.0, size=250)\nprint(\"Mean with 250 days:\", round(first_250.mean(), 3))" },
+        solution: { tr: "rng = np.random.default_rng(42)     # sabit tohum: hep aynı sayılar\ngetiriler = rng.normal(loc=0.5, scale=2.0, size=20000)\n\nprint(len(getiriler))\nprint(\"Ortalama:\", round(getiriler.mean(), 3))\nprint(\"Std. sapma:\", round(getiriler.std(), 3))\n\n# karşılaştırma için hep 250 günlük örneklem\nilk_250 = np.random.default_rng(42).normal(loc=0.5, scale=2.0, size=250)\nprint(\"250 günle ortalama:\", round(ilk_250.mean(), 3))", en: "rng = np.random.default_rng(42)     # fixed seed: same numbers every time\nreturns = rng.normal(loc=0.5, scale=2.0, size=20000)\n\nprint(len(returns))\nprint(\"Mean:\", round(returns.mean(), 3))\nprint(\"Std. dev.:\", round(returns.std(), 3))\n\n# a 250-day sample, kept for comparison\nfirst_250 = np.random.default_rng(42).normal(loc=0.5, scale=2.0, size=250)\nprint(\"Mean with 250 days:\", round(first_250.mean(), 3))" },
         hints: [{ tr: "Önce olduğu gibi çalıştırıp sonucu not et, sonra <code>250</code> yerine <code>20000</code> yaz.", en: "Run it as it is first and note the result, then replace <code>250</code> with <code>20000</code>." }],
         checks: [{ py: { tr: "len(getiriler) == 20000", en: "len(returns) == 20000" }, msg: { tr: "Dizinin uzunluğu 20000 olmalı: <code>size=20000</code>.", en: "The array should have 20000 elements: <code>size=20000</code>." } }],
-        after: { tr: "Örneklem büyüdükçe örneklem ortalaması gerçek ortalamaya yaklaşır (büyük sayılar yasası). Tohumu değiştirmezsen sonuçlar herkeste aynı çıkar.", en: "As the sample grows, the sample mean approaches the true mean (law of large numbers). If you keep the seed, everyone gets the same numbers." }
+        after: { tr: "Son iki satır iki sonucu yan yana gösteriyor: 250 günle ortalama 0,403, 20000 günle 0,51; gerçek değer 0,5. Örneklem büyüdükçe örneklem ortalaması gerçek ortalamaya <b>yaklaşma eğilimindedir</b> (büyük sayılar yasası). Bu her tek denemede garanti değildir; garanti olan, büyük örneklemde sapmanın genellikle küçülmesidir. Tohumu değiştirmezsen sonuçlar herkeste aynı çıkar.", en: "The last two lines show the two results side by side: with 250 days the mean is 0.403, with 20000 days 0.51; the true value is 0.5. As the sample grows, the sample mean <b>tends to approach</b> the true mean (law of large numbers). This is not guaranteed in every single draw; what holds is that the deviation usually shrinks in large samples. If you keep the seed, everyone gets the same numbers." }
       },
       {
         id: "m0-l6-c5", kind: "fill",
@@ -857,7 +864,7 @@ growth_rate(1000, 1050)   # 5.0</code></pre>
 <li>Okunur bir grafik için: <code>plt.title(...)</code>, <code>plt.xlabel(...)</code>, <code>plt.ylabel(...)</code>. Birden çok çizgi varsa her birine <code>label="..."</code> verip <code>plt.legend()</code> çağır.</li>
 <li><code>plt.show()</code> grafiği gösterir. Bu laboratuvarda hücre bitince grafikler zaten otomatik görünür.</li>
 </ul>
-<div class="box econ"><b>İktisat örneği.</b> Büyüme ile işsizlik arasındaki ters ilişki <b>Okun yasası</b> olarak bilinir. Bir serpme grafiği bu ilişkinin verideki izini hemen gösterir.</div>`,
+<div class="box econ"><b>İktisat örneği.</b> Büyüme ile işsizlik arasındaki ters ilişki <b>Okun yasası</b> olarak bilinir. Okun yasası asıl olarak büyümeyi işsizlikteki <b>değişimle</b> (yüzde puan) ilişkilendirir; bitirme projesinde bu biçimi kullanacaksın. Bu derste kurgusal verideki büyüme oranı ile işsizlik <b>düzeyini</b> karşılaştıracağız: bu, ilişkinin izini gösteren betimleyici bir bakıştır.</div>`,
       en: `<p>Every analysis starts with <b>looking</b> at the data. A chart reveals at a glance the trends, breaks and relationships that numbers in a table hide. Python's basic charting tool is <b>matplotlib</b>, usually loaded as <code>import matplotlib.pyplot as plt</code>.</p>
 <ul>
 <li><code>plt.plot(x, y)</code> is a <b>line chart</b>: for change over time (inflation by year).</li>
@@ -866,11 +873,11 @@ growth_rate(1000, 1050)   # 5.0</code></pre>
 <li>To make a chart readable: <code>plt.title(...)</code>, <code>plt.xlabel(...)</code>, <code>plt.ylabel(...)</code>. With several lines, give each a <code>label="..."</code> and call <code>plt.legend()</code>.</li>
 <li><code>plt.show()</code> displays the chart. In this lab charts also appear automatically when a cell finishes.</li>
 </ul>
-<div class="box econ"><b>Economics example.</b> The inverse relation between growth and unemployment is known as <b>Okun's law</b>. A scatter plot shows its trace in the data straight away.</div>`
+<div class="box econ"><b>Economics example.</b> The inverse relation between growth and unemployment is known as <b>Okun's law</b>. Strictly, Okun's law relates growth to the <b>change</b> in unemployment (in percentage points); you will use that form in the capstone project. In this lesson we compare the growth rate with the unemployment <b>level</b> in fictional data: a descriptive look at the trace of the relationship.</div>`
     },
     playground: {
       type: "chartBuilder",
-      intro: { tr: "Grafik türünü ve değişkenleri seç, seçenekleri aç kapat. Altta bu grafiği çizen matplotlib kodu oluşur. Serpme grafiğinde x = buyume, y = issizlik seçip Okun ilişkisini ara.", en: "Pick the chart type and variables, toggle the options. The matplotlib code that draws the chart appears below. Try a scatter with x = growth, y = unemployment to look for Okun's relation." },
+      intro: { tr: "Grafik türünü ve değişkenleri seç, seçenekleri aç kapat. Altta bu grafiği çizen matplotlib kodu oluşur. Serpme grafiğinde x = buyume, y = issizlik seçip büyüme ile işsizlik düzeyi arasındaki ilişkiyi ara.", en: "Pick the chart type and variables, toggle the options. The matplotlib code that draws the chart appears below. Try a scatter with x = growth, y = unemployment to look for the relation between growth and the unemployment level." },
       data: MACRO,
       takeaway: { tr: "Zaman için çizgi, karşılaştırma için sütun, ilişki için serpme grafiği. Başlık ve eksen adları olmayan bir grafik eksiktir.", en: "Line for time, bar for comparison, scatter for relationships. A chart without a title and axis labels is incomplete." }
     },
@@ -898,7 +905,7 @@ growth_rate(1000, 1050)   # 5.0</code></pre>
         solution: { tr: 'plt.scatter(veri["buyume"], veri["issizlik"])\nplt.title("Büyüme ve işsizlik")\nplt.xlabel("Büyüme (%)")\nplt.ylabel("İşsizlik (%)")\nplt.show()', en: 'plt.scatter(data["growth"], data["unemployment"])\nplt.title("Growth and unemployment")\nplt.xlabel("Growth (%)")\nplt.ylabel("Unemployment (%)")\nplt.show()' },
         hints: [{ tr: "Serpme grafiğinin İngilizcesi <i>scatter</i>.", en: "A scatter plot in matplotlib is <code>scatter</code>." }],
         checks: [{ py: 'len(_figs) > 0 and _figs[-1]["collections"] >= 1', msg: { tr: "Bir serpme grafiği (<code>plt.scatter</code>) bekleniyordu.", en: "A scatter plot (<code>plt.scatter</code>) was expected." } }],
-        after: { tr: "Noktalar sağa doğru aşağı iniyor: büyümenin yüksek olduğu yıllarda işsizlik düşük. Bu bir ilişkidir; tek başına nedenselliği kanıtlamaz.", en: "The points slope downward: unemployment is lower in high-growth years. This is an association; on its own it does not prove causality." }
+        after: { tr: "Noktalar sağa doğru aşağı iniyor: bu kurgusal veride büyümenin yüksek olduğu yıllarda işsizlik düzeyi düşük. Bu betimleyici bir ilişkidir; tek başına nedenselliği kanıtlamaz. Eksen birimlerine dikkat: büyüme yüzde (%), işsizlik oranı yüzde (%); işsizlikteki değişimi kullansaydık birim <b>yüzde puan</b> olurdu.", en: "The points slope downward: in this fictional data, unemployment is lower in high-growth years. This is a descriptive association; on its own it does not prove causality. Mind the axis units: growth in percent (%), unemployment rate in percent (%); had we used the change in unemployment, the unit would be <b>percentage points</b>." }
       },
       {
         id: "m0-l8-c4", kind: "fill",
@@ -949,17 +956,17 @@ growth_rate(1000, 1050)   # 5.0</code></pre>
       tr: `<p>Şimdi öğrendiğin her şeyi bir araya getiriyorsun. Bir istatistik kurumunun yayımladığı gibi aylık bir <b>tüketici fiyat endeksi (TÜFE)</b> serisinden başlayıp enflasyonu hesaplayacaksın. Gerçek veriyle Colab atölyelerinde (Ünite 9–10) çalışacaksın; burada aynı adımları <b>simüle edilmiş</b> bir seriyle, sabit tohumla yapıyoruz.</p>
 <ul>
 <li><b>Aylık enflasyon</b>: endeksin bir önceki aya göre yüzde değişimi. pandas'ta <code>.pct_change()</code> bunu tek adımda yapar.</li>
-<li><b>Yıllık enflasyon</b>: endeksin 12 ay önceki değerine göre yüzde değişimi: <code>.pct_change(periods=12)</code>.</li>
+<li><b>Yıllık enflasyon</b>: endeksin 12 ay önceki değerine göre yüzde değişimi: <code>.pct_change(periods=12)</code>. Dikkat: bu komut <b>12 satır</b> geri gider. 12 satır öncesinin geçen yılın aynı ayı olması için seri tarih sırasına göre dizili olmalı ve arada eksik ay bulunmamalı; bunu önce kontrol ederiz.</li>
 <li>İlk ayın aylık değişimi ve ilk 12 ayın yıllık değişimi hesaplanamaz; pandas bunları <code>NaN</code> (“sayı değil”, eksik değer) olarak gösterir.</li>
-<li><code>.idxmax()</code> en büyük değerin satır numarasını, <code>.loc[satir, "sutun"]</code> o satırdaki değeri verir.</li>
+<li><code>.idxmax()</code> en büyük değerin <b>indeks etiketini</b> verir (burada indeks 0, 1, 2… olduğu için satır numarasıyla aynı), <code>.loc[etiket, "sutun"]</code> o satırdaki değeri verir.</li>
 </ul>
 <div class="box econ">Haber bültenlerindeki “yıllık enflasyon” bu hesaptır: bu ayın endeksi ile geçen yılın aynı ayının endeksi arasındaki yüzde fark.</div>`,
       en: `<p>Now you bring everything together. Starting from a monthly <b>consumer price index (CPI)</b> series like the ones statistics offices publish, you will compute inflation. You will work with real data in the Colab workshops (Units 9–10); here we follow the same steps with a <b>simulated</b> series and a fixed seed.</p>
 <ul>
 <li><b>Monthly inflation</b>: the percentage change of the index from the previous month. In pandas <code>.pct_change()</code> does this in one step.</li>
-<li><b>Annual inflation</b>: the percentage change from the index 12 months earlier: <code>.pct_change(periods=12)</code>.</li>
+<li><b>Annual inflation</b>: the percentage change from the index 12 months earlier: <code>.pct_change(periods=12)</code>. Note: this goes back <b>12 rows</b>. For 12 rows back to be the same month last year, the series must be sorted by date with no missing months; we check that first.</li>
 <li>The first month's monthly change and the first 12 months' annual change cannot be computed; pandas shows them as <code>NaN</code> (“not a number”, a missing value).</li>
-<li><code>.idxmax()</code> gives the row label of the largest value, and <code>.loc[row, "column"]</code> gives the value in that row.</li>
+<li><code>.idxmax()</code> gives the <b>index label</b> of the largest value (here the index is 0, 1, 2…, so it equals the row number), and <code>.loc[label, "column"]</code> gives the value in that row.</li>
 </ul>
 <div class="box econ">The “annual inflation” in news releases is exactly this: the percentage difference between this month's index and the same month a year earlier.</div>`
     },
@@ -997,8 +1004,8 @@ growth_rate(1000, 1050)   # 5.0</code></pre>
       {
         id: "m0-l9-c3", kind: "fill",
         task: { tr: "Yıllık enflasyonu (%) hesapla: endeksin kaç ay önceki değeriyle karşılaştırılması gerekir?", en: "Compute annual inflation (%): how many months back should the index be compared with?" },
-        code: { tr: 'tufe["yillik"] = tufe["endeks"].pct_change(periods=___) * 100\ntufe.tail()', en: 'cpi["annual"] = cpi["index"].pct_change(periods=___) * 100\ncpi.tail()' },
-        solution: { tr: 'tufe["yillik"] = tufe["endeks"].pct_change(periods=12) * 100\ntufe.tail()', en: 'cpi["annual"] = cpi["index"].pct_change(periods=12) * 100\ncpi.tail()' },
+        code: { tr: '# önce kontrol: tarih sırası ve eksik ay\nay_no = tufe["ay"].dt.year * 12 + tufe["ay"].dt.month\nprint("Tarihe göre sıralı:", tufe["ay"].is_monotonic_increasing, "| eksik ay yok:", (ay_no.diff().dropna() == 1).all())\n\ntufe["yillik"] = tufe["endeks"].pct_change(periods=___) * 100\ntufe.tail()', en: '# check first: date order and missing months\nmonth_no = cpi["month"].dt.year * 12 + cpi["month"].dt.month\nprint("Sorted by date:", cpi["month"].is_monotonic_increasing, "| no missing months:", (month_no.diff().dropna() == 1).all())\n\ncpi["annual"] = cpi["index"].pct_change(periods=___) * 100\ncpi.tail()' },
+        solution: { tr: '# önce kontrol: tarih sırası ve eksik ay\nay_no = tufe["ay"].dt.year * 12 + tufe["ay"].dt.month\nprint("Tarihe göre sıralı:", tufe["ay"].is_monotonic_increasing, "| eksik ay yok:", (ay_no.diff().dropna() == 1).all())\n\ntufe["yillik"] = tufe["endeks"].pct_change(periods=12) * 100\ntufe.tail()', en: '# check first: date order and missing months\nmonth_no = cpi["month"].dt.year * 12 + cpi["month"].dt.month\nprint("Sorted by date:", cpi["month"].is_monotonic_increasing, "| no missing months:", (month_no.diff().dropna() == 1).all())\n\ncpi["annual"] = cpi["index"].pct_change(periods=12) * 100\ncpi.tail()' },
         hints: [{ tr: "Bir yılda kaç ay var?", en: "How many months are in a year?" }],
         checks: [{ py: { tr: '"yillik" in tufe.columns and tufe["yillik"].isna().sum() == 12 and ((tufe["yillik"] - tufe["endeks"].pct_change(periods=12) * 100).abs().dropna() < 1e-9).all()', en: '"annual" in cpi.columns and cpi["annual"].isna().sum() == 12 and ((cpi["annual"] - cpi["index"].pct_change(periods=12) * 100).abs().dropna() < 1e-9).all()' }, msg: { tr: "Yıllık değişim 12 ay önceki endekse göre hesaplanmalı (ilk 12 satır NaN olur).", en: "Annual change must be computed against the index 12 months earlier (the first 12 rows become NaN)." } }],
         after: { tr: "<code>tail()</code> son satırları gösterir. Aylık oranlar yaklaşık %2,5 iken yıllık oranın çok daha yüksek olduğuna dikkat et: bileşik etki.", en: "<code>tail()</code> shows the last rows. Note how the annual rate is far higher than the ~2.5% monthly rates: compounding." }
@@ -1021,7 +1028,7 @@ growth_rate(1000, 1050)   # 5.0</code></pre>
           { py: 'len(_figs) > 0 and _figs[-1]["lines"] >= 2 and _figs[-1]["legend"]', msg: { tr: "Grafikte iki çizgi ve bir lejant olmalı.", en: "The chart should have two lines and a legend." } },
           { py: '_figs[-1]["title"].strip() != ""', msg: { tr: "Grafiğin bir başlığı olmalı.", en: "The chart needs a title." } }
         ],
-        after: { tr: "Tebrikler! Veri oluşturdun, dönüştürdün, özetledin ve görselleştirdin. Yorum senin: simüle seride yıllık enflasyon ilk yıldan sonra %30–40 bandında dolaşıyor; bu sayılar gerçek bir ekonomiyi anlatmaz. Sıradaki son ders bitirme projesi: aynı adımları daha az yönlendirmeyle uygulayacaksın.", en: "Well done! You created, transformed, summarised and visualised data. The interpretation is yours: in the simulated series annual inflation hovers around 30–40% after the first year; these numbers say nothing about a real economy. The last lesson is the capstone project: the same steps with less guidance." }
+        after: { tr: "Tebrikler! Veri oluşturdun, dönüştürdün, özetledin ve görselleştirdin. Geriye son adım kaldı: aşağıdaki hücrelerde sonucu kendi cümlelerinle yorumlayacaksın. Sonra bitirme projesine geçebilirsin; aynı adımları daha az yönlendirmeyle uygulayacaksın.", en: "Well done! You created, transformed, summarised and visualised data. One step is left: in the cells below you will interpret the result in your own words. Then move on to the capstone project, where you apply the same steps with less guidance." }
       }
     ],
     quiz: [

@@ -11,6 +11,7 @@
   X["m0-l1"] = [
     {
       id: "m0-l1-c5", kind: "debug",
+      standalone: true,
       task: { tr: "Bu kod hata veriyor. Önce çalıştır ve hata mesajını oku; sonra hatayı bulup düzelt.", en: "This code raises an error. Run it first and read the message; then find and fix the bug." },
       code: { tr: 'print("Enflasyon: )\nprint(12 * 1.5)', en: 'print("Inflation: )\nprint(12 * 1.5)' },
       solution: { tr: 'print("Enflasyon:")\nprint(12 * 1.5)', en: 'print("Inflation:")\nprint(12 * 1.5)' },
@@ -19,11 +20,15 @@
     },
     {
       id: "m0-l1-c6", kind: "challenge",
-      task: { tr: "Bir ürünün fiyatı 250 TL'den 200 TL'ye indi. Yüzde değişimi tek bir <code>print</code> ile yazdır. (Sonuç negatif çıkmalı.)", en: "A product's price fell from 250 to 200. Print the percentage change with a single <code>print</code>. (The result should be negative.)" },
+      standalone: true,
+      task: { tr: "Bir ürünün fiyatı 250 TL'den 200 TL'ye indi. Yüzde değişimi tek bir <code>print</code> ile yazdır. Hesabı Python yapsın: 250 ve 200'ü formülün içinde kullan, sonucu elle yazma. (Sonuç negatif çıkmalı.)", en: "A product's price fell from 250 to 200. Print the percentage change with a single <code>print</code>. Let Python do the calculation: use 250 and 200 inside the formula rather than typing the result. (The result should be negative.)" },
       code: { tr: "# Kodunu buraya yaz\n", en: "# Write your code here\n" },
       solution: { tr: "print((200 - 250) / 250 * 100)", en: "print((200 - 250) / 250 * 100)" },
       hints: [{ tr: "Formül aynı: (yeni − eski) / eski × 100. Yeni fiyat 200, eski fiyat 250.", en: "Same formula: (new − old) / old × 100. New price 200, old price 250." }],
-      checks: [{ py: '"-20.0" in _out', msg: { tr: "Çıktı −20.0 olmalı. Paydada eski fiyatı (250) kullandın mı?", en: "The output should be −20.0. Did you use the old price (250) as the denominator?" } }]
+      checks: [
+        { py: '"250" in _code and "200" in _code and "-20.0" not in _code', msg: { tr: "Sonucu elle yazma: 250 ve 200'ü formülde kullanarak hesabı Python'a yaptır.", en: "Do not type the result: use 250 and 200 in the formula so Python does the calculation." } },
+        { py: '"-20.0" in _out', msg: { tr: "Çıktı −20.0 olmalı. Paydada eski fiyatı (250) kullandın mı?", en: "The output should be −20.0. Did you use the old price (250) as the denominator?" } }
+      ]
     }
   ];
 
@@ -106,7 +111,7 @@
     },
     {
       id: "m0-l5-c7", kind: "challenge",
-      task: { tr: "<code>buyume_serisi(seri)</code> fonksiyonunu yaz: düzey değerlerinden oluşan bir listeyi alsın, ardışık yüzde büyüme oranlarının listesini döndürsün. Örnek: <code>[100, 110, 121]</code> → <code>[10.0, 10.0]</code>.", en: "Write <code>growth_series(levels)</code>: it takes a list of levels and returns the list of consecutive percentage growth rates. Example: <code>[100, 110, 121]</code> → <code>[10.0, 10.0]</code>." },
+      task: { tr: "<code>buyume_serisi(seri)</code> fonksiyonunu yaz: düzey değerlerinden oluşan bir listeyi alsın, ardışık yüzde büyüme oranlarının listesini döndürsün. Örnek: <code>[100, 110, 121]</code> → <code>[10.0, 10.0]</code>. Giriş koşulu: büyüme oranı önceki değere bölünerek hesaplandığından listedeki değerler (sonuncusu hariç) <b>sıfırdan farklı</b> olmalı; önceki değer 0 ise oran tanımsızdır.", en: "Write <code>growth_series(levels)</code>: it takes a list of levels and returns the list of consecutive percentage growth rates. Example: <code>[100, 110, 121]</code> → <code>[10.0, 10.0]</code>. Precondition: since each rate divides by the previous value, the values (except the last) must be <b>non-zero</b>; if the previous value is 0, the rate is undefined." },
       code: { tr: "def buyume_serisi(seri):\n    # kodunu buraya yaz\n    pass\n\nprint(buyume_serisi([100, 110, 121]))", en: "def growth_series(levels):\n    # write your code here\n    pass\n\nprint(growth_series([100, 110, 121]))" },
       solution: { tr: "def buyume_serisi(seri):\n    oranlar = []\n    for i in range(1, len(seri)):\n        oranlar.append((seri[i] - seri[i - 1]) / seri[i - 1] * 100)\n    return oranlar\n\nprint(buyume_serisi([100, 110, 121]))", en: "def growth_series(levels):\n    rates = []\n    for i in range(1, len(levels)):\n        rates.append((levels[i] - levels[i - 1]) / levels[i - 1] * 100)\n    return rates\n\nprint(growth_series([100, 110, 121]))" },
       hints: [
@@ -134,12 +139,12 @@
     },
     {
       id: "m0-l6-c7", kind: "challenge",
-      task: { tr: "Günlük oynaklığı yıllığa çevirmek için standart sapma √250 ile çarpılır (yılda yaklaşık 250 işlem günü). <code>getiriler</code> dizisinden <code>yillik_oynaklik</code>'ı hesapla; <code>np.sqrt</code> kullan.", en: "To annualise daily volatility, multiply the standard deviation by √250 (about 250 trading days a year). Compute <code>annual_vol</code> from <code>returns</code>; use <code>np.sqrt</code>." },
+      task: { tr: "Günlük oynaklığı yıllığa çevirmek için standart sapma √250 ile çarpılır (yılda yaklaşık 250 işlem günü). Bu kural iki varsayıma dayanır: günlük getirilerin varyansı her gün benzerdir ve ardışık günlerin getirileri birbiriyle ilişkili değildir (seri korelasyon yok). <code>getiriler</code> dizisinden <code>yillik_oynaklik</code>'ı hesapla; <code>np.sqrt</code> kullan.", en: "To annualise daily volatility, multiply the standard deviation by √250 (about 250 trading days a year). The rule rests on two assumptions: daily returns have a similar variance every day, and returns on consecutive days are not correlated (no serial correlation). Compute <code>annual_vol</code> from <code>returns</code>; use <code>np.sqrt</code>." },
       code: { tr: "# yillik_oynaklik = ...\n", en: "# annual_vol = ...\n" },
       solution: { tr: "yillik_oynaklik = getiriler.std() * np.sqrt(250)\nprint(round(yillik_oynaklik, 2))", en: "annual_vol = returns.std() * np.sqrt(250)\nprint(round(annual_vol, 2))" },
       hints: [{ tr: "Standart sapma: <code>getiriler.std()</code>. Karekök: <code>np.sqrt(250)</code>.", en: "Standard deviation: <code>returns.std()</code>. Square root: <code>np.sqrt(250)</code>." }],
       checks: [{ py: { tr: "abs(yillik_oynaklik - getiriler.std() * 250 ** 0.5) < 1e-9", en: "abs(annual_vol - returns.std() * 250 ** 0.5) < 1e-9" }, msg: { tr: "Sonuç, günlük standart sapmanın √250 katı olmalı.", en: "The result should be the daily standard deviation times √250." } }],
-      after: { tr: "Oynaklık zamanla doğrusal değil, zamanın karekökü ile büyür: getirilerin bağımsız olduğu varsayımının bir sonucudur.", en: "Volatility grows with the square root of time, not linearly; this follows from assuming independent returns." }
+      after: { tr: "Oynaklık zamanla doğrusal değil, zamanın karekökü ile büyür: bu, getirilerin birbirinden bağımsız ve varyansın sabit olduğu varsayımının sonucudur. Gerçek piyasalarda oynaklık kümelenir; bu durumda √250 kuralı yalnızca bir yaklaşıklıktır.", en: "Volatility grows with the square root of time, not linearly; this follows from assuming independent returns with a constant variance. In real markets volatility clusters, so the √250 rule is only an approximation." }
     }
   ];
 
@@ -208,6 +213,15 @@
       solution: { tr: 'ay_sayisi = (tufe["yillik"] > 35).sum()\nprint(ay_sayisi)', en: 'n_months = (cpi["annual"] > 35).sum()\nprint(n_months)' },
       hints: [{ tr: "Koşul True/False üretir; True'ları toplamak onları saymaktır: <code>(koşul).sum()</code>.", en: "A condition gives True/False; summing the Trues counts them: <code>(condition).sum()</code>." }],
       checks: [{ py: { tr: 'ay_sayisi == (tufe["yillik"] > 35).sum()', en: 'n_months == (cpi["annual"] > 35).sum()' }, msg: { tr: "Sayı beklenenle uyuşmuyor. NaN değerleri koşulu sağlamaz; ayrıca saymana gerek yok.", en: "The count does not match. NaN values never meet the condition; no need to handle them separately." } }]
+    },
+    {
+      id: "m0-l9-c8", kind: "challenge",
+      task: { tr: "Son adım: yorum. Grafiğe ve özet sayılara bakarak simüle yıllık enflasyon hakkında <b>bir cümlelik</b> yorumunu <code>yorum</code> değişkenine metin olarak yaz ve yazdır. Ne gördüğünü ve bunun neyi göstermediğini (veri simüle!) söylemeye çalış.", en: "Final step: interpretation. Looking at the chart and summary numbers, write a <b>one-sentence</b> interpretation of simulated annual inflation as text in <code>comment</code> and print it. Try to say what you see and what it does not show (the data are simulated!)." },
+      code: { tr: 'yorum = "..."\nprint(yorum)', en: 'comment = "..."\nprint(comment)' },
+      solution: { tr: 'yorum = "Simüle seride yıllık enflasyon ilk yıldan sonra yaklaşık %30–40 bandında dolaşıyor; veri simüle olduğu için bu gerçek bir ekonomi hakkında bilgi vermez."\nprint(yorum)', en: 'comment = "In the simulated series, annual inflation hovers around 30–40% after the first year; because the data are simulated, this says nothing about a real economy."\nprint(comment)' },
+      hints: [{ tr: "Örnek yapı: “… bandında dolaşıyor / yükseliyor; ancak veri simüle olduğu için …”.", en: "Example structure: “… hovers around / rises …; but since the data are simulated, …”." }],
+      checks: [{ py: { tr: 'isinstance(yorum, str) and yorum.strip() not in ("", "...") and len(yorum.split()) >= 8', en: 'isinstance(comment, str) and comment.strip() not in ("", "...") and len(comment.split()) >= 8' }, msg: { tr: "<code>yorum</code> en az 8 kelimelik bir cümle olmalı.", en: "<code>comment</code> should be a sentence of at least 8 words." } }],
+      after: { tr: "Analizin son adımı her zaman yorumdur: sayıları söze dökmek ve sınırlarını belirtmek. İlerideki modüllerde YZ'nin yazdığı yorumları da aynı gözle denetleyeceksin.", en: "The last step of any analysis is interpretation: putting the numbers into words and stating their limits. In later modules you will audit the AI's interpretations with the same eye." }
     }
   ];
 

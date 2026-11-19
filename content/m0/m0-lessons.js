@@ -68,7 +68,7 @@ while gsyh &lt; 200:
 <ul>
 <li><b>Dikkat:</b> <code>while</code> döngüsünde koşulu bir gün yanlış yapacak bir değişiklik olmalıdır. Yoksa döngü hiç bitmez. Bu laboratuvar 15 saniye sonra Python'u durdurur.</li>
 <li><code>enumerate(liste)</code> her turda hem <b>sıra numarasını</b> hem <b>değeri</b> verir: <code>for i, deger in enumerate(aylik_enf):</code>.</li>
-<li><code>zip(a, b)</code> iki listeyi yan yana <b>eşler</b>: <code>for n, p in zip(nominal, enflasyon):</code>. Her turda her listeden bir eleman gelir.</li>
+<li><code>zip(a, b)</code> iki listeyi yan yana <b>eşler</b>: <code>for n, p in zip(nominal, enflasyon):</code>. Her turda her listeden bir eleman gelir. Listelerin uzunluğu farklıysa <code>zip</code> <b>kısa olan bittiğinde durur</b>: <code>list(zip([1, 2, 3], ["a", "b"]))</code> yalnızca iki çift verir, 3 sessizce dışarıda kalır. Seriler eşit uzunlukta mı, önce kontrol et.</li>
 <li><b>Liste üreteci</b> (list comprehension), “boş liste aç, döngüyle doldur” kalıbının tek satırlık hâlidir: <code>[d / 100 for d in aylik_enf if d &gt; 3]</code>. Okunuşu: “aylik_enf içindeki her d için, d 3'ten büyükse, d / 100'ü al.”</li>
 </ul>
 <div class="box econ"><b>70 kuralı.</b> Yıllık %g büyüyen bir değişken yaklaşık 70 / g yılda ikiye katlanır. %5 büyümede yaklaşık 14 yıl. <code>while</code> döngüsüyle tam sonucu bulacaksın.</div>`,
@@ -81,7 +81,7 @@ while gdp &lt; 200:
 <ul>
 <li><b>Careful:</b> something inside a <code>while</code> loop must eventually make the condition false, or the loop never ends. This lab stops Python after 15 seconds.</li>
 <li><code>enumerate(list)</code> gives both the <b>position</b> and the <b>value</b> each turn: <code>for i, value in enumerate(monthly_inf):</code>.</li>
-<li><code>zip(a, b)</code> <b>pairs</b> two lists side by side: <code>for n, p in zip(nominal, inflation):</code>. Each turn takes one element from each list.</li>
+<li><code>zip(a, b)</code> <b>pairs</b> two lists side by side: <code>for n, p in zip(nominal, inflation):</code>. Each turn takes one element from each list. If the lists differ in length, <code>zip</code> <b>stops when the shorter one ends</b>: <code>list(zip([1, 2, 3], ["a", "b"]))</code> gives only two pairs and 3 is silently dropped. Check first that the series have the same length.</li>
 <li>A <b>list comprehension</b> is the one-line form of “open an empty list, fill it in a loop”: <code>[d / 100 for d in monthly_inf if d &gt; 3]</code>. Read it as “for each d in monthly_inf, if d is above 3, take d / 100.”</li>
 </ul>
 <div class="box econ"><b>Rule of 70.</b> A variable growing g% a year doubles in about 70 / g years: about 14 years at 5%. You will find the exact answer with a <code>while</code> loop.</div>`
@@ -180,7 +180,10 @@ while gdp &lt; 200:
     concept: {
       tr: `<p>İktisatçıların verisi yalnızca sayı değildir: merkez bankası açıklamaları, haberler, şirket raporları da veridir. Bilgisayarla metin üzerinde çalışmak için önce metnin temel işlemlerini bilmek gerekir.</p>
 <ul>
-<li><b>Metin metotları:</b> <code>.lower()</code> küçük harfe çevirir, <code>.replace(",", "")</code> bir parçayı başka bir şeyle değiştirir, <code>.split()</code> metni boşluklardan bölerek kelime listesi yapar. <code>"para" in metin</code> bir kelimenin metinde geçip geçmediğini söyler.</li>
+<li><b>Metin metotları:</b> <code>.lower()</code> küçük harfe çevirir, <code>.replace(",", "")</code> bir parçayı başka bir şeyle değiştirir, <code>.split()</code> metni boşluklardan bölerek kelime listesi yapar. <code>"para" in metin</code> bir parçanın metinde geçip geçmediğini söyler.</li>
+<li><b>Alt dize mi, kelime mi?</b> <code>"para" in "parasal politika"</code> de <code>True</code> verir, çünkü <code>in</code> metinde harf dizisi arar. Kelimenin tam olarak geçip geçmediğini bilmek için bölünmüş listede ara: <code>"para" in metin.split()</code>.</li>
+<li><b>Türkçe harfler:</b> Python'un <code>.lower()</code> metodu Türkçe kuralını bilmez: <code>"IŞIK".lower()</code> sonucu <code>"işik"</code> olur. Türkçe metinde önce <code>.replace("I", "ı").replace("İ", "i")</code>, sonra <code>.lower()</code> uygula.</li>
+<li><b>Noktalamayı boşlukla değiştir:</b> <code>"para,politika".replace(",", "")</code> iki kelimeyi birleştirir (<code>"parapolitika"</code>). Kelimeleri ayıran işaretleri <code>" "</code> ile değiştirmek daha güvenlidir.</li>
 <li><b>Sözlük (dict)</b>, değerleri sıra numarasıyla değil <b>isimle</b> saklar: <code>{"2023": 42.5, "2024": 50.0}</code>. Soldaki <b>anahtar</b>, sağdaki <b>değer</b>dir. <code>d["2024"]</code> değeri getirir, <code>d["2025"] = 45.0</code> yeni çift ekler.</li>
 <li><code>d.get(anahtar, 0)</code>: anahtar yoksa hata vermek yerine 0 döndürür. Saymak için ideal: <code>sayim[k] = sayim.get(k, 0) + 1</code>.</li>
 <li><code>for anahtar, deger in d.items():</code> sözlüğün tüm çiftlerini gezer.</li>
@@ -188,7 +191,9 @@ while gdp &lt; 200:
 <div class="box">Bu derste kullanılan “Kurul açıklaması” metni öğretim amacıyla yazılmış <b>kurgusal</b> bir metindir. Metinleri sayılara dönüştürmenin yöntemleri ilerideki bir modülde ele alınır.</div>`,
       en: `<p>Economists' data are not only numbers: central bank statements, news and company reports are data too. To work with text on a computer, you first need its basic operations.</p>
 <ul>
-<li><b>String methods:</b> <code>.lower()</code> converts to lowercase, <code>.replace(",", "")</code> replaces one piece with another, <code>.split()</code> splits on spaces into a list of words. <code>"policy" in text</code> tells you whether a word appears.</li>
+<li><b>String methods:</b> <code>.lower()</code> converts to lowercase, <code>.replace(",", "")</code> replaces one piece with another, <code>.split()</code> splits on spaces into a list of words. <code>"policy" in text</code> tells you whether a piece of text appears.</li>
+<li><b>Substring or word?</b> <code>"policy" in "policymakers"</code> is also <code>True</code>, because <code>in</code> searches for a sequence of letters. To check for the exact word, search the split list: <code>"policy" in text.split()</code>.</li>
+<li><b>Replace punctuation with a space:</b> <code>"money,policy".replace(",", "")</code> merges two words (<code>"moneypolicy"</code>). Replacing word-separating marks with <code>" "</code> is safer.</li>
 <li>A <b>dictionary (dict)</b> stores values by <b>name</b> rather than position: <code>{"2023": 42.5, "2024": 50.0}</code>. The left side is the <b>key</b>, the right side the <b>value</b>. <code>d["2024"]</code> fetches a value, <code>d["2025"] = 45.0</code> adds a new pair.</li>
 <li><code>d.get(key, 0)</code> returns 0 instead of raising an error when the key is missing. Ideal for counting: <code>counts[w] = counts.get(w, 0) + 1</code>.</li>
 <li><code>for key, value in d.items():</code> visits every pair in the dictionary.</li>
@@ -206,7 +211,7 @@ while gdp &lt; 200:
       {
         id: "m0-text-c1", kind: "run",
         task: { tr: "Temel metin işlemlerini dene.", en: "Try the basic string operations." },
-        code: { tr: 'metin = "Kurul, sıkı para politikası duruşunu sürdürecektir."\nprint(len(metin))\nprint(metin.lower())\nprint(metin.split())\nprint("para" in metin)', en: 'text = "The committee will maintain its tight monetary policy stance."\nprint(len(text))\nprint(text.lower())\nprint(text.split())\nprint("policy" in text)' }
+        code: { tr: 'metin = "Kurul, sıkı para politikası duruşunu sürdürecektir."\nprint(len(metin))\nprint(metin.lower())\nprint(metin.split())\nprint("para" in metin)\nprint("para" in "parasal politika")          # alt dize: True\nprint("para" in "parasal politika".split())  # kelime: False', en: 'text = "The committee will maintain its tight monetary policy stance."\nprint(len(text))\nprint(text.lower())\nprint(text.split())\nprint("policy" in text)\nprint("policy" in "policymakers met")          # substring: True\nprint("policy" in "policymakers met".split())  # word: False' }
       },
       {
         id: "m0-text-c2", kind: "run",
@@ -316,25 +321,25 @@ while gdp &lt; 200:
       {
         id: "m0-sim-c1", kind: "run",
         task: { tr: "30'dan başlayan bir kur için tek bir olası 250 günlük yol simüle et ve çiz.", en: "Simulate and plot one possible 250-day path for an exchange rate starting at 30." },
-        code: { tr: SIM_SETUP.tr + 'rng = np.random.default_rng(7)\ngetiri = rng.normal(0.05, 1.0, 250) / 100     # günlük getiri (oran)\nkur = 30 * np.cumprod(1 + getiri)              # simüle kur yolu\n\nplt.plot(kur)\nplt.title("Simüle kur: tek bir olası yol")\nplt.xlabel("Gün")\nplt.show()\nprint("250. gün:", round(kur[-1], 2))', en: SIM_SETUP.en + 'rng = np.random.default_rng(7)\nret = rng.normal(0.05, 1.0, 250) / 100      # daily return (ratio)\nrate = 30 * np.cumprod(1 + ret)              # simulated rate path\n\nplt.plot(rate)\nplt.title("Simulated exchange rate: one possible path")\nplt.xlabel("Day")\nplt.show()\nprint("Day 250:", round(rate[-1], 2))' }
+        code: { tr: SIM_SETUP.tr + 'rng = np.random.default_rng(7)\ngetiri = rng.normal(0.05, 1.0, 250) / 100     # günlük getiri (oran)\nkur = np.concatenate([[30], 30 * np.cumprod(1 + getiri)])   # gün 0 = başlangıç (30)\n\nplt.plot(kur)\nplt.title("Simüle kur: tek bir olası yol")\nplt.xlabel("Gün (0 = başlangıç)")\nplt.show()\nprint("250. gün:", round(kur[-1], 2))', en: SIM_SETUP.en + 'rng = np.random.default_rng(7)\nret = rng.normal(0.05, 1.0, 250) / 100      # daily return (ratio)\nrate = np.concatenate([[30], 30 * np.cumprod(1 + ret)])   # day 0 = start (30)\n\nplt.plot(rate)\nplt.title("Simulated exchange rate: one possible path")\nplt.xlabel("Day (0 = start)")\nplt.show()\nprint("Day 250:", round(rate[-1], 2))' }
       },
       {
         id: "m0-sim-c2", kind: "fill",
         task: { tr: "Şimdi 1000 olası yol üret. Her yolun son gününü seçmek için sütun indeksini doldur.", en: "Now generate 1000 possible paths. Fill in the column index to pick each path's last day." },
-        code: { tr: "yollar = 30 * np.cumprod(1 + rng.normal(0.05, 1.0, size=(1000, 250)) / 100, axis=1)\nson = yollar[:, ___]      # her yolun son günü\nprint(yollar.shape)\nprint(son.shape, round(son.mean(), 2))", en: "paths = 30 * np.cumprod(1 + rng.normal(0.05, 1.0, size=(1000, 250)) / 100, axis=1)\nfinal = paths[:, ___]      # each path's last day\nprint(paths.shape)\nprint(final.shape, round(final.mean(), 2))" },
-        solution: { tr: "yollar = 30 * np.cumprod(1 + rng.normal(0.05, 1.0, size=(1000, 250)) / 100, axis=1)\nson = yollar[:, -1]      # her yolun son günü\nprint(yollar.shape)\nprint(son.shape, round(son.mean(), 2))", en: "paths = 30 * np.cumprod(1 + rng.normal(0.05, 1.0, size=(1000, 250)) / 100, axis=1)\nfinal = paths[:, -1]      # each path's last day\nprint(paths.shape)\nprint(final.shape, round(final.mean(), 2))" },
+        code: { tr: "rng_yol = np.random.default_rng(11)   # bu hücrenin kendi sabit tohumlu üreteci\nyollar = 30 * np.cumprod(1 + rng_yol.normal(0.05, 1.0, size=(1000, 250)) / 100, axis=1)\nson = yollar[:, ___]      # her yolun son günü\nprint(yollar.shape)\nprint(son.shape, round(son.mean(), 2))", en: "rng_paths = np.random.default_rng(11)   # this cell's own fixed-seed generator\npaths = 30 * np.cumprod(1 + rng_paths.normal(0.05, 1.0, size=(1000, 250)) / 100, axis=1)\nfinal = paths[:, ___]      # each path's last day\nprint(paths.shape)\nprint(final.shape, round(final.mean(), 2))" },
+        solution: { tr: "rng_yol = np.random.default_rng(11)   # bu hücrenin kendi sabit tohumlu üreteci\nyollar = 30 * np.cumprod(1 + rng_yol.normal(0.05, 1.0, size=(1000, 250)) / 100, axis=1)\nson = yollar[:, -1]      # her yolun son günü\nprint(yollar.shape)\nprint(son.shape, round(son.mean(), 2))", en: "rng_paths = np.random.default_rng(11)   # this cell's own fixed-seed generator\npaths = 30 * np.cumprod(1 + rng_paths.normal(0.05, 1.0, size=(1000, 250)) / 100, axis=1)\nfinal = paths[:, -1]      # each path's last day\nprint(paths.shape)\nprint(final.shape, round(final.mean(), 2))" },
         hints: [{ tr: "Listelerdeki gibi: son eleman −1.", en: "Just like lists: the last element is −1." }],
         checks: [{ py: { tr: "son.shape == (1000,) and (son == yollar[:, -1]).all()", en: "final.shape == (1000,) and (final == paths[:, -1]).all()" }, msg: { tr: "<code>son</code>, her yolun son değerini içeren 1000 elemanlı bir dizi olmalı.", en: "<code>final</code> should be a 1000-element array of each path's last value." } }],
-        after: { tr: "<code>axis=1</code>, birikimli çarpımın her satırda soldan sağa (günler boyunca) yapılmasını sağlar.", en: "<code>axis=1</code> makes the cumulative product run along each row (across the days)." }
+        after: { tr: "<code>axis=1</code>, birikimli çarpımın her satırda soldan sağa (günler boyunca) yapılmasını sağlar. Bu hücre kendi üretecini (<code>rng_yol</code>) kullanıyor; böylece sonucu, önceki hücreleri kaç kez çalıştırdığına bağlı olmadan hep aynı çıkar.", en: "<code>axis=1</code> makes the cumulative product run along each row (across the days). This cell uses its own generator (<code>rng_paths</code>), so its result is always the same, however many times you ran the earlier cells." }
       },
       {
         id: "m0-sim-c3", kind: "fill",
         task: { tr: "Olası sonuçların orta %90'ını bul: %5 ve %95 yüzdelik dilimleri.", en: "Find the middle 90% of outcomes: the 5th and 95th percentiles." },
-        code: { tr: 'alt, ust = np.percentile(son, [5, ___])\nprint(f"%90 olasılıkla kur {alt:.2f} ile {ust:.2f} arasında")', en: 'low, high = np.percentile(final, [5, ___])\nprint(f"With 90% probability the rate is between {low:.2f} and {high:.2f}")' },
-        solution: { tr: 'alt, ust = np.percentile(son, [5, 95])\nprint(f"%90 olasılıkla kur {alt:.2f} ile {ust:.2f} arasında")', en: 'low, high = np.percentile(final, [5, 95])\nprint(f"With 90% probability the rate is between {low:.2f} and {high:.2f}")' },
+        code: { tr: 'alt, ust = np.percentile(son, [5, ___])\nprint(f"Bu varsayımlar altında simüle edilen son değerlerin orta %90\'ı: {alt:.2f} ile {ust:.2f} arası")', en: 'low, high = np.percentile(final, [5, ___])\nprint(f"Under these assumptions, the middle 90% of simulated final values: {low:.2f} to {high:.2f}")' },
+        solution: { tr: 'alt, ust = np.percentile(son, [5, 95])\nprint(f"Bu varsayımlar altında simüle edilen son değerlerin orta %90\'ı: {alt:.2f} ile {ust:.2f} arası")', en: 'low, high = np.percentile(final, [5, 95])\nprint(f"Under these assumptions, the middle 90% of simulated final values: {low:.2f} to {high:.2f}")' },
         hints: [{ tr: "Orta %90 için alttan %5, üstten %5 kesilir.", en: "For the middle 90%, cut 5% from the bottom and 5% from the top." }],
         checks: [{ py: { tr: "abs(ust - np.percentile(son, 95)) < 1e-9 and abs(alt - np.percentile(son, 5)) < 1e-9", en: "abs(high - np.percentile(final, 95)) < 1e-9 and abs(low - np.percentile(final, 5)) < 1e-9" }, msg: { tr: "Üst sınır %95 yüzdelik dilim olmalı.", en: "The upper bound should be the 95th percentile." } }],
-        after: { tr: "“%90 olasılıkla” ifadesi modelin varsayımları altında geçerlidir; gerçek dünyada bilinmeyen riskler bu aralığı genişletebilir.", en: "“With 90% probability” holds under the model's assumptions; unknown risks in the real world can widen the range." }
+        after: { tr: "Bu aralık bir tahmin değil, modelin ürettiği yolların özetidir: yalnızca varsayılan ortalama ve oynaklık doğruysa “%90 olasılıkla” diye okunabilir. Gerçek dünyada bilinmeyen riskler bu aralığı genişletebilir.", en: "This range is not a forecast but a summary of the paths the model generated: it can be read as “with 90% probability” only if the assumed mean and volatility are right. Unknown risks in the real world can widen the range." }
       },
       {
         id: "m0-sim-c4", kind: "run",
@@ -409,7 +414,7 @@ while gdp &lt; 200:
 <li><b>CSV okumak:</b> <code>pd.read_csv("dosya.csv")</code>. CSV, virgülle ayrılmış düz metin tablosudur. Burada dosya yerine metni <code>io.StringIO</code> ile okuyoruz; sonuç aynıdır.</li>
 <li><b>Gruplamak:</b> <code>panel.groupby("bolge")["issizlik"].mean()</code> her bölge için ayrı ortalama verir. “Böl → uygula → birleştir” mantığıdır.</li>
 <li><b>Eksik değer:</b> CSV'deki boş hücre <code>NaN</code> olur. <code>panel.isna().sum()</code> her sütundaki eksik sayısını gösterir. Eksik değerlerle <i>ne yapılacağı</i> ilerideki bir modülün konusudur; burada yalnızca onları görmeyi öğreniyoruz.</li>
-<li><b>Birleştirmek:</b> <code>panel.merge(bolgeler, on="bolge")</code> ortak bir sütun üzerinden iki tabloyu yan yana getirir (Excel'deki DÜŞEYARA'nın karşılığı).</li>
+<li><b>Birleştirmek:</b> <code>panel.merge(bolgeler, on="bolge")</code> ortak bir sütun üzerinden iki tabloyu yan yana getirir (Excel'deki DÜŞEYARA'nın karşılığı). İki tuzağa dikkat: varsayılan birleştirme yalnızca iki tabloda da bulunan anahtarları tutar, yani bölge tablosunda eksik bir bölge varsa o bölgenin gözlemleri <b>sessizce kaybolur</b>; bölge tablosunda bir anahtar iki kez geçerse gözlemler <b>çoğalır</b>. Bu yüzden bölge tablosunda her bölge bir kez geçmeli. <code>validate="many_to_one"</code> bunu denetler, birleştirmeden önce ve sonra satır sayısını karşılaştırmak da hatayı yakalar.</li>
 <li><b>Tarihler:</b> <code>tablo["tarih"].dt.year</code> bir tarih sütunundan yılı çıkarır; sonra yıla göre gruplayabilirsin.</li>
 </ul>
 <div class="box">Bölgeler ve tüm değerler <b>kurgusaldır</b>.</div>`,
@@ -418,7 +423,7 @@ while gdp &lt; 200:
 <li><b>Reading CSV:</b> <code>pd.read_csv("file.csv")</code>. A CSV is a plain-text table with comma-separated values. Here we read text through <code>io.StringIO</code> instead of a file; the result is the same.</li>
 <li><b>Grouping:</b> <code>panel.groupby("region")["unemployment"].mean()</code> gives a separate mean for each region. The logic is “split → apply → combine”.</li>
 <li><b>Missing values:</b> an empty cell in a CSV becomes <code>NaN</code>. <code>panel.isna().sum()</code> counts missing values per column. <i>What to do</i> with missing values is the topic of a later module; here you only learn to spot them.</li>
-<li><b>Merging:</b> <code>panel.merge(regions, on="region")</code> brings two tables side by side through a shared column (the equivalent of a spreadsheet VLOOKUP).</li>
+<li><b>Merging:</b> <code>panel.merge(regions, on="region")</code> brings two tables side by side through a shared column (the equivalent of a spreadsheet VLOOKUP). Watch for two traps: the default merge keeps only keys found in both tables, so a region missing from the region table makes its observations <b>silently disappear</b>; a key that appears twice in the region table <b>duplicates</b> observations. So each region must appear once in the region table. <code>validate="many_to_one"</code> enforces this, and comparing the row count before and after the merge also catches the problem.</li>
 <li><b>Dates:</b> <code>table["date"].dt.year</code> extracts the year from a date column; then you can group by year.</li>
 </ul>
 <div class="box">The regions and all values are <b>fictional</b>.</div>`
@@ -459,11 +464,11 @@ while gdp &lt; 200:
       {
         id: "m0-pandas2-c4", kind: "fill",
         task: { tr: "Bölgelerin nüfus ve kıyı bilgisini içeren ikinci tabloyu panelle birleştir. Ortak sütunun adını yaz.", en: "Merge the second table with population and coastal information into the panel. Write the name of the shared column." },
-        code: { tr: REG_TABLE.tr + 'birlesik = panel.merge(bolgeler, on="___")\nprint(birlesik.shape)\nbirlesik.head()', en: REG_TABLE.en + 'merged = panel.merge(regions, on="___")\nprint(merged.shape)\nmerged.head()' },
-        solution: { tr: REG_TABLE.tr + 'birlesik = panel.merge(bolgeler, on="bolge")\nprint(birlesik.shape)\nbirlesik.head()', en: REG_TABLE.en + 'merged = panel.merge(regions, on="region")\nprint(merged.shape)\nmerged.head()' },
+        code: { tr: REG_TABLE.tr + 'birlesik = panel.merge(bolgeler, on="___", validate="many_to_one")   # bölge tablosunda her bölge bir kez\nprint(len(panel), "→", len(birlesik), "satır")   # birleştirme öncesi → sonrası\nprint(birlesik.shape)\nbirlesik.head()', en: REG_TABLE.en + 'merged = panel.merge(regions, on="___", validate="many_to_one")   # each region once in the region table\nprint(len(panel), "→", len(merged), "rows")   # before → after the merge\nprint(merged.shape)\nmerged.head()' },
+        solution: { tr: REG_TABLE.tr + 'birlesik = panel.merge(bolgeler, on="bolge", validate="many_to_one")   # bölge tablosunda her bölge bir kez\nprint(len(panel), "→", len(birlesik), "satır")   # birleştirme öncesi → sonrası\nprint(birlesik.shape)\nbirlesik.head()', en: REG_TABLE.en + 'merged = panel.merge(regions, on="region", validate="many_to_one")   # each region once in the region table\nprint(len(panel), "→", len(merged), "rows")   # before → after the merge\nprint(merged.shape)\nmerged.head()' },
         hints: [{ tr: "İki tabloda da bulunan sütun hangisi?", en: "Which column appears in both tables?" }],
         checks: [{ py: { tr: '"nufus" in birlesik.columns and len(birlesik) == len(panel)', en: '"population" in merged.columns and len(merged) == len(panel)' }, msg: { tr: "Birleşik tablo 25 satır olmalı ve nüfus sütununu içermeli.", en: "The merged table should have 25 rows and a population column." } }],
-        after: { tr: "Satır sayısının değişmemesi önemli bir kontroldür: birleştirmeden sonra satır sayısı artarsa anahtar sütunda tekrar eden değerler olabilir.", en: "Checking that the row count is unchanged matters: if it grows after a merge, the key column may have duplicates." }
+        after: { tr: "Satır sayısı 25 → 25: hiçbir gözlem kaybolmadı ya da çoğalmadı. Satır sayısı azalsaydı bölge tablosunda eksik anahtar, artsaydı tekrar eden anahtar olurdu. <code>validate=\"many_to_one\"</code> ikinci durumda doğrudan hata verir.", en: "Rows 25 → 25: no observation was lost or duplicated. Fewer rows would mean a missing key in the region table, more rows a duplicated key. <code>validate=\"many_to_one\"</code> raises an error directly in the second case." }
       },
       {
         id: "m0-pandas2-c5", kind: "fill",
@@ -528,18 +533,18 @@ while gdp &lt; 200:
     terms: [{ tr: "korelasyon", en: "correlation" }, { tr: "fark alma", en: "differencing" }, { tr: "Okun yasası", en: "Okun's law" }],
     concept: {
       tr: `<p>Modül 0'da öğrendiğin her şeyi tek bir analizde kullanacaksın. Bu derste hücrelerin çoğu <b>meydan okumadır</b>: yalnızca görev ve otomatik testler var. Takılırsan ipuçlarına, en sonda çözüme bakabilirsin; ama önce kendin dene.</p>
-<p><b>Veri:</b> 6 kurgusal bölgenin 2015–2024 yıllarına ait büyüme, işsizlik ve enflasyon verisi. Veriyi kendimiz simüle ediyoruz ve içine bilerek bir ilişki koyuyoruz: büyüme normalin (%3) üstündeyse işsizlik düşüyor, altındaysa artıyor. Bu, <b>Okun yasası</b>nın basit bir biçimidir.</p>
+<p><b>Veri:</b> 6 kurgusal bölgenin 2015–2024 yıllarına ait büyüme, işsizlik ve enflasyon verisi. Veriyi kendimiz simüle ediyoruz ve içine bilerek bir ilişki koyuyoruz: büyüme normalin (%3) üstündeyse işsizlik <b>ortalama olarak</b> düşüyor, altındaysa artıyor. Veriye rastgele gürültü de eklendiği için bu her gözlemde geçerli değil: büyümenin %3'ü geçtiği bazı yıllarda işsizlik yine de biraz artabiliyor. Bu, <b>Okun yasası</b>nın basit bir biçimidir.</p>
 <p><b>Yeni iki araç:</b></p>
 <ul>
-<li><code>.diff()</code> bir serinin bir önceki değere göre farkını alır. Panelde bunu <b>bölge içinde</b> yapmak gerekir: <code>panel.groupby("bolge")["issizlik"].diff()</code>. Yoksa bir bölgenin ilk yılı, önceki bölgenin son yılından çıkarılır.</li>
+<li><code>.diff()</code> bir serinin bir önceki değere göre farkını alır. Panelde bunu <b>bölge içinde</b> yapmak gerekir: <code>panel.groupby("bolge")["issizlik"].diff()</code>. Yoksa bir bölgenin ilk yılı, önceki bölgenin son yılından çıkarılır. <code>.diff()</code> satır sırasına bakar; bu yüzden önce <code>panel.sort_values(["bolge", "yil"])</code> ile bölge ve yıla göre sırala. Her bölgenin ilk yılının bir öncesi olmadığından o yılın farkı <code>NaN</code> olur.</li>
 <li><code>x.corr(y)</code> iki değişken arasındaki <b>korelasyonu</b> verir: −1 ile +1 arasında, işaret yönü, büyüklük doğrusal ilişkinin gücünü gösterir.</li>
 </ul>
 <div class="box econ"><b>Yorum için hatırlatma.</b> Bulacağın güçlü ilişki, veriyi üretirken koyduğumuz ilişkidir. Bu, analiz adımlarının ilişkiyi doğru yakaladığını gösterir; gerçek bir ekonomi hakkında hiçbir şey söylemez. Korelasyon tek başına nedensellik değildir; sonucu “birlikte hareket” olarak yorumla.</div>`,
       en: `<p>You will use everything from Module 0 in a single analysis. Most cells in this lesson are <b>challenges</b>: just a task and automatic tests. If you get stuck you can look at the hints and, at the end, the solution; but try on your own first.</p>
-<p><b>Data:</b> growth, unemployment and inflation for 6 fictional regions, 2015–2024. We simulate the data ourselves and deliberately build in a relationship: when growth is above normal (3%), unemployment falls; below it, unemployment rises. This is a simple form of <b>Okun's law</b>.</p>
+<p><b>Data:</b> growth, unemployment and inflation for 6 fictional regions, 2015–2024. We simulate the data ourselves and deliberately build in a relationship: when growth is above normal (3%), unemployment falls <b>on average</b>; below it, unemployment rises. Because random noise is added too, this does not hold for every observation: in some years with growth above 3%, unemployment can still rise slightly. This is a simple form of <b>Okun's law</b>.</p>
 <p><b>Two new tools:</b></p>
 <ul>
-<li><code>.diff()</code> takes the difference from the previous value. In a panel this must be done <b>within each region</b>: <code>panel.groupby("region")["unemployment"].diff()</code>. Otherwise a region's first year would be compared with the previous region's last year.</li>
+<li><code>.diff()</code> takes the difference from the previous value. In a panel this must be done <b>within each region</b>: <code>panel.groupby("region")["unemployment"].diff()</code>. Otherwise a region's first year would be compared with the previous region's last year. <code>.diff()</code> follows the row order, so first sort by region and year with <code>panel.sort_values(["region", "year"])</code>. Each region's first year has no predecessor, so its difference is <code>NaN</code>.</li>
 <li><code>x.corr(y)</code> gives the <b>correlation</b> between two variables: between −1 and +1; the sign shows the direction and the size the strength of the linear relationship.</li>
 </ul>
 <div class="box econ"><b>A reminder for interpretation.</b> The strong relationship you will find is the one we put into the data. It shows that the analysis steps recover the relationship correctly; it says nothing about a real economy. Correlation alone is not causation; interpret the result as “moving together”.</div>`
@@ -561,10 +566,10 @@ while gdp &lt; 200:
       },
       {
         id: "m0-capstone-c3", kind: "challenge",
-        task: { tr: "İşsizliğin yıllık değişimini <b>her bölge içinde</b> hesaplayıp <code>issizlik_degisim</code> adlı yeni bir sütuna yaz.", en: "Compute the yearly change in unemployment <b>within each region</b> and store it in a new column <code>unemp_change</code>." },
+        task: { tr: "Paneli önce bölge ve yıla göre sırala, sonra işsizliğin yıllık değişimini <b>her bölge içinde</b> hesaplayıp <code>issizlik_degisim</code> adlı yeni bir sütuna yaz. Birimi yüzde puandır.", en: "First sort the panel by region and year, then compute the yearly change in unemployment <b>within each region</b> and store it in a new column <code>unemp_change</code>. Its unit is percentage points." },
         code: { tr: '# panel["issizlik_degisim"] = ...\n', en: '# panel["unemp_change"] = ...\n' },
-        solution: { tr: 'panel["issizlik_degisim"] = panel.groupby("bolge")["issizlik"].diff()\npanel.head(4)', en: 'panel["unemp_change"] = panel.groupby("region")["unemployment"].diff()\npanel.head(4)' },
-        hints: [{ tr: "Kavram bölümündeki örneğe bak: <code>groupby(...)[...].diff()</code>.", en: "See the example in the idea section: <code>groupby(...)[...].diff()</code>." }],
+        solution: { tr: 'panel = panel.sort_values(["bolge", "yil"]).reset_index(drop=True)\npanel["issizlik_degisim"] = panel.groupby("bolge")["issizlik"].diff()\npanel.head(4)', en: 'panel = panel.sort_values(["region", "year"]).reset_index(drop=True)\npanel["unemp_change"] = panel.groupby("region")["unemployment"].diff()\npanel.head(4)' },
+        hints: [{ tr: "Önce <code>panel = panel.sort_values([\"bolge\", \"yil\"])</code>, sonra kavram bölümündeki örnek: <code>groupby(...)[...].diff()</code>.", en: "First <code>panel = panel.sort_values([\"region\", \"year\"])</code>, then the example in the idea section: <code>groupby(...)[...].diff()</code>." }],
         checks: [
           { py: { tr: '"issizlik_degisim" in panel.columns', en: '"unemp_change" in panel.columns' }, msg: { tr: "Yeni sütun bulunamadı.", en: "The new column was not found." } },
           { py: { tr: 'panel["issizlik_degisim"].isna().sum() == 6 and ((panel["issizlik_degisim"] - panel.groupby("bolge")["issizlik"].diff()).abs().dropna() < 1e-9).all()', en: 'panel["unemp_change"].isna().sum() == 6 and ((panel["unemp_change"] - panel.groupby("region")["unemployment"].diff()).abs().dropna() < 1e-9).all()' }, msg: { tr: "Fark bölge içinde alınmalı: her bölgenin ilk yılı NaN olmalı (toplam 6 NaN).", en: "The difference must be taken within regions: each region's first year should be NaN (6 NaN in total)." } }
@@ -574,7 +579,7 @@ while gdp &lt; 200:
         id: "m0-capstone-c4", kind: "challenge",
         task: { tr: "Büyüme (x) ile işsizlikteki değişimin (y) serpme grafiğini çiz. Başlık ve iki eksen adı olsun.", en: "Draw a scatter plot of growth (x) against the change in unemployment (y), with a title and both axis labels." },
         code: { tr: "# kodunu buraya yaz\n", en: "# write your code here\n" },
-        solution: { tr: 'plt.scatter(panel["buyume"], panel["issizlik_degisim"])\nplt.title("Büyüme ve işsizlikteki değişim")\nplt.xlabel("Büyüme (%)")\nplt.ylabel("İşsizlikteki değişim (puan)")\nplt.show()', en: 'plt.scatter(panel["growth"], panel["unemp_change"])\nplt.title("Growth and the change in unemployment")\nplt.xlabel("Growth (%)")\nplt.ylabel("Change in unemployment (points)")\nplt.show()' },
+        solution: { tr: 'plt.scatter(panel["buyume"], panel["issizlik_degisim"])\nplt.title("Büyüme ve işsizlikteki değişim")\nplt.xlabel("Büyüme (%)")\nplt.ylabel("İşsizlikteki değişim (yüzde puan)")\nplt.show()', en: 'plt.scatter(panel["growth"], panel["unemp_change"])\nplt.title("Growth and the change in unemployment")\nplt.xlabel("Growth (%)")\nplt.ylabel("Change in unemployment (percentage points)")\nplt.show()' },
         hints: [{ tr: "Grafik dersindeki serpme grafiği hücresine benzer.", en: "It is like the scatter cell in the plotting lesson." }],
         checks: [
           { py: 'len(_figs) > 0 and _figs[-1]["collections"] >= 1', msg: { tr: "Bir serpme grafiği bekleniyordu.", en: "A scatter plot was expected." } },
@@ -588,7 +593,7 @@ while gdp &lt; 200:
         solution: { tr: 'korelasyon = panel["buyume"].corr(panel["issizlik_degisim"])\nprint(round(korelasyon, 3))', en: 'correlation = panel["growth"].corr(panel["unemp_change"])\nprint(round(correlation, 3))' },
         hints: [{ tr: "<code>seri1.corr(seri2)</code>. NaN değerler otomatik atlanır.", en: "<code>series1.corr(series2)</code>. NaN values are skipped automatically." }],
         checks: [{ py: { tr: 'abs(korelasyon - panel["buyume"].corr(panel["issizlik_degisim"])) < 1e-9', en: 'abs(correlation - panel["growth"].corr(panel["unemp_change"])) < 1e-9' }, msg: { tr: "Korelasyon büyüme ile işsizlik değişimi arasında hesaplanmalı.", en: "The correlation should be between growth and the change in unemployment." } }],
-        after: { tr: "Güçlü ve negatif: büyüme yüksekken işsizlik düşüyor. Ama bu ilişkiyi veriyi üretirken biz koyduk; analizin yaptığı, onu doğru biçimde geri bulmak.", en: "Strong and negative: unemployment falls when growth is high. But we put this relationship into the data; what the analysis does is recover it correctly." }
+        after: { tr: "Güçlü ve negatif: büyüme yüksekken işsizlik <b>ortalama olarak</b> düşüyor. Gürültü nedeniyle bu her gözlemde geçerli değil; korelasyon tek tek yılları değil genel eğilimi özetler. Ayrıca bu ilişkiyi veriyi üretirken biz koyduk; analizin yaptığı, onu doğru biçimde geri bulmak.", en: "Strong and negative: unemployment falls <b>on average</b> when growth is high. Because of the noise, this does not hold for every observation; the correlation summarises the overall tendency, not individual years. Also, we put this relationship into the data; what the analysis does is recover it correctly." }
       },
       {
         id: "m0-capstone-c6", kind: "challenge",

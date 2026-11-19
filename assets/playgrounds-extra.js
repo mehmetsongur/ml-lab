@@ -32,7 +32,7 @@
     const transforms = [
       { code: "d", f: (x) => x, d: 2, label: { tr: "olduğu gibi", en: "as is" } },
       { code: "d / 100", f: (x) => x / 100, d: 4, label: { tr: "orana çevir", en: "to a ratio" } },
-      { code: "round(((1 + d / 100) ** 12 - 1) * 100, 1)", f: (x) => Math.round(((Math.pow(1 + x / 100, 12) - 1) * 100) * 10) / 10, d: 1, label: { tr: "yıllık eşdeğer", en: "annual equivalent" } }
+      { code: "round(((1 + d / 100) ** 12 - 1) * 100, 1)", f: (x) => Math.round(((Math.pow(1 + x / 100, 12) - 1) * 100) * 10) / 10, d: 1, label: { tr: "yıllık eşdeğer (bu aylık oran 12 ay sürerse)", en: "annual equivalent (if this monthly rate lasts 12 months)" } }
     ];
     const filters = [{ code: "", label: { tr: "filtre yok", en: "no filter" } }, { code: ">", label: { tr: "eşikten büyük", en: "above threshold" } }, { code: "<", label: { tr: "eşikten küçük", en: "below threshold" } }];
     const tabs = h("div", { class: "tabs" });
@@ -121,8 +121,9 @@
     const bars = h("div", { class: "hbars" }), codeEl = h("div"), tiles = h("div", { class: "tiles" });
     function upd() {
       let txt = ta.value;
-      if (lower) txt = txt.toLowerCase();
-      if (punct) txt = txt.replace(/[.,;:!?()"“”]/g, "");
+      const trk = ctx.lang === "tr";
+      if (lower) txt = trk ? txt.replace(/I/g, "ı").replace(/İ/g, "i").toLowerCase() : txt.toLowerCase();   // Türkçe I→ı, İ→i
+      if (punct) txt = txt.replace(/[.,;:!?()"“”]/g, " ");   // boşlukla değiştir: "para,politika" iki kelime kalır
       let words = txt.split(/\s+/).filter(Boolean);
       if (rmStop) words = words.filter((w) => !stop.includes(w));
       const cnt = {};
@@ -133,8 +134,8 @@
       top.forEach(([w, c]) => bars.append(h("div", { class: "hbar" }, h("code", null, '"' + w + '"'), h("span", { class: "tr" }, h("span", { style: "width:" + (100 * c / max) + "%" })), h("b", null, String(c)))));
       const m = t({ tr: "metin", en: "text" }), k = t({ tr: "kelimeler", en: "words" }), s = t({ tr: "sayim", en: "counts" }), d = t({ tr: "dolgu", en: "filler" });
       const L = [m + " = metin_degiskeni".replace("metin_degiskeni", t({ tr: '"..."   # yukarıdaki metin', en: '"..."   # the text above' }))];
-      if (lower) L.push(m + " = " + m + ".lower()");
-      if (punct) L.push("for " + t({ tr: "isaret", en: "mark" }) + ' in ".,;:!?":\n    ' + m + " = " + m + ".replace(" + t({ tr: "isaret", en: "mark" }) + ', "")');
+      if (lower) L.push(ctx.lang === "tr" ? m + ' = ' + m + '.replace("I", "ı").replace("İ", "i").lower()   # Türkçe I/İ' : m + " = " + m + ".lower()");
+      if (punct) L.push("for " + t({ tr: "isaret", en: "mark" }) + ' in ".,;:!?":\n    ' + m + " = " + m + ".replace(" + t({ tr: "isaret", en: "mark" }) + ', " ")   # ' + t({ tr: "boşlukla: kelimeler birleşmesin", en: "with a space so words do not merge" }));
       L.push(k + " = " + m + ".split()");
       if (rmStop) L.push(k + " = [w for w in " + k + " if w not in " + d + "]");
       L.push(s + " = {}\nfor w in " + k + ":\n    " + s + "[w] = " + s + ".get(w, 0) + 1");
@@ -203,6 +204,9 @@
         tile(h, t({ tr: "%5 dilim", en: "5th percentile" }), q(0.05).toFixed(2)),
         tile(h, t({ tr: "%95 dilim", en: "95th percentile" }), q(0.95).toFixed(2)),
         tile(h, t({ tr: "27'nin altı (≥%10 kayıp)", en: "below 27 (≥10% loss)" }), "%" + Math.round(100 * finals.filter((v) => v < 27).length / finals.length)));
+      if (finals.length < 20) tiles.append(h("p", { class: "muted small", style: "flex-basis:100%" }, finals.length === 1
+        ? t({ tr: "Tek yolda tek bir son değer vardır; %5 ve %95 dilimleri aynı sayıyı gösterir ve bir dağılım hakkında bilgi taşımaz. Yol sayısını artır.", en: "With one path there is a single final value; the 5th and 95th percentiles show the same number and say nothing about a distribution. Increase the number of paths." })
+        : t({ tr: "Az sayıda yolla yüzdelik dilimler kaba tahminlerdir; yol sayısını artırdıkça kararlı hâle gelirler.", en: "With few paths the percentiles are rough estimates; they settle down as you add paths." })));
       const yl = t({ tr: "yollar", en: "paths" });
       codeEl.innerHTML = "";
       codeEl.append(codeBlock(ctx, "rng = np.random.default_rng(" + seed + ")\n" + t({ tr: "getiri", en: "ret" }) + " = rng.normal(" + mu.toFixed(2) + ", " + sigma.toFixed(1) + ", size=(" + n + ", " + days + ")) / 100\n" + yl + " = " + start + " * np.cumprod(1 + " + t({ tr: "getiri", en: "ret" }) + ", axis=1)\n" + t({ tr: "son", en: "final" }) + " = " + yl + "[:, -1]\nnp.percentile(" + t({ tr: "son", en: "final" }) + ", [5, 95])"));

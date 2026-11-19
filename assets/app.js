@@ -269,6 +269,8 @@
     methodEyebrow: { tr: "Yöntem", en: "Method" },
     exercisesShort: { tr: "alıştırma", en: "exercises" },
     locked: { tr: "Kilitli", en: "Locked" },
+    optDone: { tr: "{d} / {n} tamamlandı (modül yüzdesine katılmaz)", en: "{d} / {n} done (not counted in the module percentage)" },
+    runAllProg: { tr: "Çalışıyor: {k} / {n}", en: "Running: {k} / {n}" },
     lockTitle: { tr: "Bu modül henüz kilitli", en: "This module is still locked" },
     lockText: { tr: "Modül {pGen} zorunlu ünitelerini tamamlayınca açılacak.", en: "It opens once you complete the required units of Module {p}." },
     lockChain: { tr: "Önce Modül {pGen} kilidini açman gerekiyor.", en: "First you need to unlock Module {p}." },
@@ -555,6 +557,7 @@ def _lab_run(code, name, checks_json):
     except Exception:
         pass
     ns["_out"] = res["stdout"]
+    ns["_code"] = code   # denetimler kaynağa da bakabilsin / checks may inspect the source
     ns["_figs"] = meta
     if res["error"] is None:
         for expr in json.loads(checks_json):
@@ -997,7 +1000,7 @@ self.onmessage = async (e) => {
         } else {
           const open = current.kind === "lesson" && sec.lessons.includes(current.lesson);
           list.append(h("details", { class: "sb-extra", open: open || null },
-            h("summary", { class: "sb-sec" }, t(sec.title)), sec.lessons.map((l) => item(l, ci))));
+            h("summary", { class: "sb-sec" }, t(sec.title), h("span", { class: "sb-extra-n" }, sec.lessons.filter((l) => store.done[l.id]).length + " / " + sec.lessons.length)), sec.lessons.map((l) => item(l, ci))));
         }
       });
       mods.append(list);
@@ -1061,7 +1064,7 @@ self.onmessage = async (e) => {
     sectionsOf(m).forEach((sec, si) => {
       const block = h("section", { class: "path-sec c" + (si % 5) },
         h("header", { class: "path-head" }, h("span", { class: "path-step" }, String(si + 1)), h("h3", null, t(sec.title)),
-          h("span", { class: "path-meta" }, sec.lessons.length + " " + (m.required && m.required.includes(sec.lessons[0].id) ? t(UI.statUnits) : t(UI.lessons)) + " · " + sec.lessons.reduce((a, l) => a + (l.minutes || 15), 0) + " " + t(UI.minutes))));
+          h("span", { class: "path-meta" }, sec.lessons.length + " " + (m.required && m.required.includes(sec.lessons[0].id) ? t(UI.statUnits) : t(UI.lessons)) + " · " + sec.lessons.reduce((a, l) => a + (l.minutes || 15), 0) + " " + t(UI.minutes) + (m.required && !m.required.includes(sec.lessons[0].id) ? " · " + t(UI.optDone).replace("{d}", sec.lessons.filter((l) => store.done[l.id]).length).replace("{n}", sec.lessons.length) : ""))));
       const ol = h("ol", { class: "path-list" });
       sec.lessons.forEach((l) => {
         const st = lessonStats(l);
@@ -1295,7 +1298,7 @@ self.onmessage = async (e) => {
     const labBar = h("div", { class: "labbar" },
       h("div", { class: "lb-left" }, exCount, exDots),
       h("div", { class: "lb-right" },
-        h("button", { class: "btn ghost sm", onclick: () => runAll(ctx) }, h("span", { html: ICON.play }), t(UI.runAll)),
+        h("button", { class: "btn ghost sm", onclick: (e) => runAll(ctx, e.currentTarget) }, h("span", { html: ICON.play }), h("span", { class: "ra-label" }, t(UI.runAll))),
         h("button", { class: "btn ghost sm", onclick: () => { Py.hardRestart(); ctx.ranUpTo = -1; ctx.gen = Py.generation; ctx.cells.forEach((c) => c.clearOut()); } }, h("span", { html: ICON.reset }), t(UI.restart))));
     const cellsWrap = h("div", { class: "cells" });
     (L.cells || []).forEach((cell, i) => { const c = buildCell(ctx, cell, i); ctx.cells.push(c); cellsWrap.append(c.el); });
@@ -1708,7 +1711,7 @@ self.onmessage = async (e) => {
     let autoRan = false;
     try {
       // Önceki hücreler bu oturumda çalışmadıysa onları da çalıştır
-      if (ctx.ranUpTo < i - 1) {
+      if (ctx.ranUpTo < i - 1 && !cell.standalone) {   // standalone: önceki hücrelere bağlı değil / does not depend on earlier cells
         for (let k = ctx.ranUpTo + 1; k < i; k++) {
           const pc = ctx.cells[k];
           if (!pc.cm || pc.cm.getValue().includes("___")) continue;
@@ -1762,13 +1765,23 @@ self.onmessage = async (e) => {
     ctx.renderDone();
   }
 
-  async function runAll(ctx) {
-    for (let i = 0; i < ctx.cells.length; i++) {
-      const c = ctx.cells[i];
-      if (!c.cm) continue;
-      if (c.cell.predict && c.guess == null && !store.cells[c.cell.id]) break;
-      if (c.cm.getValue().includes("___")) { await runCell(ctx, i); break; }
-      await runCell(ctx, i);
+  async function runAll(ctx, btn) {
+    const lbl = btn ? btn.querySelector(".ra-label") : null;
+    const n = ctx.cells.length;
+    if (btn) btn.disabled = true;
+    try {
+      for (let i = 0; i < n; i++) {
+        const c = ctx.cells[i];
+        if (lbl) lbl.textContent = t(UI.runAllProg).replace("{k}", i + 1).replace("{n}", n);
+        if (!c.cm) continue;
+        if (c.cell.predict && c.guess == null && !store.cells[c.cell.id]) { c.el.scrollIntoView({ behavior: "smooth", block: "center" }); break; }
+        if (c.cm.getValue().includes("___")) { await runCell(ctx, i); break; }
+        await runCell(ctx, i);
+      }
+    } finally {
+      if (lbl) lbl.textContent = t(UI.runAll);
+      if (btn) btn.disabled = false;
+      ctx.renderDone();   // toplu işlem bitince sayaçları tazele / refresh counters when the batch ends
     }
   }
 
@@ -1779,6 +1792,7 @@ self.onmessage = async (e) => {
     L.quiz.forEach((q, qi) => {
       const box = h("div", { class: "q" + (state[qi] === true ? " solved" : "") });
       box.append(h("p", { class: "q-text" }, h("span", { class: "qn" }, String(qi + 1)), h("span", { html: t(q.q) })));
+      if (q.code) box.append(h("pre", { class: "q-code" }, h("code", null, t(q.code))));   // çok satırlı kod / multi-line code
       const opts = h("div", { class: "q-opts" });
       const fb = h("div", { class: "q-fb", "aria-live": "polite" });
       t(q.options).forEach((o, k) => {
@@ -1789,6 +1803,7 @@ self.onmessage = async (e) => {
           fb.innerHTML = "";
           fb.append(h("p", { class: ok ? "good" : "bad" }, h("strong", null, ok ? t(UI.quizRight) : t(UI.quizWrong))));
           if (ok && q.explain) fb.append(h("p", { html: t(q.explain) }));
+          if (!ok && q.hints && t(q.hints)[k]) fb.append(h("p", { class: "q-hint", html: t(q.hints)[k] }));   // seçeneğe özel ipucu / option-specific hint
           if (ok) { state[qi] = true; box.classList.add("solved"); save(); onChange(); }
         } , html: t(o) });
         if (state[qi] === true && k === q.answer) b.classList.add("right");
