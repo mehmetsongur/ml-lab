@@ -1,0 +1,47 @@
+name: Kredi verisini indir / Download credit data
+
+# Modül 4 için UCI "Default of Credit Card Clients" (Yeh ve Lien, 2009; CC BY 4.0) veri setini indirir,
+# CSV'ye çevirir ve data/credit/ klasörüne yazar. Veri sabittir; iş yalnızca elle ya da bu dosya
+# değiştiğinde çalışır.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/credit-data.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: İndir ve dönüştür / Download and convert
+        run: |
+          set -e
+          pip install --quiet pandas xlrd
+          mkdir -p data/credit /tmp/uci
+          curl -sSfL --retry 3 "https://archive.ics.uci.edu/static/public/350/default+of+credit+card+clients.zip" -o /tmp/uci/d.zip
+          cd /tmp/uci && unzip -o -q d.zip && ls -la && cd -
+          python - <<'PY'
+          import glob, pandas as pd
+          f = glob.glob("/tmp/uci/**/*.xls", recursive=True)[0]
+          d = pd.read_excel(f, header=1)
+          d.columns = [c.strip().lower().replace(" ", "_") for c in d.columns]
+          d = d.rename(columns={"default_payment_next_month": "default"}).drop(columns=["id"])
+          assert len(d) == 30000 and d["default"].isin([0, 1]).all(), d.shape
+          d.to_csv("data/credit/taiwan_default.csv", index=False)
+          print(d.shape, round(d["default"].mean(), 4))
+          print(d.head(3).to_string())
+          PY
+      - name: Kaydet / Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/credit
+          git diff --cached --quiet || git commit -m "Kredi verisi eklendi / Credit data added (UCI 350, CC BY 4.0)"
+          git push

@@ -1,0 +1,40 @@
+name: Modül 7 verisi / Module 7 data
+
+# Dünya Bankası ülke göstergeleri (CC BY 4.0) ve FOMC açıklamaları (ABD kamu malı).
+# Ayda bir (yeni FOMC açıklamaları için), elle ya da betikler değiştiğinde çalışır.
+on:
+  schedule:
+    - cron: "41 7 5 * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/m7-data.yml"
+      - "tools/fetch_wb.py"
+      - "tools/fetch_fomc.py"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Paketler / Packages
+        run: pip install --quiet pandas beautifulsoup4
+      - name: Dünya Bankası / World Bank
+        run: python tools/fetch_wb.py
+      - name: FOMC açıklamaları / FOMC statements
+        run: python tools/fetch_fomc.py
+      - name: Kaydet / Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/wb data/fomc
+          git diff --cached --quiet && exit 0
+          git commit -m "Modül 7 verisi güncellendi / Module 7 data updated"
+          git pull --rebase
+          git push

@@ -1,0 +1,158 @@
+iso3,country,region,income,gdppc_ppp,inflation,unemployment,trade,agriculture,urban,life_exp,fertility
+AFG,Afghanistan,"Middle East, North Africa, Afghanistan & Pakistan",Low income,2361.324,5.133,12.602,59.502,31.558,25.324,63.293,5.039
+AGO,Angola,Sub-Saharan Africa ,Lower middle income,8937.33,21.355,15.433,57.541,16.92,68.255,63.598,5.29
+ALB,Albania,Europe & Central Asia,Upper middle income,18264.415,2.041,11.207,75.509,17.604,57.497,78.501,1.367
+ARE,United Arab Emirates,"Middle East, North Africa, Afghanistan & Pakistan",High income,69705.434,0.18,2.951,182.562,0.819,85.353,81.402,1.209
+ARG,Argentina,Latin America & Caribbean ,Upper middle income,26372.469,53.548,8.597,30.834,6.271,92.027,75.975,1.61
+ARM,Armenia,Europe & Central Asia,Upper middle income,16895.786,1.98,15.561,94.903,10.494,65.359,74.821,1.72
+AUS,Australia,East Asia & Pacific,High income,58870.118,2.864,4.791,45.088,2.338,87.326,83.13,1.613
+AUT,Austria,Europe & Central Asia,High income,63617.027,2.767,5.295,111.584,1.184,68.771,81.473,1.422
+AZE,Azerbaijan,Europe & Central Asia,Upper middle income,20340.189,6.65,5.914,80.928,5.657,58.347,72.631,1.65
+BEL,Belgium,Europe & Central Asia,High income,60825.534,2.443,5.655,171.368,0.707,87.373,81.726,1.55
+BEN,Benin,Sub-Saharan Africa ,Lower middle income,3474.558,1.734,1.578,49.123,26.963,50.213,60.18,4.718
+BFA,Burkina Faso,Sub-Saharan Africa ,Low income,2442.861,1.885,4.205,62.848,18.613,26.871,60.495,4.389
+BGD,Bangladesh,South Asia,Lower middle income,7485.031,5.691,4.689,30.067,11.566,31.434,72.817,2.174
+BGR,Bulgaria,Europe & Central Asia,High income,30827.49,3.298,4.564,123.129,3.44,73.52,73.92,1.79
+BHR,Bahrain,"Middle East, North Africa, Afghanistan & Pakistan",High income,56182.357,0.075,1.369,149.853,0.268,100.0,79.903,1.844
+BHS,"Bahamas, The",Latin America & Caribbean ,High income,32056.813,2.905,10.065,68.134,0.527,81.522,72.839,1.383
+BIH,Bosnia and Herzegovina,Europe & Central Asia,Upper middle income,18233.206,1.982,13.956,96.723,5.173,50.503,76.526,1.496
+BLR,Belarus,Europe & Central Asia,Upper middle income,27092.288,5.598,3.83,127.482,7.174,78.133,73.345,1.331
+BLZ,Belize,Latin America & Caribbean ,Upper middle income,11692.763,3.236,9.416,99.462,7.739,42.406,72.166,1.995
+BOL,Bolivia,Latin America & Caribbean ,Lower middle income,11304.578,1.746,4.65,47.628,8.708,70.335,65.634,2.618
+BRA,Brazil,Latin America & Caribbean ,Upper middle income,18211.14,4.594,11.194,34.266,5.653,87.139,74.815,1.649
+BRN,Brunei Darussalam,East Asia & Pacific,High income,78346.477,1.733,5.88,129.952,1.146,74.786,74.655,1.781
+BTN,Bhutan,South Asia,Lower middle income,13933.109,5.629,4.325,78.569,14.819,40.349,72.487,1.476
+BWA,Botswana,Sub-Saharan Africa ,Upper middle income,17987.176,5.068,22.243,82.13,1.867,66.581,67.205,2.822
+CAF,Central African Republic,Sub-Saharan Africa ,Low income,1135.939,2.979,6.321,46.492,31.684,42.783,39.726,6.047
+CAN,Canada,North America,High income,57068.657,3.395,6.714,64.621,1.767,82.148,81.572,1.386
+CHE,Switzerland,Europe & Central Asia,High income,83127.225,0.582,4.478,127.69,0.632,83.486,83.683,1.436
+CHL,Chile,Latin America & Caribbean ,High income,28550.778,4.525,8.994,63.305,3.633,88.469,79.778,1.267
+CHN,China,East Asia & Pacific,Upper middle income,20613.11,1.974,4.752,36.137,7.135,64.34,78.046,1.176
+CIV,Cote d'Ivoire,Sub-Saharan Africa ,Lower middle income,6104.23,4.159,2.437,46.68,16.266,52.352,60.842,4.405
+CMR,Cameroon,Sub-Saharan Africa ,Lower middle income,4831.659,2.453,3.748,38.605,16.981,54.547,62.132,4.479
+COG,"Congo, Rep.",Sub-Saharan Africa ,Lower middle income,6386.097,2.206,20.966,88.16,8.826,63.603,64.501,4.272
+COL,Colombia,Latin America & Caribbean ,Upper middle income,17489.341,3.523,12.059,40.018,7.864,77.851,75.696,1.678
+COM,Comoros,Sub-Saharan Africa ,Lower middle income,3478.637,3.582,4.1,42.579,35.196,32.426,65.975,4.004
+CPV,Cabo Verde,Sub-Saharan Africa ,Upper middle income,8416.697,1.862,12.965,90.296,5.282,73.922,75.131,1.58
+CRI,Costa Rica,Latin America & Caribbean ,High income,24323.423,1.726,12.406,69.152,4.121,77.975,79.637,1.413
+CYP,Cyprus,Europe & Central Asia,High income,47800.984,2.446,7.013,176.899,1.483,66.7,81.068,1.373
+CZE,Czechia,Europe & Central Asia,High income,47325.732,3.84,2.434,136.043,1.962,72.725,78.687,1.676
+DEU,Germany,Europe & Central Asia,High income,62559.674,3.067,3.369,80.535,0.848,81.62,80.955,1.499
+DJI,Djibouti,"Middle East, North Africa, Afghanistan & Pakistan",Lower middle income,6050.45,1.779,26.786,279.67,2.331,72.296,64.788,2.701
+DNK,Denmark,Europe & Central Asia,High income,67909.862,1.84,5.051,118.054,1.14,88.33,81.503,1.63
+DOM,Dominican Republic,Latin America & Caribbean ,Upper middle income,21863.921,4.786,6.249,50.364,4.302,72.901,73.087,2.3
+DZA,Algeria,"Middle East, North Africa, Afghanistan & Pakistan",Upper middle income,14766.349,7.226,12.813,45.733,11.913,73.614,75.307,2.878
+ECU,Ecuador,Latin America & Caribbean ,Upper middle income,13665.213,0.266,4.331,52.875,7.939,63.09,75.201,1.919
+EGY,"Egypt, Arab Rep.","Middle East, North Africa, Afghanistan & Pakistan",Lower middle income,15793.32,9.153,7.313,36.108,10.969,42.582,70.524,2.794
+ESP,Spain,Europe & Central Asia,High income,45351.521,3.093,13.952,68.52,2.61,79.84,83.262,1.174
+EST,Estonia,Europe & Central Asia,High income,42357.714,4.65,5.919,153.699,2.061,70.161,78.164,1.514
+ETH,Ethiopia,Sub-Saharan Africa ,Low income,2591.297,26.84,3.524,24.872,36.04,22.155,66.25,4.174
+FIN,Finland,Europe & Central Asia,High income,56451.559,2.202,7.188,82.523,2.232,73.38,81.715,1.352
+FJI,Fiji,East Asia & Pacific,Upper middle income,11900.784,1.794,5.132,104.297,14.473,57.66,66.66,2.332
+FRA,France,Europe & Central Asia,High income,52649.552,1.641,7.787,67.129,1.507,78.735,82.458,1.79
+GAB,Gabon,Sub-Saharan Africa ,Upper middle income,18811.989,2.465,20.671,82.486,6.423,90.78,67.506,3.77
+GBR,United Kingdom,Europe & Central Asia,High income,52109.655,2.518,4.157,63.379,0.658,82.959,80.92,1.581
+GEO,Georgia,Europe & Central Asia,Upper middle income,19538.147,5.202,11.651,106.83,7.106,59.564,73.589,1.921
+GHA,Ghana,Sub-Saharan Africa ,Lower middle income,6613.085,9.971,3.029,68.122,19.258,56.739,64.759,3.491
+GIN,Guinea,Sub-Saharan Africa ,Lower middle income,3724.819,10.493,5.431,99.874,27.531,36.868,59.855,4.397
+GMB,"Gambia, The",Sub-Saharan Africa ,Low income,2811.543,7.37,5.816,46.035,21.945,62.739,64.682,4.165
+GNB,Guinea-Bissau,Sub-Saharan Africa ,Low income,2536.403,2.242,2.723,45.216,36.91,44.733,62.569,3.995
+GNQ,Equatorial Guinea,Sub-Saharan Africa ,Upper middle income,16918.423,2.859,8.383,78.455,2.735,70.633,62.789,4.258
+GRC,Greece,Europe & Central Asia,High income,34009.356,1.224,14.21,87.898,3.729,78.442,81.107,1.348
+GTM,Guatemala,Latin America & Caribbean ,Upper middle income,11782.704,4.261,2.545,47.74,9.442,54.902,70.655,2.421
+HKG,"Hong Kong SAR, China",East Asia & Pacific,High income,64205.025,1.881,4.233,368.993,0.068,100.0,85.019,0.834
+HND,Honduras,Latin America & Caribbean ,Lower middle income,6178.146,4.481,8.006,100.465,11.634,57.351,71.616,2.552
+HRV,Croatia,Europe & Central Asia,High income,37146.089,2.555,6.871,105.192,3.085,56.768,77.644,1.512
+HTI,Haiti,Latin America & Caribbean ,Lower middle income,3131.551,22.796,14.793,34.083,19.709,53.237,63.92,2.754
+HUN,Hungary,Europe & Central Asia,High income,38722.723,5.111,3.872,163.446,3.243,70.281,75.649,1.588
+IDN,Indonesia,East Asia & Pacific,Upper middle income,13025.524,3.031,3.688,39.546,12.924,56.901,69.738,2.167
+IND,India,South Asia,Lower middle income,7985.127,5.649,5.949,44.021,17.733,34.442,70.377,2.03
+IRL,Ireland,Europe & Central Asia,High income,111073.861,2.34,5.128,244.974,1.003,63.686,82.546,1.604
+IRN,"Iran, Islamic Rep.","Middle East, North Africa, Afghanistan & Pakistan",Upper middle income,15905.973,43.389,9.385,46.692,11.116,75.961,75.84,1.715
+IRQ,Iraq,"Middle East, North Africa, Afghanistan & Pakistan",Upper middle income,13421.067,4.358,15.337,65.291,3.661,69.868,71.192,3.36
+ISL,Iceland,Europe & Central Asia,High income,65036.457,4.444,4.464,81.787,4.427,94.131,82.794,1.684
+ISR,Israel,"Middle East, North Africa, Afghanistan & Pakistan",High income,45874.675,1.48,3.956,56.22,1.327,91.547,82.77,2.93
+ITA,Italy,Europe & Central Asia,High income,50039.41,1.874,8.854,62.011,1.866,69.505,82.878,1.242
+JPN,Japan,East Asia & Pacific,High income,46094.788,0.469,2.636,37.752,0.92,91.886,84.28,1.29
+KAZ,Kazakhstan,Europe & Central Asia,Upper middle income,33293.022,7.96,4.991,62.244,4.792,60.66,72.578,3.08
+KEN,Kenya,Sub-Saharan Africa ,Lower middle income,5350.297,6.108,5.459,35.674,21.506,31.35,62.591,3.316
+KGZ,Kyrgyz Republic,Europe & Central Asia,Lower middle income,6015.486,10.753,4.962,107.969,11.089,34.771,71.92,2.958
+KHM,Cambodia,East Asia & Pacific,Lower middle income,6391.372,2.921,0.238,132.82,16.601,40.106,70.137,2.657
+KOR,"Korea, Rep.",East Asia & Pacific,High income,51628.232,2.498,3.37,77.028,1.529,81.191,83.258,0.812
+KWT,Kuwait,"Middle East, North Africa, Afghanistan & Pakistan",High income,50115.1,3.424,2.577,88.53,0.442,100.0,80.649,1.867
+LBN,Lebanon,"Middle East, North Africa, Afghanistan & Pakistan",Lower middle income,12514.36,154.756,11.872,82.207,1.961,89.97,76.795,2.284
+LBY,Libya,"Middle East, North Africa, Afghanistan & Pakistan",Upper middle income,12176.805,2.373,19.294,122.329,2.351,87.84,72.238,2.453
+LKA,Sri Lanka,South Asia,Upper middle income,13830.873,7.015,4.814,43.555,8.158,19.823,76.937,1.996
+LSO,Lesotho,Sub-Saharan Africa ,Lower middle income,2601.036,6.048,17.289,140.779,5.668,40.648,55.756,2.79
+LTU,Lithuania,Europe & Central Asia,High income,45012.155,4.684,6.93,152.704,3.299,67.945,75.657,1.32
+LUX,Luxembourg,Europe & Central Asia,High income,132396.517,2.527,5.54,394.098,0.208,94.253,82.727,1.328
+LVA,Latvia,Europe & Central Asia,High income,36268.507,3.276,7.041,136.301,4.237,68.197,74.652,1.512
+MAR,Morocco,"Middle East, North Africa, Afghanistan & Pakistan",Lower middle income,8610.361,1.402,9.848,82.878,10.882,62.288,74.247,2.287
+MDA,Moldova,Europe & Central Asia,Upper middle income,15038.69,5.106,1.196,92.296,9.063,41.865,70.366,1.745
+MDG,Madagascar,Sub-Saharan Africa ,Low income,1612.605,5.811,3.1,60.012,22.801,31.128,63.085,4.101
+MDV,Maldives,South Asia,Upper middle income,19768.392,0.543,4.664,141.138,5.504,40.752,79.655,1.602
+MEX,Mexico,Latin America & Caribbean ,Upper middle income,21094.407,5.528,3.591,79.985,3.711,78.928,72.754,1.966
+MKD,North Macedonia,Europe & Central Asia,Upper middle income,22231.995,3.231,15.488,145.496,7.472,61.535,74.797,1.47
+MLI,Mali,Sub-Saharan Africa ,Low income,2836.82,2.059,3.232,57.189,32.138,29.696,59.533,5.765
+MLT,Malta,"Middle East, North Africa, Afghanistan & Pakistan",High income,55588.263,1.642,3.928,232.244,0.604,95.372,82.534,1.11
+MNE,Montenegro,Europe & Central Asia,Upper middle income,24401.283,2.411,15.509,109.172,3.885,65.324,76.043,1.768
+MNG,Mongolia,East Asia & Pacific,Upper middle income,15383.518,7.359,6.888,127.105,12.127,69.073,71.614,2.82
+MOZ,Mozambique,Sub-Saharan Africa ,Low income,1488.33,6.408,5.669,111.775,25.91,34.508,61.917,4.897
+MRT,Mauritania,Sub-Saharan Africa ,Lower middle income,6058.35,3.565,10.698,92.552,19.73,57.894,67.592,4.842
+MUS,Mauritius,Sub-Saharan Africa ,Upper middle income,24543.467,4.029,6.914,135.849,3.315,39.099,73.804,1.404
+MWI,Malawi,Sub-Saharan Africa ,Low income,1668.116,9.371,5.273,43.176,25.992,16.522,65.677,3.798
+MYS,Malaysia,East Asia & Pacific,Upper middle income,31062.14,2.477,4.06,130.574,8.34,75.563,75.595,1.622
+NAM,Namibia,Sub-Saharan Africa ,Lower middle income,10050.797,3.722,20.126,90.49,8.434,49.018,64.008,3.303
+NER,Niger,Sub-Saharan Africa ,Low income,1650.638,3.701,0.548,36.308,39.715,17.256,60.209,6.26
+NIC,Nicaragua,Latin America & Caribbean ,Lower middle income,7034.697,5.376,5.476,101.872,15.86,58.845,72.884,2.269
+NLD,Netherlands,Europe & Central Asia,High income,68561.325,2.681,3.694,165.041,1.709,94.616,81.652,1.53
+NOR,Norway,Europe & Central Asia,High income,92293.146,3.468,3.854,71.735,1.581,82.817,82.971,1.474
+NPL,Nepal,South Asia,Lower middle income,4638.183,5.566,11.371,44.753,21.6,66.216,69.446,2.028
+NZL,New Zealand,East Asia & Pacific,High income,48271.247,3.941,3.903,49.959,5.149,83.839,82.047,1.646
+OMN,Oman,"Middle East, North Africa, Afghanistan & Pakistan",High income,38429.255,0.951,2.672,97.299,2.276,79.86,78.324,2.579
+PAK,Pakistan,"Middle East, North Africa, Afghanistan & Pakistan",Lower middle income,5348.658,10.578,5.538,28.83,22.19,37.949,66.654,3.712
+PAN,Panama,Latin America & Caribbean ,High income,32153.29,1.489,9.145,82.217,2.684,65.806,78.153,2.176
+PER,Peru,Latin America & Caribbean ,Upper middle income,15052.758,4.272,4.969,50.956,7.217,83.945,75.255,2.031
+PHL,Philippines,East Asia & Pacific,Upper middle income,9224.181,3.927,2.591,66.069,9.605,54.438,69.151,2.017
+POL,Poland,Europe & Central Asia,High income,40834.36,5.055,3.049,108.952,2.551,59.873,77.014,1.33
+PRT,Portugal,Europe & Central Asia,High income,39707.461,1.266,6.524,88.731,2.069,61.129,81.669,1.418
+PRY,Paraguay,Latin America & Caribbean ,Upper middle income,15352.915,4.632,6.801,72.033,10.862,67.279,72.132,2.471
+PSE,West Bank and Gaza,"Middle East, North Africa, Afghanistan & Pakistan",Lower middle income,5734.441,1.58,25.511,73.587,6.219,86.335,73.306,3.446
+QAT,Qatar,"Middle East, North Africa, Afghanistan & Pakistan",High income,112790.945,2.304,0.128,93.265,0.289,99.202,81.732,1.696
+ROU,Romania,Europe & Central Asia,High income,37718.119,5.052,5.148,85.533,4.028,52.413,74.846,1.726
+RUS,Russian Federation,Europe & Central Asia,High income,38086.045,5.866,4.365,45.978,3.529,74.78,72.025,1.468
+RWA,Rwanda,Sub-Saharan Africa ,Low income,2859.756,9.85,13.255,56.179,22.449,26.043,67.161,3.843
+SAU,Saudi Arabia,"Middle East, North Africa, Afghanistan & Pakistan",High income,62883.879,2.544,5.903,53.567,2.506,83.97,77.808,2.27
+SDN,Sudan,Sub-Saharan Africa ,Low income,3117.781,151.033,10.577,9.075,23.495,34.638,65.483,4.465
+SEN,Senegal,Sub-Saharan Africa ,Lower middle income,4159.165,2.543,3.07,68.93,16.068,52.274,67.701,3.944
+SGP,Singapore,East Asia & Pacific,High income,127295.518,2.316,3.775,327.166,0.03,100.0,83.245,1.074
+SLB,Solomon Islands,East Asia & Pacific,Lower middle income,2459.576,2.964,1.082,77.322,32.754,28.671,69.813,3.684
+SLE,Sierra Leone,Sub-Saharan Africa ,Low income,2884.871,14.805,3.299,42.132,33.226,43.745,60.522,3.983
+SLV,El Salvador,Latin America & Caribbean ,Upper middle income,10707.21,3.467,3.899,78.572,4.903,73.582,71.196,1.804
+SRB,Serbia,Europe & Central Asia,Upper middle income,23362.699,4.085,9.191,113.33,4.82,61.536,74.915,1.546
+STP,Sao Tome and Principe,Sub-Saharan Africa ,Lower middle income,5670.233,9.819,9.215,57.229,13.745,68.221,68.601,3.765
+SVK,Slovak Republic,Europe & Central Asia,High income,37975.387,3.15,6.272,183.737,1.855,53.237,76.846,1.57
+SVN,Slovenia,Europe & Central Asia,High income,45603.487,1.917,4.365,163.238,1.667,55.403,81.19,1.58
+SWE,Sweden,Europe & Central Asia,High income,61477.334,2.164,7.791,96.613,1.227,88.172,82.978,1.606
+SWZ,Eswatini,Sub-Saharan Africa ,Lower middle income,9978.991,2.598,33.287,90.576,7.285,25.046,61.018,2.842
+SYR,Syrian Arab Republic,"Middle East, North Africa, Afghanistan & Pakistan",Low income,4770.902,13.418,13.99,44.908,38.73,73.006,72.048,2.794
+TCD,Chad,Sub-Saharan Africa ,Low income,2487.13,4.464,1.288,45.224,37.228,25.267,53.762,6.27
+TGO,Togo,Sub-Saharan Africa ,Lower middle income,2995.651,4.186,2.104,57.858,20.249,42.323,61.714,4.321
+THA,Thailand,East Asia & Pacific,Upper middle income,20696.232,1.229,0.941,117.218,8.56,58.47,76.767,1.242
+TJK,Tajikistan,Europe & Central Asia,Lower middle income,4009.325,7.769,7.275,62.938,22.36,26.181,70.503,3.172
+TLS,Timor-Leste,East Asia & Pacific,Lower middle income,5640.529,3.698,2.272,88.43,12.713,28.81,66.934,2.905
+TON,Tonga,East Asia & Pacific,Upper middle income,6922.778,5.641,2.128,77.638,17.714,21.552,72.466,3.201
+TUN,Tunisia,"Middle East, North Africa, Afghanistan & Pakistan",Lower middle income,12601.402,6.72,16.368,101.705,10.109,69.412,75.211,1.916
+TUR,Turkiye,Europe & Central Asia,Upper middle income,31682.66,19.596,11.74,67.632,6.467,88.966,76.946,1.702
+TZA,Tanzania,Sub-Saharan Africa ,Lower middle income,3519.062,3.691,1.708,32.822,24.916,34.37,66.557,4.736
+UGA,Uganda,Sub-Saharan Africa ,Low income,2713.66,3.313,3.186,37.184,23.764,29.229,67.028,4.509
+UKR,Ukraine,Europe & Central Asia,Upper middle income,16455.916,9.363,9.168,83.454,9.057,69.408,72.983,1.09
+URY,Uruguay,Latin America & Caribbean ,High income,29834.33,7.882,8.962,53.664,6.865,95.448,77.185,1.469
+USA,United States,North America,High income,71029.987,4.116,4.872,25.294,0.903,80.048,77.583,1.657
+UZB,Uzbekistan,Europe & Central Asia,Lower middle income,9725.065,11.447,4.897,58.661,20.831,50.853,71.954,3.22
+VNM,Viet Nam,East Asia & Pacific,Upper middle income,12408.695,3.157,1.876,172.555,12.159,36.505,74.566,1.936
+VUT,Vanuatu,East Asia & Pacific,Lower middle income,3729.211,5.329,4.871,71.891,25.181,22.538,70.78,3.693
+WSM,Samoa,East Asia & Pacific,Upper middle income,6793.278,3.133,6.391,72.455,9.505,17.807,71.068,3.943
+ZAF,South Africa,Sub-Saharan Africa ,Upper middle income,13749.613,4.619,31.412,58.29,2.426,63.472,64.965,2.242
+ZMB,Zambia,Sub-Saharan Africa ,Lower middle income,3548.961,10.993,5.724,76.349,2.832,44.243,64.053,4.253
+ZWE,Zimbabwe,Sub-Saharan Africa ,Lower middle income,4920.709,180.005,8.993,37.437,18.719,37.812,61.572,3.752

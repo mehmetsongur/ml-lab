@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Giriş · ML Laboratuvarı</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; display: grid; place-items: center; min-height: 100vh; margin: 0; background: #f6f7fb; color: #1d2433; }
+    .box { text-align: center; padding: 24px; max-width: 420px; }
+    a { color: #2346d8; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <p id="msg">Giriş tamamlanıyor… / Completing login…</p>
+  </div>
+  <script src="assets/auth.js?v=202611191410"></script>
+  <script>
+    (function () {
+      var msg = document.getElementById("msg");
+      if (!window.MLLabAuth) { location.replace("index.html"); return; }
+      MLLabAuth.completeLogin().then(function (r) {
+        if (r.ok) { location.replace("index.html" + (r.ret || "#home")); return; }
+        msg.innerHTML = 'Giriş tamamlanamadı. / Login could not be completed.<br><a href="index.html' + (r.ret || "#home") + '">Laboratuvara dön / Back to the lab</a>';
+      });
+    })();
+  </script>
+</body>
+</html>

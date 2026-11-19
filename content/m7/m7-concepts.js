@@ -1,0 +1,219 @@
+/* Modül 7 — genişletilmiş kavram anlatımları (şekil, tablo, çözümlü örnek, sık hatalar, özet)
+ * Şekiller tools/m7_figs.py ile üretilir (window.M7_FIGS). Bileşenler: content/concept-kit.js
+ * © 2026 Prof. Dr. Mehmet Songur — CC BY-NC-SA 4.0 (LICENSE-CONTENT.txt)
+ */
+(function () {
+  "use strict";
+  const K = window.CK, F = window.M7_FIGS || {};
+  const U = window.M7_UNITS || [];
+  if (!K) return;
+  const { sec, cards, pit, sum, analogy, formula, steps, table, vs, wrap, nf } = K;
+  const fig = (name, lang, cap) => K.fig(F, name, lang, cap);
+  const B = {};
+  const pc = (x, d, lang) => (lang === "tr" ? "%" + nf(x, d, lang) : nf(x, d, lang) + "%");
+
+  /* ------------------------------------------------------------ Ünite 1 */
+  B["m7-u1"] = (lang) => {
+    const t = (a, b) => (lang === "tr" ? a : b);
+    return wrap(`
+<p class="c-lead">${t("Modül 1–6'da her gözlemin bir etiketi vardı: ücret, enflasyon, temerrüt, getiri. <b>Gözetimsiz öğrenmede</b> etiket yoktur; amaç verinin kendi yapısını bulmaktır. İktisatta bu çok sık gerekir: ülkeleri kalkınma profillerine, bankaları risk profillerine, haneleri tüketim kalıplarına göre gruplamak.", "In Modules 1–6 every observation had a label: wage, inflation, default, return. In <b>unsupervised learning</b> there is no label; the aim is to find the data's own structure. In economics this is needed very often: grouping countries by development profile, banks by risk profile, households by consumption pattern.")}</p>
+${sec(1, 0, t("Sezgi: masadaki bilyeler", "Intuition: marbles on a table"), analogy("🔵", t("Masaya dökülmüş bilyeleri üç tabağa ayırmak istiyorsun ama hangi bilyenin hangi tabağa ait olduğunu kimse söylemiyor. Tabakları rastgele koyar, her bilyeyi en yakın tabağa itersin; sonra her tabağı kendi bilyelerinin ortasına taşırsın. Birkaç turdan sonra tabaklar yerine oturur. k-ortalamalar budur.", "You want to sort marbles spilled on a table into three plates, but no one tells you which marble belongs to which plate. You put the plates down at random and push every marble to its nearest plate; then you move every plate to the middle of its marbles. After a few rounds the plates settle. That is k-means.")))}
+${sec(2, 1, t("Algoritma", "The algorithm"), fig("u1_steps", lang, t("<b>Şekil 1.</b> k-ortalamaların iki adımı: en yakın merkeze ata, merkezi ortalamaya taşı.", "<b>Figure 1.</b> The two steps of k-means: assign to the nearest centre, move the centre to the mean.")) +
+      formula("min Σ<sub>j</sub> Σ<sub>i ∈ küme j</sub> ‖x<sub>i</sub> − μ<sub>j</sub>‖²".replace("küme", t("küme", "cluster")), [["x<sub>i</sub>", t("i. gözlemin değişken vektörü (bir ülkenin sekiz göstergesi)", "the i-th observation's vector of variables (a country's eight indicators)")], ["μ<sub>j</sub>", t("j. kümenin merkezi: üyelerinin ortalaması", "the centre of cluster j: the mean of its members")], [t("amaç", "objective"), t("küme içi kareler toplamı (inertia) en küçük olsun", "make the within-cluster sum of squares (inertia) as small as possible")]]))}
+${sec(3, 2, t("Ölçeklemenin etkisi", "The effect of scaling"), fig("u1_scale", lang, t("<b>Şekil 2.</b> Ölçeklemeden kurulan kümeler enflasyon ve dış ticaretten ibaret; standartlaştırınca gelir, tarım, doğurganlık ve yaşam süresi de belirleyici olur.", "<b>Figure 2.</b> Clusters built without scaling are just inflation and trade; after standardising, income, agriculture, fertility and life expectancy also matter.")) +
+      formula("z = (x − ortalama) / standart sapma".replace("ortalama", t("ortalama", "mean")).replace("standart sapma", t("standart sapma", "standard deviation")), [[t("sonuç", "result"), t("her değişken ortalama 0, standart sapma 1; birimden bağımsız", "every variable has mean 0 and standard deviation 1; unit-free")]]))}
+${sec(4, 3, t("Çözümlü örnek: 157 ülke, 4 küme", "Worked example: 157 countries, 4 clusters"), table([t("Küme", "Cluster"), t("Ülke", "Countries"), t("Profil", "Profile")], [
+      ["A", "61", t("53 yüksek gelirlinin hepsi + 8 üst orta: yüksek gelir, uzun yaşam, düşük doğurganlık", "all 53 high-income + 8 upper-middle: high income, long life, low fertility")],
+      ["B", "54", t("36 üst orta, 18 alt orta gelir: orta düzey kalkınma", "36 upper-middle, 18 lower-middle income: middle development")],
+      ["C", "39", t("16 düşük, 21 alt orta gelir: tarım payı ve doğurganlık yüksek", "16 low, 21 lower-middle income: high agriculture share and fertility")],
+      { cls: "bad", cells: ["D", "3", t("Lübnan, Sudan, Zimbabve: enflasyon %150 üstü (Ünite 2)", "Lebanon, Sudan, Zimbabwe: inflation above 150% (Unit 2)")] }
+    ]))}
+${sec(5, 0, t("Sık yapılan hatalar", "Common mistakes"), pit([
+      [t("Ölçeklemeden kümelemek", "Clustering without scaling"), t("En büyük birimli değişkenler kümeleri belirler.", "The variables with the largest units determine the clusters."), t("StandardScaler; ya da bilinçli bir ağırlıklandırma.", "StandardScaler; or a deliberate weighting.")],
+      [t("Kümeleri “doğru gruplar” sanmak", "Treating clusters as “the true groups”"), t("Gözetimsiz öğrenmede doğrulanacak bir hedef yoktur.", "In unsupervised learning there is no target to validate against."), t("Kümeleri değişken ve k seçimiyle birlikte raporla.", "Report clusters together with the choice of variables and k.")],
+      [t("Aynı boyutu ölçen çok değişken", "Many variables measuring the same dimension"), t("O boyut uzaklıkta birkaç kez sayılır.", "That dimension is counted several times in the distance."), t("Değişken seçimini gerekçelendir; PCA'yı düşün (Ünite 4).", "Justify the choice of variables; consider PCA (Unit 4).")]
+    ]))}
+${sum(t("Akılda kalsın", "Remember"), [t("Gözetimsiz öğrenme etiketsiz veride yapı arar.", "Unsupervised learning looks for structure in unlabelled data."), t("k-ortalamalar: ata, ortala, tekrarla; amaç küme içi kareler toplamını küçültmek.", "k-means: assign, average, repeat; the aim is to minimise the within-cluster sum of squares."), t("Uzaklığa dayanan her yöntemden önce ölçekle.", "Scale before any distance-based method.")])}`);
+  };
+
+  /* ------------------------------------------------------------ Ünite 2 */
+  B["m7-u2"] = (lang) => {
+    const t = (a, b) => (lang === "tr" ? a : b);
+    return wrap(`
+<p class="c-lead">${t("k-ortalamalar k'yı bizden ister. Bu ünite k'yı seçmeye yardım eden iki ölçütü, bu ölçütlerin nasıl yanıltılabileceğini ve kümelemeyi bir dış ölçüyle karşılaştırmayı anlatıyor.", "k-means asks us for k. This unit covers two criteria that help choose k, how these criteria can be misled, and comparing a clustering with an external measure.")}</p>
+${sec(1, 0, t("İki ölçüt", "Two criteria"), cards([
+      [1, "📉", t("Inertia ve dirsek", "Inertia and the elbow"), t("Küme içi kareler toplamı k arttıkça hep düşer. Düşüşün yavaşladığı “dirsek” bir ipucudur; ama gerçek veride dirsek çoğu zaman belirsizdir.", "The within-cluster sum of squares always falls as k grows. The “elbow” where the fall slows is a hint; but with real data the elbow is often unclear.")],
+      [4, "📐", t("Siluet skoru", "Silhouette score"), t("Her nokta için (b − a) / max(a, b): a kendi kümesine ortalama uzaklık, b en yakın başka kümeye. −1 ile 1 arası; yüksek daha iyi.", "For each point (b − a) / max(a, b): a is the mean distance to its own cluster, b to the nearest other cluster. Between −1 and 1; higher is better.")],
+      [0, "🧭", t("Dış kontrol", "External check"), t("Kümeleri bilinen bir sınıflamayla (gelir grubu) karşılaştırmak için düzeltilmiş Rand endeksi (ARI): 0 rastgele, 1 tam uyum.", "To compare clusters with a known classification (income group), the adjusted Rand index (ARI): 0 random, 1 perfect agreement.")]
+    ]))}
+${sec(2, 1, t("Ülke verisinde ölçütler", "The criteria with the country data"), fig("u2_select", lang, t("<b>Şekil 1.</b> Inertia belirgin bir dirsek göstermiyor. Siluet ham veriyle k = 3'ü seçiyor, ama bu çözüm 3 ülkelik bir kümeye dayanıyor; enflasyonun logaritmasıyla k = 2'yi seçiyor.", "<b>Figure 1.</b> Inertia shows no clear elbow. With raw data the silhouette picks k = 3, but that solution rests on a 3-country cluster; with log inflation it picks k = 2.")))}
+${sec(3, 2, t("Aykırı değerler ve dönüşüm", "Outliers and transformation"), fig("u2_outlier", lang, t("<b>Şekil 2.</b> Üç hiperenflasyon ülkesi ham ölçekte geri kalan 154 ülkeden çok uzakta; logaritma onları dağılımın ucuna yaklaştırır.", "<b>Figure 2.</b> On the raw scale three hyperinflation countries sit far from the other 154; the logarithm brings them close to the end of the distribution.")) +
+      table([t("Çözüm", "Solution"), t("Siluet", "Silhouette"), "ARI", t("En küçük küme", "Smallest cluster")], [
+        { cls: "bad", cells: [t("ham enflasyon, k = 3", "raw inflation, k = 3"), nf(0.399, 3, lang), nf(0.343, 3, lang), t("3 ülke", "3 countries")] },
+        [t("log enflasyon, k = 2", "log inflation, k = 2"), nf(0.371, 3, lang), nf(0.345, 3, lang), t("51 ülke", "51 countries")],
+        { cls: "hl", cells: [t("log enflasyon, k = 3", "log inflation, k = 3"), nf(0.248, 3, lang), nf(0.516, 3, lang), t("41 ülke", "41 countries")] }
+      ], { num: [1, 2] }))}
+${sec(4, 3, t("Başlangıç kararsızlığı", "Initialisation instability"), vs(t("“KMeans(4) bir kez çalıştırdım, sonuç bu.”", "“I ran KMeans(4) once, here is the result.”"), `<p>${t("Tek bir rastgele başlangıç kötü bir yerel çözüme takılabilir: 20 farklı başlangıçta inertia 562 ile 603 arasında değişti, en iyi çözüm (513) hiç bulunamadı.", "A single random start can get stuck in a bad local solution: across 20 different starts inertia ranged from 562 to 603, and the best solution (513) was never found.")}</p>`, t("“n_init=10, random_state=0”", "“n_init=10, random_state=0”"), `<p>${t("Birçok başlangıçla çalıştır, en düşük inertialıyı al ve tohumu sabitle: sonuç tekrarlanabilir olsun.", "Run from many starts, keep the one with the lowest inertia and fix the seed: make the result reproducible.")}</p>`))}
+${sec(5, 0, t("Sık yapılan hatalar", "Common mistakes"), pit([
+      [t("En düşük inertia ile k seçmek", "Choosing k by the lowest inertia"), t("Her zaman aralığın en büyük k'sı seçilir.", "The largest k in the range is always chosen."), t("Siluet, dirsek ve yorumlanabilirlik birlikte.", "Silhouette, elbow and interpretability together.")],
+      [t("Küme büyüklüklerine bakmamak", "Not looking at cluster sizes"), t("Birkaç aykırı gözlem bir kümeyi kapabilir.", "A few outliers can grab a cluster."), t("Her çözümde küme büyüklüklerini ve üyelerini incele.", "Inspect cluster sizes and members for every solution.")],
+      [t("ARI'yi en büyütmeye çalışmak", "Trying to maximise ARI"), t("Bilinen etiketi yeniden üretmek gözetimsiz öğrenmenin amacı değildir.", "Reproducing a known label is not the aim of unsupervised learning."), t("ARI'yi bir akıl sağlığı kontrolü olarak kullan.", "Use ARI as a sanity check.")]
+    ]))}
+${sum(t("Akılda kalsın", "Remember"), [t("Ölçütler k'yı önerir, seçmez.", "Criteria suggest k; they do not choose it."), t("Aykırı değerler kare uzaklıkları domine eder; dönüşüm ya da ayrı inceleme gerekir.", "Outliers dominate squared distances; a transformation or separate inspection is needed."), t("n_init ve random_state: tekrarlanabilirlik için.", "n_init and random_state: for reproducibility.")])}`);
+  };
+
+  /* ------------------------------------------------------------ Ünite 3 */
+  B["m7-u3"] = (lang) => {
+    const t = (a, b) => (lang === "tr" ? a : b);
+    return wrap(`
+<p class="c-lead">${t("Gözetimsiz öğrenmenin ikinci büyük ailesi <b>boyut indirgemedir</b>: birbirine çok bağlı birçok değişkeni az sayıda özetle temsil etmek. En yaygın araç temel bileşenler analizi (PCA). İktisatta en ünlü uygulamalarından biri getiri eğrisidir.", "The second big family of unsupervised learning is <b>dimension reduction</b>: representing many closely related variables with a few summaries. The most common tool is principal component analysis (PCA). One of its most famous applications in economics is the yield curve.")}</p>
+${sec(1, 0, t("Getiri eğrisi", "The yield curve"), fig("u3_curves", lang, t("<b>Şekil 1.</b> Farklı aylarda ABD Hazine getiri eğrisi: Aralık 1980'de çok yüksek ve ters (3 ay %15,5, 10 yıl %12,8), 2013'te sıfıra yakın ve dik, 2023'te yine ters. Eğri yukarı aşağı kayar, eğilir ve bükülür.", "<b>Figure 1.</b> The US Treasury yield curve in different months: very high and inverted in December 1980 (3 months 15.5%, 10 years 12.8%), near zero and steep in 2013, inverted again in 2023. The curve shifts up and down, tilts and bends.")))}
+${sec(2, 1, t("PCA ne yapar?", "What does PCA do?"), steps([t("Verinin en çok değiştiği yönü bul: <b>ilk bileşen</b>.", "Find the direction in which the data vary most: the <b>first component</b>."), t("Bu yöne dik yönler arasında kalan varyansın en büyüğünü taşıyanı bul: ikinci bileşen. Böyle devam et.", "Among the directions orthogonal to it, find the one carrying the most remaining variance: the second component. Continue like this."), t("Her gözlemi bileşenler üzerindeki değerleriyle (skorlarla) temsil et; ilk birkaç bileşen çoğu zaman yeterlidir.", "Represent every observation by its values on the components (scores); the first few components are often enough.")]) +
+      formula("x<sub>t</sub> ≈ x̄ + s<sub>1t</sub>·v<sub>1</sub> + s<sub>2t</sub>·v<sub>2</sub> + s<sub>3t</sub>·v<sub>3</sub>", [["x<sub>t</sub>", t("t ayındaki sekiz faiz", "the eight yields in month t")], ["v<sub>j</sub>", t("j. bileşenin yüklemeleri (vadelere göre ağırlıklar)", "the loadings of component j (weights by maturity)")], ["s<sub>jt</sub>", t("t ayında j. bileşenin skoru", "the score of component j in month t")]]))}
+${sec(3, 2, t("Düzey, eğim, eğrilik", "Level, slope, curvature"), fig("u3_load", lang, t("<b>Şekil 2.</b> İlk üç bileşenin yüklemeleri. Düz çizgi: bütün vadeler birlikte (düzey). Yükselen çizgi: uzun eksi kısa (eğim). U biçimi: uçlar eksi orta (eğrilik).", "<b>Figure 2.</b> The loadings of the first three components. Flat line: all maturities together (level). Rising line: long minus short (slope). U shape: ends minus middle (curvature).")) +
+      table([t("Bileşen", "Component"), t("Açıklanan varyans", "Explained variance"), t("Gözlenebilir karşılık", "Observable counterpart"), t("|korelasyon|", "|correlation|")], [
+        ["PC1 · " + t("düzey", "level"), pc(98.07, 2, lang), t("ortalama faiz", "average yield"), nf(1.0, 2, lang)],
+        ["PC2 · " + t("eğim", "slope"), pc(1.80, 2, lang), "10y − 3" + t("a", "m"), nf(0.982, 2, lang)],
+        ["PC3 · " + t("eğrilik", "curvature"), pc(0.10, 2, lang), "2×2y − 3" + t("a", "m") + " − 10y", nf(0.622, 2, lang)]
+      ], { num: [1, 3] }))}
+${sec(4, 3, t("Ölçeklemeli mi, ölçeklemesiz mi?", "Scaled or unscaled?"), cards([
+      [0, "📏", t("Aynı birim: genellikle ölçeklemesiz", "Same unit: usually unscaled"), t("Faizlerin hepsi yüzde. Kısa vadelerin daha oynak olması bilginin bir parçasıdır; ölçeklemek onu siler.", "All yields are in percent. Short maturities being more volatile is part of the information; scaling would erase it.")],
+      [3, "⚖️", t("Farklı birimler: ölçekle", "Different units: scale"), t("Gelir dolarla, doğurganlık çocukla ölçülüyorsa PCA önce standartlaştırılmış veriyle yapılır (Ünite 4).", "If income is in dollars and fertility in children, PCA is done on standardised data (Unit 4).")]
+    ]))}
+${sec(5, 0, t("Sık yapılan hatalar", "Common mistakes"), pit([
+      [t("Bileşenlere ad verip sınamamak", "Naming components without testing"), t("Ad bir yorumdur; yanlış olabilir.", "A name is an interpretation; it can be wrong."), t("Skorları gözlenebilir ölçülerle karşılaştır.", "Compare the scores with observable measures.")],
+      [t("İşarete anlam yüklemek", "Reading meaning into the sign"), t("Bir bileşen ve −1 katı aynı bileşendir.", "A component and −1 times it are the same component."), t("İşareti bir kurala bağla (örneğin 10 yıl pozitif).", "Fix the sign by a rule (for example 10-year positive).")],
+      [t("PCA'yı nedensellik sanmak", "Treating PCA as causality"), t("PCA ortak hareketi betimler, nedenini söylemez.", "PCA describes the common movement; it does not say why."), t("Yorum için iktisat bilgisi ve başka analizler.", "Economic knowledge and other analyses for interpretation.")]
+    ]))}
+${sum(t("Akılda kalsın", "Remember"), [t("PCA, ilişkili değişkenleri ilişkisiz az sayıda bileşene indirger.", "PCA reduces correlated variables to a few uncorrelated components."), t("Getiri eğrisinde üç bileşen (düzey, eğim, eğrilik) varyansın %99,97'sini açıklar.", "For the yield curve three components (level, slope, curvature) explain 99.97% of the variance."), t("Adlar yorumdur; sınanmalıdır.", "Names are interpretations; they should be tested.")])}`);
+  };
+
+  /* ------------------------------------------------------------ Ünite 4 */
+  B["m7-u4"] = (lang) => {
+    const t = (a, b) => (lang === "tr" ? a : b);
+    return wrap(`
+<p class="c-lead">${t("PCA'nın en sezgisel kullanımı çok boyutlu veriyi görselleştirmektir. Sekiz göstergeli 157 ülkeyi doğrudan çizemeyiz; ilk iki bileşen bize bir harita verir. Bu harita kümelemeyle birlikte kullanıldığında güçlüdür, ama neyi göstermediğini bilmek gerekir.", "The most intuitive use of PCA is to visualise multi-dimensional data. We cannot draw 157 countries with eight indicators directly; the first two components give us a map. This map is powerful together with clustering, but we need to know what it does not show.")}</p>
+${sec(1, 0, t("Ülke haritası", "The country map"), fig("u4_map", lang, t("<b>Şekil 1.</b> İlk iki bileşen: sağa doğru kalkınma artıyor, yukarı doğru işsizlik ve enflasyon. Gelir grupları PCA'ya verilmediği hâlde yatay eksende sıralanıyor.", "<b>Figure 1.</b> The first two components: development increases to the right, unemployment and inflation upwards. Although income groups were not given to PCA, they line up along the horizontal axis.")))}
+${sec(2, 1, t("Bileşenleri okumak", "Reading the components"), table([t("Gösterge", "Indicator"), "PC1", "PC2"], [
+      [t("kişi başı gelir (log)", "income per head (log)"), nf(0.46, 2, lang), nf(-0.05, 2, lang)],
+      [t("yaşam süresi", "life expectancy"), nf(0.43, 2, lang), nf(-0.10, 2, lang)],
+      [t("kentleşme", "urbanisation"), nf(0.39, 2, lang), nf(0.19, 2, lang)],
+      [t("tarım payı", "agriculture share"), nf(-0.43, 2, lang), nf(-0.17, 2, lang)],
+      [t("doğurganlık", "fertility"), nf(-0.43, 2, lang), nf(-0.01, 2, lang)],
+      { cls: "hl", cells: [t("işsizlik", "unemployment"), nf(0.0, 2, lang), nf(0.79, 2, lang)] },
+      { cls: "hl", cells: [t("enflasyon", "inflation"), nf(-0.10, 2, lang), nf(0.54, 2, lang)] }
+    ], { num: [1, 2] }))}
+${sec(3, 2, t("Birimler ve PCA", "Units and PCA"), fig("u4_units", lang, t("<b>Şekil 2.</b> Ham göstergelerle ilk bileşen varyansın %99,9995'ini “açıklıyor”: çünkü bu yalnızca kişi başı gelirin binlerle ölçülen varyansı. Standartlaştırınca ilk bileşen %54.", "<b>Figure 2.</b> With raw indicators the first component “explains” 99.9995% of the variance: because it is just the variance of income per head, measured in thousands. After standardising the first component is 54%.")))}
+${sec(4, 3, t("Haritanın sınırları", "The limits of the map"), cards([
+      [1, "🗺️", t("Kayıp boyutlar", "Lost dimensions"), t("İki bileşen varyansın %68'ini taşır; %32'si haritada yoktur. Haritada yakın iki ülke kalan boyutlarda uzak olabilir.", "Two components carry 68% of the variance; 32% is not on the map. Two countries close on the map can be far apart in the remaining dimensions.")],
+      [4, "🔗", t("Benzerlik ≠ nedensellik", "Similarity ≠ causality"), t("Türkiye'nin en yakın komşuları Uruguay, Şili, Brezilya: bu, aynı politikaların aynı sonucu vereceği anlamına gelmez.", "Türkiye's nearest neighbours are Uruguay, Chile, Brazil: this does not mean the same policies will give the same result.")],
+      [0, "🧩", t("Kümeleme + PCA", "Clustering + PCA"), t("Kümeleri tam boyutta kur, haritada göster. Haritada kümeleme yapmak bilgi kaybını kümeye taşır.", "Build the clusters in full dimension, show them on the map. Clustering on the map carries the information loss into the clusters.")]
+    ]))}
+${sec(5, 0, t("Sık yapılan hatalar", "Common mistakes"), pit([
+      [t("Farklı birimlerle ölçeklemeden PCA", "PCA with different units and no scaling"), t("İlk bileşen en büyük varyanslı değişkendir.", "The first component is the variable with the largest variance."), t("Standartlaştır.", "Standardise.")],
+      [t("Harita uzaklığını gerçek uzaklık sanmak", "Treating map distance as true distance"), t("Varyansın üçte biri haritada yok.", "A third of the variance is not on the map."), t("Komşuları tam boyutta hesapla.", "Compute neighbours in full dimension.")],
+      [t("PC1'i bir “endeks” olarak raporlamak", "Reporting PC1 as an “index”"), t("Ağırlıklar örnekleme ve değişken seçimine bağlıdır.", "The weights depend on the sample and the choice of variables."), t("Ağırlıkları ve açıklanan varyansı birlikte raporla.", "Report the weights and the explained variance together.")]
+    ]))}
+${sum(t("Akılda kalsın", "Remember"), [t("Farklı birimlerde PCA'dan önce standartlaştır.", "With different units, standardise before PCA."), t("İlk iki bileşen bir harita verir; kaybolan varyansı söyle.", "The first two components give a map; state the lost variance."), t("Bir sonucun birim değişikliğiyle değişmesi hata işaretidir.", "A result that changes with a change of units is a sign of an error.")])}`);
+  };
+
+  /* ------------------------------------------------------------ Ünite 5 */
+  B["m7-u5"] = (lang) => {
+    const t = (a, b) => (lang === "tr" ? a : b);
+    return wrap(`
+<p class="c-lead">${t("Ekonomik bilginin büyük kısmı metindir: merkez bankası açıklamaları, haberler, şirket raporları, tutanaklar. Bir model metni ancak sayıya çevrildikten sonra kullanabilir. Bu ünite en temel çeviriyi anlatıyor: <b>kelime torbası</b> ve <b>TF-IDF</b>.", "A large part of economic information is text: central bank statements, news, company reports, minutes. A model can use text only after it has been turned into numbers. This unit covers the most basic translation: the <b>bag of words</b> and <b>TF-IDF</b>.")}</p>
+${sec(1, 0, t("Kelime torbası", "The bag of words"), fig("u5_dtm", lang, t("<b>Şekil 1.</b> Üç kısa cümlenin belge-terim matrisi. Her satır bir belge, her sütun bir kelime, hücreler sayım. “raise” ve “lower” dışında ilk ve üçüncü cümle aynı.", "<b>Figure 1.</b> The document-term matrix of three short sentences. Each row is a document, each column a word, cells are counts. Apart from “raise” and “lower” the first and third sentences are the same.")) +
+      steps([t("<b>Küçük harfe çevir</b> ve kelimelere böl (tokenleştirme).", "<b>Lower-case</b> and split into words (tokenisation)."), t("<b>Durak kelimeleri</b> (the, and, of…) at.", "Drop <b>stop words</b> (the, and, of…)."), t("Her belgede her kelimeyi say: belge-terim matrisi.", "Count every word in every document: the document-term matrix."), t("Çok nadir (min_df) ve çok yaygın (max_df) kelimeleri at.", "Drop very rare (min_df) and very common (max_df) words.")]))}
+${sec(2, 1, "TF-IDF", formula("tfidf(w, d) = tf(w, d) × [ln((1 + n) / (1 + df(w))) + 1]", [["tf(w, d)", t("w kelimesinin d belgesindeki sayısı", "the count of word w in document d")], ["df(w)", t("w'nin geçtiği belge sayısı", "the number of documents containing w")], ["n", t("belge sayısı (201)", "the number of documents (201)")], [t("sonra", "then"), t("her satır birim uzunluğa ölçeklenir (L2)", "each row is scaled to unit length (L2)")]]) +
+      fig("u5_bars", lang, t("<b>Şekil 2.</b> Mart 2020 açıklaması: sayım her açıklamada geçen kelimeleri öne çıkarıyor; TF-IDF “coronavirus” gibi o açıklamaya özgü kelimeleri yukarı taşıyor.", "<b>Figure 2.</b> The March 2020 statement: counts bring out words found in every statement; TF-IDF moves words specific to that statement, such as “coronavirus”, up.")))}
+${sec(3, 2, t("Neyi kaybediyoruz?", "What do we lose?"), vs(t("“Kelime torbası metni anlar.”", "“The bag of words understands the text.”"), `<p>${t("Sıra yok: “not raise” ile “raise” neredeyse aynı satırdır. Anlam yok: “tighten” ile “firming” iki ayrı sütundur.", "No order: “not raise” and “raise” are almost the same row. No meaning: “tighten” and “firming” are two separate columns.")}</p>`, t("“Kelime torbası kaba ama şeffaf bir temsildir.”", "“The bag of words is a crude but transparent representation.”"), `<p>${t("Bigramlar (ngram_range=(1, 2)) kısa kalıpları yakalar; anlam için gömmeler ve dil modelleri gerekir (Ünite 8).", "Bigrams (ngram_range=(1, 2)) capture short phrases; meaning needs embeddings and language models (Unit 8).")}</p>`))}
+${sec(4, 0, t("Sık yapılan hatalar", "Common mistakes"), pit([
+      [t("En sık kelimeleri “önemli” saymak", "Treating the most frequent words as “important”"), t("En sık kelimeler kalıp kelimelerdir.", "The most frequent words are boilerplate."), t("TF-IDF ya da metne özgü durak kelimeler.", "TF-IDF or text-specific stop words.")],
+      [t("Sözlük seçimlerini raporlamamak", "Not reporting vocabulary choices"), t("min_df, max_df ve durak kelimeler sonucu değiştirir.", "min_df, max_df and stop words change the result."), t("Ön işleme adımlarını yaz.", "Write down the preprocessing steps.")],
+      [t("TF-IDF'i bütün veriyle kurup öngörü sınamak", "Fitting TF-IDF on all data and testing forecasts"), t("IDF test belgelerinden de öğrenilir: küçük bir sızıntı.", "The IDF is learned from test documents too: a small leak."), t("Vektörleştiriciyi pipeline içinde yalnızca eğitimle kur.", "Fit the vectoriser inside a pipeline on training only.")]
+    ]))}
+${sum(t("Akılda kalsın", "Remember"), [t("Metin → belge-terim matrisi → model.", "Text → document-term matrix → model."), t("TF-IDF yaygın kelimeleri cezalandırır, ayırt edicileri öne çıkarır.", "TF-IDF penalises common words and brings out distinctive ones."), t("Kelime torbası sırayı ve anlamı kaybeder.", "The bag of words loses order and meaning.")])}`);
+  };
+
+  /* ------------------------------------------------------------ Ünite 6 */
+  B["m7-u6"] = (lang) => {
+    const t = (a, b) => (lang === "tr" ? a : b);
+    return wrap(`
+<p class="c-lead">${t("Bir metni sayıya çevirmenin en eski yolu, önceden belirlenmiş kelime listelerini saymaktır. Finans literatüründe olumlu/olumsuz ve şahin/güvercin sözlükleri yaygındır. Bu ünitedeki sözlük öğretim amacıyla hazırlandı; yöntemi ve tuzaklarını göstermek içindir, yayımlanmış bir sözlüğün yerine geçmez.", "The oldest way to turn text into numbers is to count predefined word lists. Positive/negative and hawkish/dovish dictionaries are common in the finance literature. The dictionary in this unit was prepared for teaching; it is meant to show the method and its traps and does not replace a published dictionary.")}</p>
+${sec(1, 0, t("Endeks", "The index"), formula("ton = (S − G) / max(1, S + G)".replace("ton", t("ton", "tone")), [["S", t("şahin kelime sayısı (tighten, raise, elevated, strong…)", "number of hawkish words (tighten, raise, elevated, strong…)")], ["G", t("güvercin kelime sayısı (accommodative, lower, weak, slack…)", "number of dovish words (accommodative, lower, weak, slack…)")], [t("aralık", "range"), t("−1 tamamen güvercin, +1 tamamen şahin", "−1 fully dovish, +1 fully hawkish")]]) +
+      fig("u6_tone", lang, t("<b>Şekil 1.</b> Yıllık ortalama ton ve federal fon oranı: endeks faiz artış dönemlerinde şahin, sıfır faiz yıllarında güvercin.", "<b>Figure 1.</b> Annual average tone and the federal funds rate: the index is hawkish in hiking periods and dovish in the zero-rate years.")))}
+${sec(2, 1, t("Geçerlilik sınaması", "Validation"), fig("u6_corr", lang, t("<b>Şekil 2.</b> Ton, açıklamadan önceki 3 aydaki faiz değişimiyle en güçlü ilişkili; ufuk uzadıkça ilişki zayıflıyor ve 12 ayda kayboluyor.", "<b>Figure 2.</b> Tone is most strongly related to the rate change over the 3 months before the statement; as the horizon grows the relation weakens and vanishes at 12 months.")) +
+      cards([
+        [0, "📣", t("Eşzamanlı bilgi", "Simultaneous information"), t("Açıklama, o günkü kararı duyurur. 1 aylık ilişkinin bir kısmı “bugün faizi artırdık” cümlesidir.", "The statement announces the day's decision. Part of the 1-month relation is the sentence “we raised the rate today”.")],
+        [3, "🔙", t("Geçmişi anlatmak", "Describing the past") , t("Ton en çok son aylardaki faiz hareketini yansıtıyor: Fed yaptığını anlatıyor.", "The tone mostly reflects the rate moves of recent months: the Fed describes what it has done.")],
+        [4, "🔮", t("Öngörü ayrı bir sorudur", "Forecasting is a separate question"), t("Bir yıllık öngörü gücü yok. Öngörüyü sınamak için kararın ötesindeki bilgi ve zamana saygılı bir tasarım gerekir.", "There is no forecasting power a year ahead. Testing forecasts needs information beyond the decision and a time-respecting design.")]
+      ]))}
+${sec(3, 2, t("Kelime sınırı", "Word boundary"), table([t("Arama", "Search"), t("Eşleşir", "Matches"), t("Sonuç", "Result")], [
+      { cls: "bad", cells: ["<code>m.count(\"ease\")</code>", "ease, incr<b>ease</b>, decr<b>ease</b>, rel<b>ease</b>", t("ortalama ton 0,04; açıklamaların %51'i güvercin", "average tone 0.04; 51% of statements dovish")] },
+      [`<code>re.findall(r"\\bease\\b", m)</code>`, t("yalnızca ease", "ease only"), t("ortalama ton 0,13; %40 güvercin", "average tone 0.13; 40% dovish")]
+    ]))}
+${sec(4, 3, t("Sözlük yönteminin artıları ve eksileri", "Pros and cons of the dictionary method"), cards([
+      [0, "🔍", t("Şeffaf", "Transparent"), t("Hangi kelimenin neden sayıldığı açık; herkes yeniden üretebilir.", "It is clear which word is counted and why; anyone can reproduce it.")],
+      [1, "🧾", t("Etiket gerekmez", "No labels needed"), t("Eğitim verisi istemez; küçük derlemlerde de çalışır.", "It needs no training data; it works with small corpora too.")],
+      [4, "🙈", t("Bağlamı kaçırır", "Misses context"), t("“increase in unemployment” şahin sayılır; “not tighten” şahin sayılır.", "“increase in unemployment” counts as hawkish; “not tighten” counts as hawkish.")]
+    ]))}
+${sec(5, 0, t("Sık yapılan hatalar", "Common mistakes"), pit([
+      [t("Karakter dizisi araması", "Substring search"), t("Kelime içindeki kelimeler sayılır.", "Words inside words are counted."), t("\\b ve küçük harf.", "\\b and lower case.")],
+      [t("Endeksi gözle doğrulamak", "Validating the index by eye"), t("“Mantıklı görünmek” sayısal bir sınama değildir.", "“Looking sensible” is not a numerical test."), t("Bir dış ölçüyle ve farklı ufuklarla sına.", "Test against an external measure and at several horizons.")],
+      [t("Eşzamanlı ilişkiyi öngörü sanmak", "Treating a simultaneous relation as a forecast"), t("Açıklama kararı duyurur.", "The statement announces the decision."), t("Kararın ötesindeki bilgiyi ayır.", "Separate out the information beyond the decision.")]
+    ]))}
+${sum(t("Akılda kalsın", "Remember"), [t("Sözlük endeksi: şeffaf, ucuz, bağlamdan habersiz.", "Dictionary index: transparent, cheap, unaware of context."), t("Eşleşen kelimelerden örneklere bak.", "Look at examples of the matched words."), t("Ton bugünkü duruşu ölçer; öngörü ayrıca sınanmalıdır.", "Tone measures today's stance; forecasting must be tested separately.")])}`);
+  };
+
+  /* ------------------------------------------------------------ Ünite 7 */
+  B["m7-u7"] = (lang) => {
+    const t = (a, b) => (lang === "tr" ? a : b);
+    return wrap(`
+<p class="c-lead">${t("Sözlük yönteminde kelimeleri biz seçtik. Konu modelleri bunu tersine çevirir: hangi kelimelerin birlikte geçtiğini veriden öğrenir. Gözetimsiz öğrenmenin metne uygulanmış hâlidir; Ünite 1–4'teki kümeleme ve boyut indirgemenin akrabasıdır.", "In the dictionary method we chose the words. Topic models turn this around: they learn from the data which words occur together. It is unsupervised learning applied to text; a relative of the clustering and dimension reduction of Units 1–4.")}</p>
+${sec(1, 0, t("Fikir", "The idea"), formula("T ≈ W · H", [["T", t("açıklama × kelime TF-IDF matrisi (201 × ~3.000)", "statement × word TF-IDF matrix (201 × ~3,000)")], ["W", t("açıklama × konu: her açıklamanın konu karışımı", "statement × topic: each statement's mix of topics")], ["H", t("konu × kelime: her konunun kelime ağırlıkları", "topic × word: each topic's word weights")], ["NMF", t("bütün matrisler negatif olmayan sayılar: konular toplanabilir parçalar", "all matrices are non-negative: topics are additive parts")]]) +
+      cards([
+        [1, "🧮", "NMF", t("Doğrusal cebir tabanlı; TF-IDF ile iyi çalışır; scikit-learn'de hızlı.", "Based on linear algebra; works well with TF-IDF; fast in scikit-learn.")],
+        [2, "🎲", "LDA", t("Olasılıksal: her belge konuların, her konu kelimelerin bir dağılımı. Kelime sayımlarıyla çalışır.", "Probabilistic: each document is a distribution over topics, each topic over words. Works with word counts.")],
+        [4, "🤖", t("Gömme tabanlı", "Embedding-based"), t("Belgeleri dil modeli gömmeleriyle temsil edip kümeler; anlamı daha iyi yakalar, şeffaflığı daha azdır.", "Represents documents with language-model embeddings and clusters them; captures meaning better, is less transparent.")]
+      ]))}
+${sec(2, 1, t("FOMC açıklamalarında konular", "Topics in the FOMC statements"), fig("u7_eras", lang, t("<b>Şekil 1.</b> Beş konunun yıllara göre payı. Her konu bir iletişim dönemi: 2000'lerin “committee believes” dili, parasal genişleme, normalleşme, salgın ve 2022 sonrası.", "<b>Figure 1.</b> The share of five topics by year. Each topic is a communication era: the “committee believes” language of the 2000s, quantitative easing, normalisation, the pandemic and after 2022.")))}
+${sec(3, 2, t("Bulduğumuz neydi?", "What did we find?"), vs(t("“Fed beş ekonomik temayı konuşuyor.”", "“The Fed talks about five economic themes.”"), `<p>${t("Konular zamanda bloklar hâlinde. Model, açıklama şablonunun değiştiği anları buluyor; her açıklama büyük ölçüde tek bir konuya ait.", "The topics come in blocks over time. The model finds the moments the statement template changed; each statement belongs mostly to a single topic.")}</p>`, t("“Fed'in iletişim dili beş kez belirgin biçimde değişmiş.”", "“The Fed's communication language changed markedly five times.”"), `<p>${t("Ekonomik temaları ayırmak için cümle ya da paragraf düzeyinde modelleme, dönem etkilerini çıkarmak veya daha uzun belgeler (tutanaklar) gerekir.", "Separating economic themes needs sentence- or paragraph-level modelling, removing era effects, or longer documents (minutes).")}</p>`))}
+${sec(4, 0, t("Sık yapılan hatalar", "Common mistakes"), pit([
+      [t("Genel durak kelime listesiyle yetinmek", "Settling for a generic stop-word list"), t("“committee”, “federal” her konuya sızar.", "“committee”, “federal” leak into every topic."), t("max_df ya da metne özgü liste.", "max_df or a text-specific list.")],
+      [t("k'yı “gerçek konu sayısı” sanmak", "Treating k as “the true number of topics”"), t("Model her k için o kadar konu bulur.", "The model finds that many topics for any k."), t("Birkaç k dene, kararlılığa ve yorumlanabilirliğe bak.", "Try several k, look at stability and interpretability.")],
+      [t("Konu adlarını bulgu gibi sunmak", "Presenting topic names as findings"), t("Adlar araştırmacının yorumudur.", "Names are the researcher's interpretation."), t("En ağır kelimeleri ve örnek belgeleri birlikte göster.", "Show the heaviest words and example documents together.")]
+    ]))}
+${sum(t("Akılda kalsın", "Remember"), [t("Konu modeli = metinde gözetimsiz öğrenme.", "Topic model = unsupervised learning on text."), t("NMF: T ≈ W·H; W belge-konu, H konu-kelime.", "NMF: T ≈ W·H; W document-topic, H topic-word."), t("Modelin bulduğu yapı, sorduğun soruyla aynı olmayabilir.", "The structure the model finds may not be the question you asked.")])}`);
+  };
+
+  /* ------------------------------------------------------------ Ünite 8 */
+  B["m7-u8"] = (lang) => {
+    const t = (a, b) => (lang === "tr" ? a : b);
+    return wrap(`
+<p class="c-lead">${t("Metni sayıya çevirdikten sonra Modül 4 ve 5'teki her sınıflandırıcıyı kullanabiliriz. Son yıllarda bunun yerine metni doğrudan bir büyük dil modeline (LLM) okutmak yaygınlaştı. İki yolun da ortak bir tuzağı var: zaman.", "Once text is turned into numbers we can use every classifier from Modules 4 and 5. In recent years, having a large language model (LLM) read the text directly has become common instead. Both routes share a trap: time.")}</p>
+${sec(1, 0, t("TF-IDF + lojistik regresyon", "TF-IDF + logistic regression"), fig("u8_split", lang, t("<b>Şekil 1.</b> Aynı model, dört değerlendirme. Rastgele bölme %81 vaat ediyor; zamana saygılı her değerlendirme “hep sabit” demekle aynı ya da ona yakın.", "<b>Figure 1.</b> The same model, four evaluations. A random split promises 81%; every time-respecting evaluation is the same as or close to saying “always hold”.")) +
+      steps([t("Ardışık açıklamalar neredeyse aynı metindir: kalıp dil aylarca değişmez.", "Consecutive statements are almost the same text: the boilerplate does not change for months."), t("Faiz döngüleri de aylarca sürer: komşu açıklamaların etiketleri aynıdır.", "Rate cycles last for months too: neighbouring statements have the same labels."), t("Rastgele bölmede model test açıklamasının “kardeşini” eğitimde görür ve etiketini kopyalar.", "In a random split the model sees the test statement's “sibling” in training and copies its label.")]))}
+${sec(2, 1, t("LLM ile sınıflandırma", "Classification with an LLM"), cards([
+      [0, "💬", t("Sıfır atışlı (zero-shot)", "Zero-shot"), t("Örnek vermeden, etiketleri tanımlayan bir istemle: “Bu açıklama şahin mi, nötr mü, güvercin mi?”", "With a prompt defining the labels and no examples: “Is this statement hawkish, neutral or dovish?”")],
+      [1, "📝", t("Az atışlı (few-shot)", "Few-shot"), t("İsteme birkaç etiketli örnek eklenir. Bu örnekler doğrulama örnekleminden ayrı tutulmalı.", "A few labelled examples are added to the prompt. These examples must be kept separate from the validation sample.")],
+      [4, "🧠", t("Güçlü yanı", "Strength"), t("Bağlamı, olumsuzluğu ve eş anlamlıları sözlükten ve TF-IDF'ten çok daha iyi anlar.", "It understands context, negation and synonyms far better than a dictionary or TF-IDF.")]
+    ]) + fig("u8_llm", lang, t("<b>Şekil 2.</b> LLM etiketlemesi için dürüst bir akış.", "<b>Figure 2.</b> An honest workflow for LLM labelling.")))}
+${sec(3, 2, t("LLM'e özgü riskler", "Risks specific to LLMs"), table([t("Risk", "Risk"), t("Neden", "Why"), t("Önlem", "Safeguard")], [
+      { cls: "bad", cells: [t("İleriye bakma", "Look-ahead"), t("Model, sınanan dönemden sonraki olayları eğitim verisinde görmüş olabilir.", "The model may have seen events after the tested period in its training data."), t("Eğitim tarihinden sonraki metinlerle sına.", "Test with texts from after its training date.")] },
+      [t("İstem duyarlılığı", "Prompt sensitivity"), t("Küçük ifade değişiklikleri etiketleri değiştirebilir.", "Small wording changes can change the labels."), t("Birkaç istem dene; farkı raporla.", "Try several prompts; report the difference.")],
+      [t("Tekrarlanabilirlik", "Reproducibility"), t("Model sürümleri değişir; sıcaklık rastgelelik ekler.", "Model versions change; temperature adds randomness."), t("Sürüm, istem, sıcaklık ve tarihi kaydet.", "Record version, prompt, temperature and date.")],
+      [t("Doğrulanmamış etiketler", "Unvalidated labels"), t("Sistematik hatalar görünmez.", "Systematic errors are invisible."), t("Yeterince büyük, ayrılmış, insan etiketli örneklem.", "A large enough, set-aside, human-labelled sample.")]
+    ]))}
+${sec(4, 0, t("Sık yapılan hatalar", "Common mistakes"), pit([
+      [t("Metin verisinde rastgele çapraz doğrulama", "Random cross-validation with text data"), t("Aynı döneme ait kardeş belgeler sızıntı yaratır.", "Sibling documents from the same era create leakage."), t("TimeSeriesSplit ya da tarihle bölme.", "TimeSeriesSplit or a split by date.")],
+      [t("LLM çıktısını gerçek etiket saymak", "Treating LLM output as ground truth"), t("LLM de hata yapar ve hataları rastgele değildir.", "LLMs make errors too, and the errors are not random."), t("İnsan etiketleriyle karşılaştır: uyum oranı, karışıklık matrisi.", "Compare with human labels: agreement rate, confusion matrix.")],
+      [t("20 örnekle doğrulamak", "Validating with 20 examples"), t("80%'lik bir modelde doğruluk tahmini yaklaşık ±18 puan oynar.", "For an 80% model the accuracy estimate swings by about ±18 points."), t("Yüzlerce örnek; belirsizlik aralığını raporla.", "Hundreds of examples; report the uncertainty range.")]
+    ]))}
+${sum(t("Akılda kalsın", "Remember"), [t("Metin sınıflandırmada da zaman sızar.", "Time leaks in text classification too."), t("LLM güçlü bir etiketleyicidir; doğrulanmadan güvenilmez.", "An LLM is a powerful labeller; it is not to be trusted unvalidated."), t("İleriye bakma: LLM'in bildiği gelecek, öngörüyü geçersiz kılar.", "Look-ahead: the future the LLM knows invalidates the forecast.")])}`);
+  };
+
+  const C = {};
+  Object.keys(B).forEach((id) => { C[id] = { tr: B[id]("tr"), en: B[id]("en") }; });
+  K.apply(U, C, 10);
+  K.prepend(U, "m7-u9", F, "u9_flow", { tr: "<b>Şekil 1.</b> Atölyenin akışı.", en: "<b>Figure 1.</b> The workshop's flow." });
+})();
