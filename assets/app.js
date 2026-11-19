@@ -268,6 +268,17 @@
     statInstall: { tr: "kurulum", en: "installs" },
     methodEyebrow: { tr: "Yöntem", en: "Method" },
     exercisesShort: { tr: "alıştırma", en: "exercises" },
+    locked: { tr: "Kilitli", en: "Locked" },
+    lockTitle: { tr: "Bu modül henüz kilitli", en: "This module is still locked" },
+    lockText: { tr: "Modül {pGen} zorunlu ünitelerini tamamlayınca açılacak.", en: "It opens once you complete the required units of Module {p}." },
+    lockChain: { tr: "Önce Modül {pGen} kilidini açman gerekiyor.", en: "First you need to unlock Module {p}." },
+    lockProgress: { tr: "{d} / {n} zorunlu ünite tamamlandı", en: "{d} / {n} required units completed" },
+    lockMissing: { tr: "Kalan üniteler:", en: "Units left:" },
+    lockUnit: { tr: "Ünite", en: "Unit" },
+    lockGo: { tr: "Modül {pDat} devam et", en: "Continue Module {p}" },
+    lockNote: { tr: "Colab + Gemini atölyeleri kilidi etkilemez; onları istediğin zaman yapabilirsin.", en: "The Colab + Gemini workshops do not affect the lock; you can do them any time." },
+    lockCard: { tr: "Modül {pAcc} bitirince açılır", en: "Opens after Module {p}" },
+    lockComing: { tr: "Bu modülde neler var", en: "What this module covers" },
     license: { tr: "Kaynağı açık · ticari olmayan kullanım", en: "Source available · noncommercial use" },
     stepsLabel: { tr: "Ders adımları", en: "Lesson steps" },
     read: { tr: "oku", en: "read" },
@@ -788,6 +799,26 @@ self.onmessage = async (e) => {
     }
     return { d, n: c.units, pct: c.units ? Math.round(100 * d / c.units) : 0, next: next || c.id + "-u1" };
   }
+  /* Modül kilidi (öğrenci hızına göre): bir modül, önceki modülün zorunlu üniteleri bitince açılır.
+     Colab atölyeleri (catalog.workshops; yoksa son ünite) sayılmaz. LAB.unlockAll yönetici hesabında her şeyi açar.
+     Module lock (learner-paced): a module opens once the previous module's required units are done.
+     Colab workshops (catalog.workshops, else the last unit) do not count. LAB.unlockAll opens everything for the admin account. */
+  function requiredUnitIds(c) {
+    const w = c.workshops || [c.units], out = [];
+    for (let k = 1; k <= c.units; k++) if (!w.includes(k)) out.push(c.id + "-u" + k);
+    return out;
+  }
+  function moduleLock(c) {
+    const i = LAB.catalog.indexOf(c);
+    if (!LAB.lockEnabled || LAB.unlockAll || i <= 0) return null;
+    const prev = LAB.catalog[i - 1];
+    const req = requiredUnitIds(prev);
+    const missing = req.filter((id) => !store.done[id]);
+    const chain = !!moduleLock(prev);
+    if (!missing.length && !chain) return null;
+    return { prev, req, missing, chain };
+  }
+  LAB.moduleLock = moduleLock;
   function overallNext() {
     for (const c of LAB.catalog) { const p = catalogProgress(c); if (p.d < p.n) return { id: p.next, started: LAB.catalog.some((x) => catalogProgress(x).d > 0) }; }
     return { id: LAB.catalog.length ? LAB.catalog[0].id : "home", started: true };
@@ -871,6 +902,7 @@ self.onmessage = async (e) => {
     bulb: '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
     reset: '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     key: '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12l4 4L19 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    lock: '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
     clock: '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
     book: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
     sliders: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="16" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="17" r="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>',
@@ -937,10 +969,11 @@ self.onmessage = async (e) => {
       const m = cm && cm.id === c.id ? cm : null;
       const p = m ? moduleProgress(m) : catalogProgress(c);
       const on = !!m;
-      const head = h("a", { class: "sb-mod" + (on ? " on" : "") + (on && current.kind === "module" ? " cur" : ""), href: "#" + c.id, onclick: closeNav },
+      const lk = moduleLock(c);
+      const head = h("a", { class: "sb-mod" + (on ? " on" : "") + (on && current.kind === "module" ? " cur" : "") + (lk ? " locked" : ""), href: "#" + c.id, onclick: closeNav, title: lk ? t(UI.locked) : null },
         h("span", { class: "sb-mod-n" }, String(c.num)),
         h("span", { class: "sb-mod-t" }, t(c.title)),
-        h("span", { class: "sb-mod-p" }, p.pct + "%"));
+        lk ? h("span", { class: "sb-mod-p sb-lock", html: ICON.lock, "aria-label": t(UI.locked) }) : h("span", { class: "sb-mod-p" }, p.pct + "%"));
       mods.append(head);
       if (!m) return;
       mods.append(h("div", { class: "sb-bar" }, h("span", { style: "width:" + p.pct + "%" })));
@@ -1081,8 +1114,10 @@ self.onmessage = async (e) => {
       h("div", { class: "sec-head" }, h("p", { class: "eyebrow" }, t(UI.modulesEyebrow)), h("h2", null, t(UI.modulesTitle))),
       h("div", { class: "mod-grid" }, cat.map((c, i) => {
         const p = catalogProgress(c);
-        return h("a", { class: "mod-card c" + (i % 5), href: "#" + c.id },
-          h("div", { class: "mc-top" }, h("span", { class: "mc-num" }, t(UI.module) + " " + c.num), h("span", { class: "mc-pct" }, p.pct + "%")),
+        const lk = moduleLock(c);
+        return h("a", { class: "mod-card c" + (i % 5) + (lk ? " locked" : ""), href: "#" + c.id },
+          h("div", { class: "mc-top" }, h("span", { class: "mc-num" }, t(UI.module) + " " + c.num),
+            lk ? h("span", { class: "mc-pct mc-lock", html: ICON.lock + " " + t(UI.locked) }) : h("span", { class: "mc-pct" }, p.pct + "%")),
           h("h3", null, t(c.title)),
           h("p", null, t(c.summary)),
           c.topics ? h("ul", { class: "mc-topics" }, t(c.topics).map((x) => h("li", null, x))) : null,
@@ -1091,7 +1126,7 @@ self.onmessage = async (e) => {
             h("span", { class: "chip" }, c.exercises + " " + t(UI.exercisesShort)),
             h("span", { class: "chip", html: ICON.clock + " ~" + Math.round(c.minutes / 60) + " " + t(UI.heroHrShort) })),
           h("div", { class: "mc-bar" }, h("span", { style: "width:" + p.pct + "%" })),
-          h("span", { class: "mc-go" }, (p.d > 0 ? t(UI.heroContinue) : t(UI.openModule)) + " →"));
+          h("span", { class: "mc-go" }, lk ? fillP(t(UI.lockCard), lk.prev.num) : (p.d > 0 ? t(UI.heroContinue) : t(UI.openModule)) + " →"));
       }))));
     wrap.append(h("section", { class: "about", id: "about" },
       h("div", { class: "sec-head" }, h("p", { class: "eyebrow" }, t(UI.aboutEyebrow)), h("h2", null, t(UI.aboutTitle))),
@@ -1774,6 +1809,8 @@ self.onmessage = async (e) => {
     const id = (location.hash || "#home").slice(1) || "home";
     const tok = ++routeToken;
     const entry = catalogEntryFor(id);
+    const lock = entry ? moduleLock(entry) : null;
+    if (lock) { Bar.done(); renderLocked(entry, lock); return; }
     const ready = !entry || LAB.modules.some((m) => m.id === entry.id);
     if (ready) { Bar.done(); renderRoute(id); prefetch(); return; }
     const count = h("span", { class: "load-count" });
@@ -1805,6 +1842,45 @@ self.onmessage = async (e) => {
     if (!e) return;
     const go = () => loadModule(e.id).catch(() => {});
     if ("requestIdleCallback" in window) requestIdleCallback(go, { timeout: 4000 }); else setTimeout(go, 1500);
+  }
+  /* "Modül 2'nin / 2'ye / 2'yi" gibi Türkçe ekler için / Turkish suffixes after module numbers */
+  const NUM_SUFFIX = { gen: ["'ın", "'in", "'nin", "'ün", "'ün", "'in", "'nın", "'nin", "'in", "'un"], dat: ["'a", "'e", "'ye", "'e", "'e", "'e", "'ya", "'ye", "'e", "'a"], acc: ["'ı", "'i", "'yi", "'ü", "'ü", "'i", "'yı", "'yi", "'i", "'u"] };
+  function fillP(str, n) {
+    const d = Number(String(n).slice(-1));
+    return str.replace("{pGen}", n + NUM_SUFFIX.gen[d]).replace("{pDat}", n + NUM_SUFFIX.dat[d]).replace("{pAcc}", n + NUM_SUFFIX.acc[d]).replace("{p}", n);
+  }
+  function renderLocked(c, lk) {
+    app.innerHTML = "";
+    closeNav();
+    current = { kind: "locked" };
+    document.title = t(c.title) + " · " + t(UI.appName);
+    renderTopbar([{ label: t(UI.appName), href: "#home" }, { label: t(UI.module) + " " + c.num }]);
+    const P = lk.prev.num;
+    const done = lk.req.length - lk.missing.length;
+    const target = lk.chain ? overallNext().id : (lk.missing[0] || lk.prev.id);
+    const wrap = h("main", { class: "page module locked-page" });
+    wrap.append(h("header", { class: "page-head" }, h("div", null,
+      h("p", { class: "eyebrow" }, t(UI.module) + " " + c.num),
+      h("h1", null, t(c.title)),
+      h("p", { class: "lead" }, t(c.summary)))));
+    const card = h("section", { class: "lock-card" },
+      h("span", { class: "lock-ic", html: ICON.lock.replace(/width="14" height="14"/, 'width="26" height="26"') }),
+      h("div", { class: "lock-body" },
+        h("h2", null, t(UI.lockTitle)),
+        h("p", null, lk.chain ? fillP(t(UI.lockChain), P) : fillP(t(UI.lockText), P)),
+        lk.chain ? null : h("div", { class: "lock-prog" },
+          h("div", { class: "mc-bar" }, h("span", { style: "width:" + Math.round(100 * done / lk.req.length) + "%" })),
+          h("small", null, t(UI.lockProgress).replace("{d}", done).replace("{n}", lk.req.length))),
+        lk.chain || !lk.missing.length ? null : h("div", { class: "lock-missing" },
+          h("span", null, t(UI.lockMissing)),
+          lk.missing.map((id) => h("a", { class: "chip", href: "#" + id }, t(UI.lockUnit) + " " + id.split("-u")[1]))),
+        h("div", { class: "lock-actions" }, h("a", { class: "btn primary", href: "#" + target }, fillP(t(UI.lockGo), lk.chain ? overallNext().id.split("-")[0].slice(1) : P) + " →")),
+        h("p", { class: "lock-note" }, t(UI.lockNote))));
+    wrap.append(card);
+    if (c.topics) wrap.append(h("section", { class: "lock-coming" }, h("h3", null, t(UI.lockComing)), h("ul", { class: "mc-topics" }, t(c.topics).map((x) => h("li", null, x)))));
+    app.append(wrap);
+    renderSidebar();
+    window.scrollTo(0, 0);
   }
   function renderRoute(id) {
     app.innerHTML = "";

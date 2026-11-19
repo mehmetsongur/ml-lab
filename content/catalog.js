@@ -22,6 +22,7 @@
         en: ["The AI coding assistant and silent errors", "Code literacy: Python and pandas", "Writing good prompts and verification", "Error catalogue and debugging", "Colab + Gemini workshop with FRED data"]
       },
       units: 10, exercises: 40, minutes: 404,
+      workshops: [9, 10],   // Colab atölyeleri modül kilidini etkilemez / Colab workshops do not affect the module lock
       files: ["../concept-kit.js", "m0-figs.js", "m0.js", "m0-cells.js", "m0-lessons.js", "m0-ai1.js", "m0-ai2.js", "m0-concepts.js", "m0-order.js"]
     },
     {

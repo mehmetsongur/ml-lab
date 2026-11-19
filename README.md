@@ -50,7 +50,7 @@ GitHub Pages'te yayımlamak için depoyu açıp **Settings → Pages → Deploy 
 
 ### Hesap ve ilerleme
 
-Laboratuvar hesapsız çalışır; ilerleme tarayıcıda saklanır. Yalnızca [songurmehmet.com/ml-lab](https://www.songurmehmet.com/ml-lab/index.html) kopyasında ana sayfa herkese açıktır, modül ve derslere girmek için giriş gerekir (e-posta veya Google, Wix üyelik altyapısı). Giriş yapanın ad-soyadı, e-postası ve ünite ilerlemesi buluta kaydedilir ve cihazlar arasında birleştirilir. Kod `assets/auth.js` ve `giris.html` içindedir; başka adreslerde (GitHub Pages, kendi kopyanız) hiçbir şey yapmaz.
+Laboratuvar hesapsız çalışır; ilerleme tarayıcıda saklanır. Yalnızca [songurmehmet.com/ml-lab](https://www.songurmehmet.com/ml-lab/index.html) kopyasında ana sayfa herkese açıktır, modül ve derslere girmek için giriş gerekir (e-posta veya Google, Wix üyelik altyapısı). Giriş yapanın ad-soyadı, e-postası ve ünite ilerlemesi buluta kaydedilir ve cihazlar arasında birleştirilir. Bu kopyada modüller sırayla açılır: bir modül, öncekinin zorunlu üniteleri (Colab atölyeleri hariç) bitince açılır. Kod `assets/auth.js` ve `giris.html` içindedir; başka adreslerde (GitHub Pages, kendi kopyanız) hiçbir şey yapmaz.
 
 ### Yeni modül eklemek
 
@@ -114,7 +114,7 @@ Python runs directly in the browser via [Pyodide](https://pyodide.org); numpy, p
 
 ### Account and progress
 
-The lab works without an account; progress is kept in the browser. Only the copy at [songurmehmet.com/ml-lab](https://www.songurmehmet.com/ml-lab/index.html) keeps the home page open and asks for a login to open modules and lessons (email or Google, via Wix members). For logged-in learners, name, email and unit progress are saved to the cloud and merged across devices. The code lives in `assets/auth.js` and `giris.html`; on any other host (GitHub Pages, your own copy) it does nothing.
+The lab works without an account; progress is kept in the browser. Only the copy at [songurmehmet.com/ml-lab](https://www.songurmehmet.com/ml-lab/index.html) keeps the home page open and asks for a login to open modules and lessons (email or Google, via Wix members). For logged-in learners, name, email and unit progress are saved to the cloud and merged across devices. On this copy modules open in order: a module unlocks once the previous module's required units (excluding the Colab workshops) are done. The code lives in `assets/auth.js` and `giris.html`; on any other host (GitHub Pages, your own copy) it does nothing.
 
 ### Running locally
 

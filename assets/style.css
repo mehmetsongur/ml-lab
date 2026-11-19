@@ -1291,3 +1291,27 @@ html.auth-locked, html.auth-locked body { overflow: hidden; }
 .un-body strong { color: var(--ink); font-size: 0.98rem; }
 .un-body p { margin: 0; color: var(--ink-2); line-height: 1.55; font-size: 0.93rem; }
 .un-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+
+/* Modül kilidi / Module lock */
+.sb-mod.locked { opacity: .62; }
+.sb-mod.locked .sb-mod-n { background: var(--surface-3); color: var(--muted); }
+.sb-lock { display: grid; place-items: center; color: var(--muted); }
+.mod-card.locked { opacity: .78; }
+.mod-card.locked:hover { opacity: 1; }
+.mc-lock { display: inline-flex; align-items: center; gap: 4px; color: var(--muted); font-weight: 700; }
+.mod-card.locked .mc-go { color: var(--muted); }
+.locked-page .page-head { margin-bottom: 8px; }
+.lock-card { display: flex; gap: 18px; align-items: flex-start; padding: 24px 26px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--sh-2); max-width: 760px; }
+.lock-ic { flex: none; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; color: #fff; background: var(--grad); }
+.lock-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; flex: 1; }
+.lock-body h2 { margin: 0; font-size: 1.3rem; }
+.lock-body p { margin: 0; color: var(--ink-2); }
+.lock-prog { display: flex; flex-direction: column; gap: 6px; max-width: 420px; }
+.lock-prog small { color: var(--muted); font-weight: 600; }
+.lock-missing { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.88rem; color: var(--muted); }
+.lock-missing .chip { text-decoration: none; color: var(--accent-strong); }
+.lock-actions { margin-top: 4px; }
+.lock-note { font-size: 0.82rem; color: var(--muted) !important; }
+.lock-coming { margin-top: 26px; max-width: 760px; }
+.lock-coming h3 { font-size: 1rem; margin: 0 0 8px; }
+.acct-admin { font-size: 0.7rem; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 999px; padding: 2px 8px; align-self: flex-start; }

@@ -27,6 +27,9 @@
   var META_KEY = "mllab.wix.meta";
   var SYNC_FIELDS = ["cells", "quiz", "pg", "done", "code"];
   var CONSENT_KEY = "mllab.wix.consent";
+  /* Yönetici hesabının e-postasının SHA-256 özeti (e-posta kodda açık yazılmaz); bu hesapta tüm modüller açık.
+     SHA-256 of the admin account's email (the email itself is not in the code); all modules are open for it. */
+  var ADMIN_HASH = "6b036e3f5cd4c740598389b651788fc11afd829430d67a11d98878e9662db55c";
   var CONSENT_VER = "v1-2026-11-19"; // aydınlatma metni sürümü / privacy notice version
 
   /* ---------------------------------------------------------------- */
@@ -148,8 +151,25 @@
   /* Senkron / Sync                                                    */
   /* ---------------------------------------------------------------- */
   var store = LAB.store;
+  LAB.lockEnabled = true;   // modül kilidi yalnız bu sitede / module lock only on this site
   var S = { member: null, item: null, state: isMember() ? "loading" : "out", lastSync: null, error: null, busy: false, dirty: false };
   var meta = readJSON(META_KEY) || {};
+  if (isMember() && meta.admin) LAB.unlockAll = true;
+  function sha256hex(txt) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt)).then(function (d) {
+      return Array.prototype.map.call(new Uint8Array(d), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+    });
+  }
+  function checkAdmin(m) {
+    var email = m && m.loginEmail ? String(m.loginEmail).trim().toLowerCase() : "";
+    if (!email) return Promise.resolve(false);
+    return sha256hex(email).then(function (hx) {
+      var admin = hx === ADMIN_HASH;
+      if (admin !== !!meta.admin) { meta.admin = admin; writeJSON(META_KEY, meta); }
+      if (admin !== !!LAB.unlockAll) { LAB.unlockAll = admin; LAB.rerender(); }
+      return admin;
+    }, function () { return false; });
+  }
 
   function memberName(m) {
     if (!m) return "";
@@ -259,7 +279,7 @@
     S.busy = true; render();
     return loadMember().then(function (m) {
       S.member = m;
-      return findItem();
+      return checkAdmin(m).then(findItem);
     }).then(function (item) {
       S.item = item;
       var remote = item && item.data && item.data.durum ? item.data.durum : null;
@@ -333,6 +353,7 @@
     failed: { tr: "Giriş başlatılamadı. Lütfen tekrar dene.", en: "Could not start login. Please try again." },
     loading: { tr: "Hesap denetleniyor…", en: "Checking account…" },
     edit: { tr: "Adı düzenle", en: "Edit name" },
+    admin: { tr: "Yönetici · tüm modüller açık", en: "Admin · all modules open" },
     gateTitle: { tr: "Giriş yap veya kayıt ol", en: "Log in or sign up" },
     gateSub: { tr: "Modüller ve alıştırmalar ücretsiz bir hesapla açılır. Kayıt birkaç saniye sürer.", en: "Modules and exercises open with a free account. Signing up takes a few seconds." },
     free: { tr: "Ücretsiz hesap", en: "Free account" },
@@ -536,6 +557,7 @@
     slot.append(
       h("div", { class: "acct-who" }, h("span", { class: "acct-avatar", "aria-hidden": "true" }, (name || "?").charAt(0).toUpperCase()), h("span", { class: "acct-name" }, name)),
       h("span", { class: "acct-status" + (S.error ? " bad" : "") }, status),
+      LAB.unlockAll ? h("span", { class: "acct-admin" }, tx("admin")) : "",
       h("div", { class: "acct-actions" },
         h("button", { class: "sb-reset", onclick: askName }, tx("edit")),
         h("button", { class: "sb-reset", onclick: function () { flush().then(logout); } }, tx("logout")),
