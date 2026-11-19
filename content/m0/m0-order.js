@@ -28,4 +28,19 @@
     { title: { tr: "Ek: Python pratiği (isteğe bağlı)", en: "Appendix: Python practice (optional)" }, ids: ids(practice) }
   ].filter((s) => s.ids.length);
   m.required = ids(units);
+  /* İlk ünitenin başında Python önerisi / Python tip at the top of the first unit */
+  if (units.length && practice.length) {
+    m.unitNotice = {
+      key: "m0-python-tip",
+      ids: [units[0].id],
+      target: practice[0].id,
+      title: { tr: "Python'a yeni misin?", en: "New to Python?" },
+      text: {
+        tr: "Bu modülde kodu YZ yazıyor, sen okuyup denetliyorsun. Kodu rahat okuyabilmek için Python'la daha önce hiç çalışmadıysan, önce modülün sonundaki <b>Ek: Python pratiği</b> bölümünü (" + practice.length + " kısa ders) bitirmeni öneririm. Zorunlu değil: istersen buradan devam edip takıldığında Ek'e dönebilirsin.",
+        en: "In this module the AI writes the code and you read and audit it. If you have never worked with Python, I recommend finishing the <b>Appendix: Python practice</b> section at the end of the module first (" + practice.length + " short lessons) so you can read code comfortably. It is optional: you can also continue here and return to the appendix when you get stuck."
+      },
+      go: { tr: "Ek: Python pratiğine git", en: "Go to Python practice" },
+      dismiss: { tr: "Anladım, devam et", en: "Got it, continue" }
+    };
+  }
 })();

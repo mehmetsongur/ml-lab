@@ -793,6 +793,24 @@ self.onmessage = async (e) => {
     return { id: LAB.catalog.length ? LAB.catalog[0].id : "home", started: true };
   }
 
+  /* Modülün tanımladığı ünite notu (ör. M0'da Python önerisi); kapatılınca bir daha gösterilmez.
+     A module-defined unit notice (e.g. the Python tip in M0); hidden for good once dismissed. */
+  function unitNotice(m, L) {
+    const n = m.unitNotice;
+    if (!n || !n.ids.includes(L.id)) return null;
+    store.notices = store.notices || {};
+    if (store.notices[n.key]) return null;
+    const box = h("aside", { class: "unit-notice", role: "note" },
+      h("span", { class: "un-ic", "aria-hidden": "true", html: '<svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 7.6v.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' }),
+      h("div", { class: "un-body" },
+        h("strong", null, t(n.title)),
+        h("p", { html: t(n.text) }),
+        h("div", { class: "un-actions" },
+          h("a", { class: "btn primary sm", href: "#" + n.target }, t(n.go) + " →"),
+          h("button", { class: "btn ghost sm", onclick: () => { store.notices[n.key] = true; save(); box.remove(); } }, t(n.dismiss)))));
+    return box;
+  }
+
   function lessonLabel(m, l) {
     const req = requiredLessons(m);
     const i = req.indexOf(l);
@@ -1167,7 +1185,7 @@ self.onmessage = async (e) => {
       h("p", { class: "eyebrow" }, (sec ? t(sec.title) + " · " : "") + lbl.long + " · " + (L.minutes || 15) + " " + t(UI.minutes)),
       h("h1", null, t(L.title)),
       L.blurb ? h("p", { class: "lead" }, t(L.blurb)) : null,
-      h("p", { class: "lesson-by" }, avatar("xs"), t(UI.authorName) + " · " + t(UI.appName))), tabs);
+      h("p", { class: "lesson-by" }, avatar("xs"), t(UI.authorName) + " · " + t(UI.appName))), unitNotice(m, L), tabs);
 
     function stepStatus(i) {
       const s = lessonStats(L);

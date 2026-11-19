@@ -1283,3 +1283,11 @@ html.auth-locked, html.auth-locked body { overflow: hidden; }
 .gate-check a { color: var(--accent-strong); font-weight: 650; }
 .gate-check.need { border-color: var(--bad); background: var(--bad-soft); }
 .modal .gate-check { padding: 0; }
+
+/* Ünite notu / Unit notice (ör. M0 Python önerisi) */
+.unit-notice { display: flex; gap: 14px; align-items: flex-start; margin: 4px 0 18px; padding: 16px 18px; border-radius: var(--r-lg); background: var(--info-soft); border: 1px solid color-mix(in srgb, var(--info) 28%, transparent); }
+.un-ic { color: var(--info); flex: none; margin-top: 1px; }
+.un-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.un-body strong { color: var(--ink); font-size: 0.98rem; }
+.un-body p { margin: 0; color: var(--ink-2); line-height: 1.55; font-size: 0.93rem; }
+.un-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
