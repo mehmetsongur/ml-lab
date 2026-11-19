@@ -20,11 +20,11 @@
       tr: `<p>Genel programlama hatalarını YZ giderek daha az yapıyor. Ama ekonomi ve finans verisine özgü hatalar, <b>alan bilgisi</b> gerektirdiği için hâlâ çok yaygın. Üstelik bunların neredeyse hiçbiri hata mesajı vermez. Bu katalog, YZ'nin kodunu okurken aklında tutman gereken kontrol listesidir.</p>
 <table><thead><tr><th>Kategori</th><th>Tipik YZ hatası</th><th>Doğrusu</th></tr></thead><tbody>
 <tr><td rowspan="3"><b>Birim</b></td><td>Aylık oranları toplamak</td><td>Bileşik: (1 + r) çarpımı</td></tr>
-<tr><td>Ortalama büyüme için aritmetik ortalama</td><td>Geometrik ortalama</td></tr>
+<tr><td>Ortalama büyüme için aritmetik ortalama</td><td>Geometrik ortalama: aynı son düzeyi veren yıllık bileşik oran</td></tr>
 <tr><td>Oran ile yüzdeyi karıştırmak</td><td>Birimi isteğe yaz, kontrol et</td></tr>
 <tr><td rowspan="3"><b>Zaman</b></td><td>Sıralanmamış tarihlerde değişim hesaplamak</td><td>Önce tarihe göre sırala</td></tr>
 <tr><td>Nominal artışı reel artış diye sunmak</td><td>Enflasyondan arındır</td></tr>
-<tr><td>Hesapta gelecekteki değeri kullanmak</td><td>Yalnızca o güne kadarki bilgi</td></tr>
+<tr><td>Hesapta gelecekteki değeri kullanmak</td><td>Yalnızca tahmin anında yayımlanmış bilgi</td></tr>
 <tr><td rowspan="2"><b>Veri</b></td><td>Veri bulamayınca sahte veri üretmek</td><td>Açıkça hata vermek</td></tr>
 <tr><td>Sessizce satır silmek ya da çoğaltmak</td><td>Satır sayısını kontrol etmek</td></tr>
 <tr><td><b>Yorum</b></td><td>Korelasyonu nedensellik gibi anlatmak</td><td>8. ünite</td></tr>
@@ -33,11 +33,11 @@
       en: `<p>AI makes fewer and fewer generic programming mistakes. But mistakes specific to economic and financial data remain very common, because they require <b>domain knowledge</b>. And almost none of them produce an error message. This catalogue is the checklist to keep in mind when reading AI code.</p>
 <table><thead><tr><th>Category</th><th>Typical AI mistake</th><th>The right way</th></tr></thead><tbody>
 <tr><td rowspan="3"><b>Units</b></td><td>Adding monthly rates</td><td>Compound: product of (1 + r)</td></tr>
-<tr><td>Arithmetic mean for average growth</td><td>Geometric mean</td></tr>
+<tr><td>Arithmetic mean for average growth</td><td>Geometric mean: the compound annual rate that reaches the same final level</td></tr>
 <tr><td>Mixing up ratio and percent</td><td>State the unit in the prompt; check it</td></tr>
 <tr><td rowspan="3"><b>Time</b></td><td>Computing changes on unsorted dates</td><td>Sort by date first</td></tr>
 <tr><td>Presenting nominal growth as real</td><td>Deflate by inflation</td></tr>
-<tr><td>Using future values in a calculation</td><td>Only information available up to that date</td></tr>
+<tr><td>Using future values in a calculation</td><td>Only information published by the forecast date</td></tr>
 <tr><td rowspan="2"><b>Data</b></td><td>Fabricating data when none is found</td><td>Fail loudly</td></tr>
 <tr><td>Silently deleting or duplicating rows</td><td>Check the row count</td></tr>
 <tr><td><b>Interpretation</b></td><td>Narrating correlation as causation</td><td>Unit 8</td></tr>
@@ -48,11 +48,11 @@
       type: "roadmap",
       intro: { tr: "Her kategoriye tıkla: YZ'nin tipik kodu ve düzeltilmiş hâli yan yana.", en: "Click each category: the AI's typical code and the corrected version side by side." },
       steps: [
-        { title: { tr: "Birim", en: "Units" }, text: { tr: "<p>Ortalama yıllık büyüme, yıllık oranların aritmetik ortalaması değildir. Oranlar birbiri üzerine bindiği için <b>geometrik ortalama</b> gerekir.</p>", en: "<p>Average annual growth is not the arithmetic mean of annual rates. Because rates compound, you need the <b>geometric mean</b>.</p>" }, code: { tr: "# YZ:      sum(oranlar) / len(oranlar)\n# Doğrusu: (carpim(1 + r/100) ** (1/n) - 1) * 100", en: "# AI:    sum(rates) / len(rates)\n# Right: (product(1 + r/100) ** (1/n) - 1) * 100" } },
+        { title: { tr: "Birim", en: "Units" }, text: { tr: "<p>“Başlangıçtan sona hangi sabit yıllık hızla gelindi?” sorusunun cevabı aritmetik ortalama değildir. Oranlar birbiri üzerine bindiği için <b>aynı son düzeyi veren yıllık bileşik oran</b>, yani geometrik ortalama gerekir. Aritmetik ortalama başka bir soruya (tipik bir yılın oranı) yanıt verebilir.</p>", en: "<p>The answer to “at what constant annual pace did we get from start to finish?” is not the arithmetic mean. Because rates compound, you need <b>the compound annual rate that reaches the same final level</b>, i.e. the geometric mean. The arithmetic mean may answer a different question (a typical year's rate).</p>" }, code: { tr: "# YZ:      sum(oranlar) / len(oranlar)\n# Doğrusu: (carpim(1 + r/100) ** (1/n) - 1) * 100", en: "# AI:    sum(rates) / len(rates)\n# Right: (product(1 + r/100) ** (1/n) - 1) * 100" } },
         { title: { tr: "Zaman", en: "Time" }, text: { tr: "<p>Merkez bankası ve istatistik kurumu indirmeleri bazen en yeni tarihi en üstte verir. Sıralamadan <code>pct_change</code> yaparsan değişimler ters işaretli çıkar.</p>", en: "<p>Downloads from statistics offices sometimes list the newest date first. If you run <code>pct_change</code> without sorting, changes come out with the wrong sign.</p>" }, code: { tr: 'df = df.sort_values("tarih")\ndf["yillik"] = df["endeks"].pct_change(periods=12) * 100', en: 'df = df.sort_values("date")\ndf["annual"] = df["index"].pct_change(periods=12) * 100' } },
         { title: { tr: "Reel / nominal", en: "Real / nominal" }, text: { tr: "<p>Maaş %50 arttı, enflasyon %45: reel artış %50 değil, yaklaşık %3,4.</p>", en: "<p>Wages up 50%, inflation 45%: the real rise is not 50% but about 3.4%.</p>" }, code: { tr: "reel = ((1 + 0.50) / (1 + 0.45) - 1) * 100", en: "real = ((1 + 0.50) / (1 + 0.45) - 1) * 100" } },
         { title: { tr: "Veri", en: "Data" }, text: { tr: "<p>“Dosya bulunamazsa örnek veri üret” diyen bir <code>try/except</code>, analizi sessizce kurguya çevirir.</p>", en: "<p>A <code>try/except</code> that says “if the file is missing, generate sample data” silently turns the analysis into fiction.</p>" }, code: { tr: "# Tehlikeli:\n# except Exception:\n#     veri = np.random.normal(...)", en: "# Dangerous:\n# except Exception:\n#     data = np.random.normal(...)" } },
-        { title: { tr: "Gelecek", en: "Future" }, text: { tr: "<p>Merkezlenmiş hareketli ortalama, bir ayın değerine <b>sonraki ayı</b> da katar. Tahmin ya da “o gün bilinen” hesaplarda bu hatadır.</p>", en: "<p>A centred moving average mixes the <b>next month</b> into a month's value. For forecasts or “known at the time” calculations, that is a mistake.</p>" }, code: { tr: "# YZ:      s.rolling(3, center=True).mean()\n# Doğrusu: s.rolling(3).mean()", en: "# AI:    s.rolling(3, center=True).mean()\n# Right: s.rolling(3).mean()" } }
+        { title: { tr: "Gelecek", en: "Future" }, text: { tr: "<p>Merkezlenmiş hareketli ortalama, bir ayın değerine <b>sonraki ayı</b> da katar. Tahmin ya da “o gün bilinen” hesaplarda bu hatadır. Geriye bakan ortalamada bile <b>yayımlanma anını</b> düşün: bir ayın TÜFE'si ay bittikten sonra açıklanır; o ayı tahmin ederken o ayın kendi değerini kullanamazsın.</p>", en: "<p>A centred moving average mixes the <b>next month</b> into a month's value. For forecasts or “known at the time” calculations, that is a mistake. Even with a backward-looking average, think about the <b>publication date</b>: a month's CPI is released after the month ends, so you cannot use it to forecast that same month.</p>" }, code: { tr: "# YZ:      s.rolling(3, center=True).mean()\n# Doğrusu: s.rolling(3).mean()         # t sonunda bilinen; t+1 tahmini için\n# t ayının kendisini tahmin ediyorsan: s.rolling(3).mean().shift(1)", en: "# AI:    s.rolling(3, center=True).mean()\n# Right: s.rolling(3).mean()            # known at end of t; for forecasting t+1\n# To forecast month t itself: s.rolling(3).mean().shift(1)" } }
       ],
       takeaway: { tr: "Bu hataların hiçbiri Python hatası değil, hepsi iktisat hatası. Onları yakalayacak olan da iktisat bilgin.", en: "None of these are Python errors; all are economics errors. Your economics is what will catch them." }
     },
@@ -67,7 +67,7 @@
           claim: { tr: "Ortalama yıllık enflasyon %22,6. Bu oranla 100 TL'lik sepet 5 yılda yaklaşık 277 TL olur.", en: "Average annual inflation is 22.6%. At this rate a 100-lira basket becomes about 277 lira in 5 years." }
         },
         bugLines: [2],
-        lineExplain: { tr: "Oranlar birbiri üzerine bindiği için ortalama oran <b>geometrik ortalamadır</b>. Aritmetik ortalama (%22,6) 5 yılda 277'ye götürür; gerçek endeks 265,6. Geometrik ortalama (≈ %21,6) tam olarak 265,6'yı verir.", en: "Because rates compound, the average rate is the <b>geometric mean</b>. The arithmetic mean (22.6%) leads to 277 after 5 years; the actual index is 265.6. The geometric mean (≈ 21.6%) gives exactly 265.6." },
+        lineExplain: { tr: "YZ, ortalamayı “fiyatlar nereye varır” sorusunda kullandı. Bu sorunun cevabı <b>aynı son düzeyi veren yıllık bileşik oran</b>, yani geometrik ortalamadır. Aritmetik ortalama (%22,6) 5 yılda 277'ye götürür; gerçek endeks 265,6. Geometrik ortalama (≈ %21,6) tam olarak 265,6'yı verir. Aritmetik ortalama “tipik bir yılın oranı” sorusuna yanıt olabilirdi, ama son düzey için değil.", en: "The AI used the average to answer “where do prices end up?”. The answer to that is <b>the compound annual rate that reaches the same final level</b>, i.e. the geometric mean. The arithmetic mean (22.6%) leads to 277 after 5 years; the actual index is 265.6. The geometric mean (≈ 21.6%) gives exactly 265.6. The arithmetic mean could answer “what was a typical year's rate?”, but not the final level." },
         hints: [{ tr: "Önce toplam artış çarpanını bul: (1 + r/100)'lerin çarpımı. Sonra bunun 1/5. kuvvetini al.", en: "First find the total growth factor: the product of (1 + r/100). Then take its 1/5th power." }],
         solution: { tr: "yillik_enf = [10.0, 20.0, 50.0, 30.0, 3.2]\ncarpan = 1\nfor r in yillik_enf:\n    carpan = carpan * (1 + r / 100)\nort = (carpan ** (1 / len(yillik_enf)) - 1) * 100\nprint(round(ort, 1))", en: "annual_inf = [10.0, 20.0, 50.0, 30.0, 3.2]\nfactor = 1\nfor r in annual_inf:\n    factor = factor * (1 + r / 100)\navg = (factor ** (1 / len(annual_inf)) - 1) * 100\nprint(round(avg, 1))" },
         checks: [{ py: { tr: "abs(ort - (__import__('math').prod(1 + r / 100 for r in yillik_enf) ** (1 / 5) - 1) * 100) < 1e-9", en: "abs(avg - (__import__('math').prod(1 + r / 100 for r in annual_inf) ** (1 / 5) - 1) * 100) < 1e-9" }, msg: { tr: "Ortalama, geometrik ortalama olmalı (≈ 21,6).", en: "The average should be the geometric mean (≈ 21.6)." } }],
@@ -121,7 +121,7 @@
       },
       {
         id: "m0-u6-c5", kind: "audit",
-        task: { tr: "Her ay için “o aya kadar olan son 3 ayın ortalaması” istendi; bu sütun daha sonra tahmin için kullanılacak. YZ'nin kodu bir ayın ortalamasına sonraki ayı da katıyor. Bul ve düzelt.", en: "For each month we asked for “the average of the last 3 months up to that month”; the column will later be used for forecasting. The AI's code mixes the next month into each average. Find and fix it." },
+        task: { tr: "Her ay için “o aya kadar olan son 3 ayın ortalaması” istendi. Bu sütun, her ayın verisi <b>açıklandıktan sonra bir sonraki ayı</b> tahmin etmek için kullanılacak; yani ay t'nin ortalaması t+1 tahmininde girdi olacak. YZ'nin kodu bir ayın ortalamasına sonraki ayı da katıyor. Bul ve düzelt.", en: "For each month we asked for “the average of the last 3 months up to that month”. The column will be used to forecast <b>the next month after each month's data are released</b>; so the average for month t feeds the forecast for t+1. The AI's code mixes the next month into each average. Find and fix it." },
         ai: {
           prompt: { tr: "Aylık enflasyon serisinde her ay için o aya kadarki son 3 ayın ortalamasını hesapla.", en: "In the monthly inflation series, compute for each month the average of the last 3 months up to that month." },
           reply: { tr: "Hareketli ortalama kullanıyorum; daha dengeli olsun diye merkezledim:", en: "I use a moving average, centred for balance:" },
@@ -133,7 +133,7 @@
         hints: [{ tr: "<code>center=True</code>'yu kaldır.", en: "Remove <code>center=True</code>." }],
         solution: { tr: "import pandas as pd\ns = pd.Series([3.2, 4.5, 2.9, 3.0, 3.4, 1.6])\nortalama3 = s.rolling(3).mean()\nprint(ortalama3.round(2).tolist())", en: "import pandas as pd\ns = pd.Series([3.2, 4.5, 2.9, 3.0, 3.4, 1.6])\navg3 = s.rolling(3).mean()\nprint(avg3.round(2).tolist())" },
         checks: [{ py: { tr: "ortalama3.isna().sum() == 2 and ((ortalama3 - s.rolling(3).mean()).abs().dropna() < 1e-12).all()", en: "avg3.isna().sum() == 2 and ((avg3 - s.rolling(3).mean()).abs().dropna() < 1e-12).all()" }, msg: { tr: "Her ayın değeri yalnızca kendisi ve önceki iki ayın ortalaması olmalı (ilk iki ay boş kalır).", en: "Each month should average only itself and the two previous months (the first two months stay empty)." } }],
-        after: { tr: "Bu hata, makine öğrenmesi modüllerinde “veri sızıntısı” olarak çok daha büyük bir sorun hâline gelecek.", en: "In the machine learning modules this mistake grows into a much bigger problem called data leakage." }
+        after: { tr: "Zamanlamayı her seferinde yaz: tahmin hangi tarihte yapılıyor, o tarihte hangi veri yayımlanmış? Ay t'nin kendisini tahmin etseydin <code>rolling(3).mean().shift(1)</code> gerekirdi; çünkü t'nin TÜFE'si tahmin anında henüz açıklanmamış olurdu. Bu hata, makine öğrenmesi modüllerinde “veri sızıntısı” olarak çok daha büyük bir sorun hâline gelecek.", en: "Always write down the timing: on what date is the forecast made, and which data have been published by then? To forecast month t itself you would need <code>rolling(3).mean().shift(1)</code>, because month t's CPI would not yet be released. In the machine learning modules this mistake grows into a much bigger problem called data leakage." }
       }
     ],
     quiz: [
@@ -156,7 +156,12 @@
     concept: {
       tr: `<p>Kod hata verdiğinde en kolay yol, hatayı YZ'ye yapıştırıp “düzelt” demek. Bu çoğu zaman işe yarar. Ama YZ'nin amacı <b>hatanın kaybolmasıdır</b>; senin amacın ise <b>sonucun doğru olması</b>. Bu ikisi her zaman aynı şey değildir.</p>
 <p><b>1. Hata mesajını sondan oku.</b> Son satır hatanın türünü ve nedenini söyler (<code>KeyError: 'buyume'</code>). Hemen üstündeki satır numarası, hatanın nerede olduğunu gösterir.</p>
-<p><b>2. YZ'ye bağlam ver.</b> İyi bir hata ayıklama isteği şunları içerir: tam hata mesajı, ilgili kod, verinin ilk birkaç satırı (<code>df.head()</code>), ne beklediğin ve “hatayı susturma, nedenini açıkla”.</p>
+<p><b>2. YZ'ye bağlam ver.</b> İyi bir hata ayıklama isteği şunları içerir: tam hata mesajı, ilgili kod, sütun adları ve türleri (<code>df.dtypes</code>), sorunu gösteren bir iki <b>temsili</b> satır, ne beklediğin ve “hatayı susturma, nedenini açıkla”.</p>
+<p><b>Veriyi paylaşmadan önce küçült.</b> <code>df.head()</code> çıktısını olduğu gibi yapıştırma: gerçek bir araştırma tablosunun ilk satırlarında kimlik, ad, adres ya da gizli tutarlar olabilir. Yalnızca sorunla ilgili sütunları al, kişisel alanları çıkar ya da uydurma etiketlerle değiştir:</p>
+<pre><code>print(df.dtypes)
+ornek = df[["tarih", "tutar"]].head(2).copy()   # yalnızca ilgili sütunlar
+ornek["tarih"] = ["2024-01", "2024-02"]          # gerekirse değerleri de temsili yap
+print(ornek)                                      # YZ'ye bunu ver</code></pre>
 <p><b>3. Düzeltmeyi denetle.</b> Kötü düzeltmeler genellikle üç türlüdür:</p>
 <ul>
 <li><b>Susturmak:</b> <code>try: … except: pass</code> ile hatayı yutmak.</li>
@@ -166,7 +171,12 @@
 <div class="box econ">İyi bir düzeltme <b>kök nedeni</b> giderir ve kontrolleri yerinde bırakır. Düzeltmeden sonra şunu sor: “Hata gitti, ama sonuç doğru mu?”</div>`,
       en: `<p>When code fails, the easiest move is to paste the error into the AI and say “fix it”. That often works. But the AI's goal is for <b>the error to disappear</b>; your goal is for <b>the result to be right</b>. These are not always the same thing.</p>
 <p><b>1. Read the error from the bottom.</b> The last line tells you the type and cause (<code>KeyError: 'growth'</code>). The line number just above shows where it happened.</p>
-<p><b>2. Give the AI context.</b> A good debugging prompt includes the full error message, the relevant code, the first rows of the data (<code>df.head()</code>), what you expected, and “do not silence the error; explain its cause”.</p>
+<p><b>2. Give the AI context.</b> A good debugging prompt includes the full error message, the relevant code, the column names and types (<code>df.dtypes</code>), one or two <b>representative</b> rows that show the problem, what you expected, and “do not silence the error; explain its cause”.</p>
+<p><b>Shrink the data before sharing.</b> Do not paste <code>df.head()</code> as it is: the first rows of a real research table may contain IDs, names, addresses or confidential amounts. Keep only the columns relevant to the problem, and drop personal fields or replace them with made-up labels:</p>
+<pre><code>print(df.dtypes)
+sample = df[["date", "amount"]].head(2).copy()   # relevant columns only
+sample["date"] = ["2024-01", "2024-02"]           # make values representative if needed
+print(sample)                                     # give the AI this</code></pre>
 <p><b>3. Audit the fix.</b> Bad fixes usually come in three kinds:</p>
 <ul>
 <li><b>Silencing:</b> swallowing the error with <code>try: … except: pass</code>.</li>
@@ -200,7 +210,7 @@
         hints: [{ tr: "Önce binlik noktayı sil, sonra ondalık virgülü noktaya çevir: <code>.str.replace(\".\", \"\", regex=False).str.replace(\",\", \".\", regex=False).astype(float)</code>", en: "First remove the thousands dot, then turn the decimal comma into a dot: <code>.str.replace(\".\", \"\", regex=False).str.replace(\",\", \".\", regex=False).astype(float)</code>" }],
         solution: { tr: 'import pandas as pd\nihracat = pd.DataFrame({"ay": ["Oca", "Şub", "Mar", "Nis"], "deger": ["21.345,6", "19.880,2", "22.104,9", "20.512,3"]})\nihracat["deger"] = ihracat["deger"].str.replace(".", "", regex=False).str.replace(",", ".", regex=False).astype(float)\ntoplam = ihracat["deger"].sum()\nprint("Toplam ihracat (milyon $):", toplam)', en: 'import pandas as pd\nexports = pd.DataFrame({"month": ["Jan", "Feb", "Mar", "Apr"], "value": ["21.345,6", "19.880,2", "22.104,9", "20.512,3"]})\nexports["value"] = exports["value"].str.replace(".", "", regex=False).str.replace(",", ".", regex=False).astype(float)\ntotal = exports["value"].sum()\nprint("Total exports (million $):", total)' },
         checks: [{ py: { tr: "abs(toplam - 83843.0) < 1e-6", en: "abs(total - 83843.0) < 1e-6" }, msg: { tr: "Toplam ≈ 83.843 milyon $ olmalı.", en: "The total should be ≈ 83,843 million $." } }],
-        after: { tr: "Türkiye verisiyle çalışırken sayı biçimi en sık karşılaşacağın sorunlardan biri. CSV okurken <code>pd.read_csv(..., thousands=\".\", decimal=\",\")</code> da aynı işi görür.", en: "Number formats are one of the most common issues with Turkish data. <code>pd.read_csv(..., thousands=\".\", decimal=\",\")</code> does the same job when reading a CSV." }
+        after: { tr: "Türkiye verisiyle çalışırken sayı biçimi en sık karşılaşacağın sorunlardan biri. CSV okurken <code>pd.read_csv(..., sep=\";\", thousands=\".\", decimal=\",\")</code> da aynı işi görür; ondalık virgül kullanan dosyalarda sütunlar genellikle noktalı virgülle ayrılır.", en: "Number formats are one of the most common issues with Turkish data. <code>pd.read_csv(..., sep=\";\", thousands=\".\", decimal=\",\")</code> does the same job when reading a CSV; files that use a decimal comma usually separate columns with a semicolon." }
       },
       {
         id: "m0-u7-c3", kind: "compare",
@@ -292,8 +302,8 @@
         task: { tr: "Simüle kur yollarından elde edilen bir sonucu YZ yorumladı. Abartılı ya da desteklenmeyen cümleleri işaretle.", en: "The AI interpreted a result from simulated exchange-rate paths. Mark the overstated or unsupported sentences." },
         prompt: { tr: "1000 simülasyonda 250. gündeki kurun %5 ve %95 yüzdelikleri 27,4 ve 34,9 çıktı. Yorumlar mısın?", en: "In 1000 simulations, the 5th and 95th percentiles of the rate on day 250 are 27.4 and 34.9. Can you interpret this?" },
         sentences: {
-          tr: ["Simülasyonların %90'ında 250. gündeki kur 27,4 ile 34,9 arasında kalmıştır.", "Dolayısıyla kurun yıl sonunda bu aralıkta olacağı kesindir.", "Bu aralık, modelin varsaydığı ortalama getiri ve oynaklığa bağlıdır.", "Bu nedenle yatırımcıların hemen döviz alması gerekir.", "Gerçek getiriler kalın kuyruklu olabileceği için uç olaylar modelin önerdiğinden sık yaşanabilir."],
-          en: ["In 90% of the simulations the rate on day 250 stayed between 27.4 and 34.9.", "It is therefore certain that the rate will be in this range at year end.", "This range depends on the mean return and volatility assumed by the model.", "Investors should therefore buy foreign currency immediately.", "Because real returns can have fat tails, extreme events may occur more often than the model suggests."]
+          tr: ["Simülasyonların yaklaşık %90'ında 250. gündeki kur 27,4 ile 34,9 arasında kalmıştır.", "Dolayısıyla kurun yıl sonunda bu aralıkta olacağı kesindir.", "Bu aralık, modelin varsaydığı ortalama getiri ve oynaklığa bağlıdır.", "Bu nedenle yatırımcıların hemen döviz alması gerekir.", "Gerçek getiriler kalın kuyruklu olabileceği için uç olaylar modelin önerdiğinden sık yaşanabilir."],
+          en: ["In about 90% of the simulations the rate on day 250 stayed between 27.4 and 34.9.", "It is therefore certain that the rate will be in this range at year end.", "This range depends on the mean return and volatility assumed by the model.", "Investors should therefore buy foreign currency immediately.", "Because real returns can have fat tails, extreme events may occur more often than the model suggests."]
         },
         bad: [1, 3],
         explain: {
@@ -332,7 +342,7 @@
     ],
     quiz: [
       { q: { tr: "“Faiz artışı enflasyonu düşürür” cümlesi bir korelasyon sonucunu yorumluyorsa sorun nedir?", en: "If “raising rates lowers inflation” interprets a correlation result, what is the problem?" }, options: { tr: ["Dilbilgisi hatası", "Korelasyondan nedensellik çıkarılıyor", "Sorun yok"], en: ["A grammar mistake", "Causality is inferred from correlation", "No problem"] }, answer: 1, explain: { tr: "Gözlemsel veriden nedensellik çıkarılamaz; bunun için uygun bir araştırma tasarımı gerekir. Bu laboratuvarda ilişkileri “birlikte hareket” olarak yorumluyoruz.", en: "Causality cannot be inferred from observational data alone; it requires a suitable research design. In this lab we interpret relationships as “moving together”." } },
-      { q: { tr: "“İhracat %4,73829 arttı” ifadesinin sorunu nedir?", en: "What is wrong with “exports rose by 4.73829%”?" }, options: { tr: ["Sahte kesinlik: verinin doğruluğundan fazla basamak", "Yanlış birim", "Sorun yok"], en: ["Spurious precision: more digits than the data's accuracy", "Wrong unit", "No problem"] }, answer: 0, explain: { tr: "Bir ya da iki ondalık genellikle yeterlidir.", en: "One or two decimals are usually enough." } },
+      { q: { tr: "Kaynak, ihracat değerlerini milyar dolar cinsinden <b>bir ondalıkla</b> raporluyor. YZ “İhracat %4,73829 arttı” diyor. Bu ifadenin sorunu nedir?", en: "The source reports export values in billion dollars with <b>one decimal</b>. The AI says “exports rose by 4.73829%”. What is wrong with this?" }, options: { tr: ["Sahte kesinlik: girdilerin doğruluğundan fazla basamak", "Yanlış birim", "Sorun yok"], en: ["Spurious precision: more digits than the inputs' accuracy", "Wrong unit", "No problem"] }, answer: 0, explain: { tr: "Girdiler bir ondalıkla yuvarlandığı için (±0,05 milyar $) oranın beşinci ondalığı anlamsızdır; bir ondalık (%4,7) yeterli. Kaç basamağın anlamlı olduğu, kaynak verinin hassasiyetine bağlıdır.", en: "Because the inputs are rounded to one decimal (±0.05 billion $), the fifth decimal of the rate is meaningless; one decimal (4.7%) is enough. How many digits are meaningful depends on the precision of the source data." } },
       { q: { tr: "İyi bir sonuç paragrafında hangisi mutlaka bulunmalıdır?", en: "What must a good result paragraph include?" }, options: { tr: ["Politika önerisi", "Sınırlar: sonucun neyi göstermediği", "Kodun tamamı"], en: ["A policy recommendation", "Limits: what the result does not show", "The full code"] }, answer: 1, explain: { tr: "Bulgu, büyüklük, bağlam ve sınırlar.", en: "Finding, magnitude, context and limits." } }
     ]
   });
@@ -353,7 +363,7 @@
 <li>Görevdeki <b>Colab'da aç</b> düğmesine bas. Notebook GitHub'dan açılır. Kendi kopyanı almak için <i>Dosya → Drive'a kopya kaydet</i>.</li>
 <li>İlk hücre (<b>Kurulum</b>) veriyi indirir ve kontrol fonksiyonlarını tanımlar. Çalıştır, değiştirme.</li>
 <li><b>Görev</b> hücrelerinde Gemini'yi kullan: hücredeki Gemini düğmesi ya da sağdaki Gemini paneli (Colab'ın arayüzü zamanla değişebilir; adı “Generate”, “Gemini” ya da bir yıldız simgesi olabilir). 4. ünitedeki şablonla istek yaz.</li>
-<li>Gemini'nin kodunu <b>çalıştırmadan önce oku</b>. 6. ünitedeki katalogla denetle.</li>
+<li>Gemini bir kod önerdiğinde hücreye eklemek için önce <b>Kabul et</b> (Accept) de; kod hücreye geçer ama henüz çalışmaz. Ardından kodu <b>çalıştırmadan önce oku</b>, 6. ünitedeki katalogla denetle, gerekirse düzelt, sonra çalıştır. Gemini istenen kontrolü kurmak yerine yalnızca sayıları yazdırabilir; istediğin her kontrolün kodda gerçekten olup olmadığına bak.</li>
 <li><b>Kontrol</b> hücresini çalıştır. Tüm kontroller geçerse bir <b>tamamlama kodu</b> verir; onu buraya yapıştır.</li>
 </ol>
 <p><b>Veri:</b> ABD tüketici fiyat endeksi (CPIAUCNS, mevsimsellikten arındırılmamış, aylık), St. Louis Fed'in açık FRED veri tabanından. API anahtarı gerektirmediği için seçildi. Türkiye verisi (TCMB EVDS) için ücretsiz bir API anahtarı almak gerekir; bu atölyede kurulum adımı olmasın diye FRED tercih edildi.</p>
@@ -364,7 +374,7 @@
 <li>Press <b>Open in Colab</b> in the task. The notebook opens from GitHub. To keep your own copy: <i>File → Save a copy in Drive</i>.</li>
 <li>The first cell (<b>Setup</b>) downloads the data and defines the check functions. Run it; do not change it.</li>
 <li>Use Gemini in the <b>Task</b> cells: the Gemini button in a cell or the Gemini side panel (Colab's interface changes over time; it may be called “Generate”, “Gemini” or show a sparkle icon). Write your prompt with the template from unit 4.</li>
-<li><b>Read</b> Gemini's code <b>before running it</b>. Audit it with the catalogue from unit 6.</li>
+<li>When Gemini suggests code, first press <b>Accept</b> to put it in the cell; the code is inserted but not run. Then <b>read</b> it <b>before running it</b>, audit it with the catalogue from unit 6, fix it if needed, and only then run it. Gemini may just print numbers instead of building the check you asked for; make sure every check you requested is actually in the code.</li>
 <li>Run the <b>Check</b> cell. If all checks pass, it gives you a <b>completion code</b>; paste it here.</li>
 </ol>
 <p><b>Data:</b> the US consumer price index (CPIAUCNS, not seasonally adjusted, monthly) from the St. Louis Fed's open FRED database. It was chosen because it needs no API key. Turkish data (CBRT EVDS) require a free API key; FRED was chosen so that this workshop needs no set-up step.</p>
@@ -379,7 +389,7 @@
         checklist: [
           { label: { tr: "Tablo ve sütunlar", en: "Table and columns" }, re: { tr: "tufe|tarih|endeks", en: "cpi|date|index" } },
           { label: { tr: "Birim ve frekans", en: "Units and frequency" }, re: { tr: "yüzde|%|12 ay|yıllık", en: "percent|%|12 month|annual" } },
-          { label: { tr: "Sıralama", en: "Sorting" }, why: { tr: "Tarihe göre sırala.", en: "Sort by date." }, re: { tr: "sırala|sort", en: "sort" } },
+          { label: { tr: "Sıralama", en: "Sorting" }, why: { tr: "Tarihe göre sırala (“artan sıraya koy”, “kronolojik sırala” da olur).", en: "Sort by date (“ascending order”, “chronological order” also count)." }, re: { tr: "sırala|sıraya|sıralı|sıralan|kronolojik|artan|sort", en: "sort|order|chronolog|ascending" } },
           { label: { tr: "Çıktı", en: "Output" }, re: { tr: "yillik|sütun", en: "annual|column" } },
           { label: { tr: "Kontrol", en: "Check" }, re: { tr: "kontrol|eksik|satır sayısı|uydurma|açıkla", en: "check|missing|row count|invent|explain" } }
         ],
@@ -391,8 +401,8 @@
         task: { tr: "<b>Görev A — Yıllık enflasyon.</b> Notebook'u aç, Gemini ile <code>yillik</code> sütununu oluştur, kontrol hücresini çalıştır ve verdiği kodu buraya yapıştır.", en: "<b>Task A — Annual inflation.</b> Open the notebook, build the <code>annual</code> column with Gemini, run the check cell and paste the code it gives you here." },
         notebook: { tr: "modul0/09_colab_atolyesi_tr.ipynb", en: "module0/09_colab_workshop_en.ipynb" },
         steps: {
-          tr: ["Notebook'u aç ve <b>Kurulum</b> hücresini çalıştır (veri indirilir).", "<b>Görev A</b> hücresinde Gemini'ye hazırladığın isteği ver.", "Gemini'nin kodunu oku: sıralama, birim (yüzde), <code>periods=12</code>.", "Kodu çalıştır, sonra <b>Kontrol A</b> hücresini çalıştır.", "Kontrol geçerse ekrana çıkan <code>ML0-…</code> kodunu yapıştır."],
-          en: ["Open the notebook and run the <b>Setup</b> cell (data are downloaded).", "In the <b>Task A</b> cell, give Gemini the prompt you prepared.", "Read Gemini's code: sorting, unit (percent), <code>periods=12</code>.", "Run the code, then run the <b>Check A</b> cell.", "If the check passes, paste the <code>ML0-…</code> code it prints."]
+          tr: ["Notebook'u aç ve <b>Kurulum</b> hücresini çalıştır (veri indirilir).", "<b>Görev A</b> hücresinde Gemini'ye hazırladığın isteği ver.", "Önerilen kodu <b>Kabul et</b> ile hücreye al; henüz çalıştırma.", "Kodu oku: sıralama, birim (yüzde), <code>periods=12</code>; istediğin kontroller kodda var mı?", "Kodu çalıştır, sonra <b>Kontrol A</b> hücresini çalıştır.", "Kontrol geçerse ekrana çıkan <code>ML0-…</code> kodunu yapıştır."],
+          en: ["Open the notebook and run the <b>Setup</b> cell (data are downloaded).", "In the <b>Task A</b> cell, give Gemini the prompt you prepared.", "Press <b>Accept</b> to put the suggested code in the cell; do not run it yet.", "Read the code: sorting, unit (percent), <code>periods=12</code>; are the checks you asked for actually there?", "Run the code, then run the <b>Check A</b> cell.", "If the check passes, paste the <code>ML0-…</code> code it prints."]
         },
         codeHashes: ["30243d14"],
         after: { tr: "Kontrol hücresi geçmeden önce Gemini'nin kodunu kaç kez düzeltmen gerekti? Bunu bir sonraki görevdeki denetim defterine yaz.", en: "How many times did you need to fix Gemini's code before the check passed? Note it in the audit log in the next task." }
@@ -402,8 +412,8 @@
         task: { tr: "<b>Görev B — Zirve ay.</b> 2000'den bu yana yıllık enflasyonun en yüksek olduğu ayı ve değerini bul. Aynı notebook'ta devam et.", en: "<b>Task B — The peak month.</b> Find the month since 2000 with the highest annual inflation, and its value. Continue in the same notebook." },
         notebook: { tr: "modul0/09_colab_atolyesi_tr.ipynb", en: "module0/09_colab_workshop_en.ipynb" },
         steps: {
-          tr: ["<b>Görev B</b> hücresinde Gemini'den <code>zirve_ay</code> (tarih) ve <code>zirve_deger</code> (yüzde) değişkenlerini üretmesini iste.", "Kodu denetle: 2000 öncesi dışarıda mı, eksik değerler nasıl ele alınmış?", "<b>Kontrol B</b> hücresini çalıştır ve kodu buraya yapıştır."],
-          en: ["In the <b>Task B</b> cell, ask Gemini to produce <code>peak_month</code> (a date) and <code>peak_value</code> (percent).", "Audit the code: is everything before 2000 excluded, and how are missing values handled?", "Run the <b>Check B</b> cell and paste the code here."]
+          tr: ["<b>Görev B</b> hücresinde Gemini'den <code>zirve_ay</code> (tarih) ve <code>zirve_deger</code> (yüzde) değişkenlerini üretmesini iste.", "Kodu <b>Kabul et</b> ile al, çalıştırmadan denetle: 2000 öncesi dışarıda mı, eksik değerler nasıl ele alınmış, zirve değeri sonlu bir sayı mı?", "<b>Kontrol B</b> hücresini çalıştır ve kodu buraya yapıştır."],
+          en: ["In the <b>Task B</b> cell, ask Gemini to produce <code>peak_month</code> (a date) and <code>peak_value</code> (percent).", "<b>Accept</b> the code and audit it before running: is everything before 2000 excluded, how are missing values handled, is the peak value a finite number?", "Run the <b>Check B</b> cell and paste the code here."]
         },
         codeHashes: ["e6839ff5"]
       },
@@ -454,6 +464,18 @@
 <li>Dört parçalı bir sonuç paragrafı (bulgu, büyüklük, bağlam, sınırlar).</li>
 <li>Notebook'taki <code>denetim</code> sözlüğü ve bu sayfadaki denetim defteri.</li>
 </ol>
+<p><b>Veri hazırlığında sıra önemli.</b> 12 aylık enflasyon için 12 ay önceki endeks gerekir. 1999 verisini de indir; yıllık değişimi (C için büyüme ve işsizlikteki değişimi) <b>önce</b> hesapla, <b>sonra</b> 2000–2024'e kes. Önce kesersen 2000'in ilk 12 ayı boş kalır.</p>
+<p><b>Son kontrolün eşikleri</b> (teslimden önce bil):</p>
+<ul>
+<li><code>veri</code>: A ve B için <b>300 aylık</b> gözlem (2000-01 … 2024-12), C için <b>100 çeyreklik</b> gözlem; tarihe göre artan sırada, boşluksuz ve tekrarsız; sayısal sütunlarda eksik değer yok; en az iki sayısal sütun.</li>
+<li><code>yorum</code>: en az <b>300 karakter</b>; sonucun sınırlarına (nedensellik, genelleme…) değinmeli.</li>
+<li><code>denetim</code>: beş alanın <b>her biri en az 30 karakter</b>.</li>
+</ul>
+<p>Son kontrol <b>biçimi ve kapsamı</b> sınar; grafiğin ve hesabın doğruluğunu, yorumun niteliğini sınamaz. Notebook'un son adımındaki öz değerlendirme formu bunlar içindir.</p>
+<p><b>Takvim kontrolü için ipucu:</b> bir <code>Series</code> ile bir <code>PeriodIndex</code>'i doğrudan <code>==</code> ile karşılaştırma; uzunluklar farklıysa <code>ValueError</code> verir. İkisini aynı türe getir:</p>
+<pre><code>donem = pd.PeriodIndex(pd.to_datetime(veri["tarih"]).dt.to_period("M"))
+beklenen = pd.period_range("2000-01", "2024-12", freq="M")
+print(donem.equals(beklenen))   # True olmalı</code></pre>
 <p><b>Değerlendirme ölçütleri</b> (öğretim elemanı için de önerilir): istek kalitesi, doğrulama adımları, bulunan ve düzeltilen hatalar, yorumun dürüstlüğü. YZ'nin hiç hata yapmaması bir başarı ölçütü değildir; senin onu nasıl denetlediğin ölçüttür.</p>
 <div class="box">Bulduğun ilişkileri “birlikte hareket” olarak yorumla. Gözlemsel veriden neden-sonuç ilişkisi çıkarmak ayrı bir araştırma tasarımı gerektirir; bu projede böyle bir iddiada bulunma.</div>`,
       en: `<p>You combine every skill from the module in one project: specify the question, have Gemini generate, audit every step, interpret the result with its limits and document what you did.</p>
@@ -469,6 +491,18 @@
 <li>A four-part result paragraph (finding, magnitude, context, limits).</li>
 <li>The <code>audit</code> dictionary in the notebook and the audit log on this page.</li>
 </ol>
+<p><b>Order matters in data preparation.</b> A 12-month inflation rate needs the index from 12 months earlier. Download 1999 as well; compute the annual change (for C, growth and the change in unemployment) <b>first</b>, and <b>then</b> cut to 2000–2024. If you cut first, the first 12 months of 2000 stay empty.</p>
+<p><b>Final-check thresholds</b> (know them before you submit):</p>
+<ul>
+<li><code>data</code>: <b>300 monthly</b> observations for A and B (2000-01 … 2024-12), <b>100 quarterly</b> observations for C; sorted by date, with no gaps or repeats; no missing values in numeric columns; at least two numeric columns.</li>
+<li><code>interpretation</code>: at least <b>300 characters</b>; must address the result's limits (causality, generalisation…).</li>
+<li><code>audit</code>: <b>each of the five fields at least 30 characters</b>.</li>
+</ul>
+<p>The final check tests <b>form and coverage</b>; it does not test whether the chart and calculations are right or how good the interpretation is. The self-assessment form in the notebook's last step is for that.</p>
+<p><b>Tip for the calendar check:</b> do not compare a <code>Series</code> with a <code>PeriodIndex</code> directly using <code>==</code>; if the lengths differ it raises a <code>ValueError</code>. Bring both to the same type:</p>
+<pre><code>periods = pd.PeriodIndex(pd.to_datetime(data["date"]).dt.to_period("M"))
+expected = pd.period_range("2000-01", "2024-12", freq="M")
+print(periods.equals(expected))   # should be True</code></pre>
 <p><b>Assessment criteria</b> (also suggested for instructors): prompt quality, verification steps, mistakes found and fixed, honesty of the interpretation. The AI making no mistakes is not a criterion of success; how you audited it is.</p>
 <div class="box">Interpret the relationships you find as “moving together”. Drawing cause and effect from observational data requires a separate research design; make no such claim in this project.</div>`
     },
@@ -479,8 +513,8 @@
         task: { tr: "Bitirme notebook'unu aç, sorunu seç ve analizi Gemini ile yap. Son hücre; verinin hazırlanışını, yorum paragrafını ve <code>denetim</code> sözlüğünü kontrol eder ve tamamlama kodunu verir.", en: "Open the capstone notebook, choose your question and do the analysis with Gemini. The final cell checks the data preparation, the interpretation paragraph and the <code>audit</code> dictionary, and gives your completion code." },
         notebook: { tr: "modul0/10_bitirme_projesi_tr.ipynb", en: "module0/10_capstone_project_en.ipynb" },
         steps: {
-          tr: ["Kurulum hücresini çalıştır; sorunu <code>SORU = \"A\"</code>, <code>\"B\"</code> ya da <code>\"C\"</code> olarak seç.", "Veri, analiz ve grafik adımlarını Gemini ile yap; her adımdan sonra 5 doğrulama sorusunu sor.", "<code>yorum</code> değişkenine dört parçalı sonuç paragrafını yaz (Gemini'ye yazdırdıysan denetle).", "<code>denetim</code> sözlüğünün beş alanını doldur.", "Son kontrol hücresini çalıştır ve kodu buraya yapıştır."],
-          en: ["Run the setup cell; choose your question with <code>QUESTION = \"A\"</code>, <code>\"B\"</code> or <code>\"C\"</code>.", "Do the data, analysis and chart steps with Gemini; after each step ask the 5 verification questions.", "Write the four-part result paragraph in the <code>interpretation</code> variable (audit it if Gemini wrote it).", "Fill in the five fields of the <code>audit</code> dictionary.", "Run the final check cell and paste the code here."]
+          tr: ["Kurulum hücresini çalıştır; sorunu <code>SORU = \"A\"</code>, <code>\"B\"</code> ya da <code>\"C\"</code> olarak seç.", "Veri, analiz ve grafik adımlarını Gemini ile yap: önerilen kodu <b>Kabul et</b> ile al, çalıştırmadan oku, gerekirse düzelt. Yıllık değişimi 2000'e kesmeden önce hesapla; her adımdan sonra 5 doğrulama sorusunu sor.", "<code>yorum</code> değişkenine dört parçalı sonuç paragrafını yaz (Gemini'ye yazdırdıysan denetle).", "<code>denetim</code> sözlüğünün beş alanını doldur.", "Öz değerlendirme formunu doldur, son kontrol hücresini çalıştır ve kodu buraya yapıştır."],
+          en: ["Run the setup cell; choose your question with <code>QUESTION = \"A\"</code>, <code>\"B\"</code> or <code>\"C\"</code>.", "Do the data, analysis and chart steps with Gemini: <b>Accept</b> the suggested code, read it before running, fix it if needed. Compute the annual change before cutting to 2000; after each step ask the 5 verification questions.", "Write the four-part result paragraph in the <code>interpretation</code> variable (audit it if Gemini wrote it).", "Fill in the five fields of the <code>audit</code> dictionary.", "Fill in the self-assessment form, run the final check cell and paste the code here."]
         },
         codeHashes: ["79e44cb7"]
       },

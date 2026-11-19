@@ -301,7 +301,7 @@
       const pct = Math.round(100 * (cfg.risks.length - left.length) / cfg.risks.length);
       meter.firstChild.style.width = pct + "%";
       meter.classList.toggle("ok", pct === 100);
-      meterLab.textContent = t({ tr: "Kapatılan risk: ", en: "Risks closed: " }) + (cfg.risks.length - left.length) + " / " + cfg.risks.length;
+      meterLab.textContent = t({ tr: "İstekte ele alınan risk: ", en: "Risks addressed in the prompt: " }) + (cfg.risks.length - left.length) + " / " + cfg.risks.length;
     }
     host.append(h("div", { class: "pg-grid" },
       h("div", { class: "pg-panel" }, h("h4", null, t({ tr: "İsteğin parçaları", en: "Parts of the prompt" })), ctr),

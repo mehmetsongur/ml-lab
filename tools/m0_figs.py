@@ -305,7 +305,9 @@ def u8_scatter(lang):
     f.mtext(552, 120, L(f"korelasyon\n2000–2019: {num(r1, 2, lang)}\n2000–2024: {num(r2, 2, lang)}", f"correlation\n2000–2019: {num(r1, 2, lang)}\n2000–2024: {num(r2, 2, lang)}")[lang], "val", "middle", 17)
     f.mtext(552, 200, L("Dönem değişince\nilişki de değişiyor", "Change the period and\nthe relationship changes")[lang], "ann", "middle")
     f.text(320, 290, L("Veri: FRED CPIAUCSL ve UNRATE, 2000–2024", "Data: FRED CPIAUCSL and UNRATE, 2000–2024")[lang], "tk")
-    NUMS["phillips"] = {"r_2000_2019": r1, "r_2000_2024": r2, "n": int(len(m)),
+    g3 = m[~m["y"].between(2020, 2022)]
+    r3 = float(np.corrcoef(g3["v"], g3["inf"])[0, 1])
+    NUMS["phillips"] = {"r_2000_2019": r1, "r_2000_2024": r2, "r_excl_2020_2022": r3, "n": int(len(m)),
                        "y2020": [float(g2.iloc[0]["v"]), float(g2.iloc[0]["inf"])], "y2022": [float(g2[g2["y"] == 2022]["v"].iloc[0]), float(g2[g2["y"] == 2022]["inf"].iloc[0])]}
     return f.svg("scatter")
 

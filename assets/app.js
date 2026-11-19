@@ -113,6 +113,8 @@
     completed: { tr: "Tamamlandı", en: "Completed" },
     prev: { tr: "Önceki ders", en: "Previous lesson" },
     next: { tr: "Sonraki ders", en: "Next lesson" },
+    nextModule: { tr: "Sonraki modül", en: "Next module" },
+    optionalNext: { tr: "İsteğe bağlı", en: "Optional" },
     backModule: { tr: "Modül sayfasına dön", en: "Back to module" },
     lessonDone: { tr: "Bu dersi tamamladın.", en: "You completed this lesson." },
     lessonTodo: {
@@ -161,19 +163,23 @@
     pickReason: { tr: "Neden?", en: "Why?" },
     answerA: { tr: "Yanıt A", en: "Answer A" },
     answerB: { tr: "Yanıt B", en: "Answer B" },
+    promptA: { tr: "İstek A", en: "Prompt A" },
+    promptB: { tr: "İstek B", en: "Prompt B" },
+    pickPrompt: { tr: "Hangi istek daha güvenilir kod üretir?", en: "Which prompt will produce more reliable code?" },
+    comparePromptWrong: { tr: "Tekrar bak: iki isteği veri, birim, yöntem, çıktı ve kontrol açısından karşılaştır.", en: "Look again: compare the two prompts on data, units, method, output and checks." },
     compareWrong: { tr: "Tekrar bak: iki kodu satır satır karşılaştır.", en: "Look again: compare the two pieces of code line by line." },
     reasonWrong: { tr: "Doğru yanıtı seçtin ama gerekçe bu değil.", en: "Right answer, but that is not the reason." },
     weakPrompt: { tr: "Zayıf istek", en: "Weak prompt" },
     weakResult: { tr: "Bu isteğin ürettiği kod", en: "Code produced by this prompt" },
     yourPrompt: { tr: "Senin isteğin", en: "Your prompt" },
     promptPh: { tr: "YZ'ye vereceğin isteği buraya yaz…", en: "Write the prompt you would give the AI here…" },
-    checklist: { tr: "İyi bir istekte olması gerekenler", en: "What a good prompt includes" },
-    detected: { tr: "metinde bulundu", en: "found in your text" },
+    checklist: { tr: "İstekte açıkça ele alınan noktalar", en: "Points your prompt addresses explicitly" },
+    detected: { tr: "anahtar kelime var", en: "keyword found" },
     selfTick: { tr: "eklediğimi düşünüyorum", en: "I think I included it" },
     promptMin: { tr: "İsteğin biraz kısa. Ayrıntı ekle.", en: "Your prompt is a bit short. Add detail." },
     promptMissing: { tr: "Kontrol listesinde eksik madde var.", en: "Some checklist items are still missing." },
-    promptDone: { tr: "İsteğin kontrol listesini karşılıyor. Örnek güçlü istekle karşılaştır.", en: "Your prompt meets the checklist. Compare it with the sample strong prompt." },
-    promptSelf: { tr: "Otomatik algılama yalnızca ipucudur; asıl değerlendirme senin. Gerekirse kutuyu kendin işaretle.", en: "Automatic detection is only a hint; the judgment is yours. Tick a box yourself if needed." },
+    promptDone: { tr: "İsteğin her maddeye değiniyor görünüyor. Bu yalnızca anahtar kelime eşleşmesi; talimatların anlamını örnek güçlü istekle karşılaştırarak sen değerlendir.", en: "Your prompt seems to touch every point. This is only keyword matching; judge what your instructions mean by comparing with the sample strong prompt." },
+    promptSelf: { tr: "Otomatik algılama yalnızca anahtar kelimeye bakar, talimatın anlamını doğrulamaz: “bileşik hesapla” da “bileşik hesaplama” da aynı kutuyu işaretler. Asıl değerlendirme senin; gerekirse kutuyu kendin işaretle ya da kaldır.", en: "Automatic detection only looks for keywords and does not verify what the instruction means: “do compound” and “do not compound” tick the same box. The judgment is yours; tick or untick a box yourself if needed." },
     strongPrompt: { tr: "Örnek güçlü istek", en: "Sample strong prompt" },
     strongResult: { tr: "Güçlü isteğin ürettiği kod", en: "Code produced by the strong prompt" },
     copyPrompt: { tr: "İsteği kopyala", en: "Copy prompt" },
@@ -360,8 +366,8 @@
       en: "Tabs and spaces are mixed. Indent with spaces only."
     },
     TypeError: {
-      tr: "Tür hatası: uyumsuz türleri birlikte kullandın (örneğin metinle sayıyı toplamak) ya da bir fonksiyona yanlış sayıda girdi verdin.",
-      en: "Type error: you combined types that do not fit (e.g. adding text and a number) or gave a function the wrong number of inputs."
+      tr: "Tür hatası: uyumsuz türleri birlikte kullandın (örneğin metinle sayıyı toplamak), bir fonksiyona yanlış sayıda girdi verdin ya da fonksiyonun tanımadığı bir parametre adı yazdın (<i>unexpected keyword argument</i>).",
+      en: "Type error: you combined types that do not fit (e.g. adding text and a number), gave a function the wrong number of inputs, or used a parameter name it does not know (<i>unexpected keyword argument</i>)."
     },
     ZeroDivisionError: { tr: "Sıfıra bölme yapılamaz. Paydayı kontrol et.", en: "You cannot divide by zero. Check the denominator." },
     IndexError: {
@@ -1171,6 +1177,26 @@ self.onmessage = async (e) => {
   /* ------------------------------------------------------------------ */
   /* Öğrenme yolu (modül)                                                */
   /* ------------------------------------------------------------------ */
+  /* Modül bitince ana geçiş sonraki modül, ek dersler isteğe bağlı
+     When the module is complete the main step is the next module; appendix lessons are optional */
+  function nextModuleOf(m) {
+    const ci = LAB.catalog.findIndex((c) => c.id === m.id);
+    return ci >= 0 ? LAB.catalog[ci + 1] || null : null;
+  }
+  function extraLessons(m) {
+    const req = requiredLessons(m);
+    return m.lessons.filter((l) => !req.includes(l));
+  }
+  function moduleCta(m, p, nl) {
+    const nm = nextModuleOf(m), ex = extraLessons(m);
+    if (p.pct === 100 && nm) {
+      const out = [h("a", { class: "btn primary", href: "#" + nm.id }, t(UI.nextModule) + ": " + t(UI.module) + " " + nm.num + " · " + t(nm.title) + " →")];
+      if (ex.length) out.push(h("a", { class: "btn ghost", href: "#" + ex[0].id }, t(UI.optionalNext) + ": " + t(ex[0].title)));
+      return out;
+    }
+    return [h("a", { class: "btn primary", href: "#" + nl.id }, (p.pct ? t(UI.continue) : t(UI.start)) + ": " + t(nl.title) + " →")];
+  }
+
   function viewModule(m) {
     current = { kind: "module", module: m };
     document.title = t(m.title) + " · " + t(UI.appName);
@@ -1186,7 +1212,7 @@ self.onmessage = async (e) => {
         h("h1", null, t(m.title)),
         h("p", { class: "lead" }, t(m.summary)),
         m.intro ? h("div", { class: "prose intro", html: t(m.intro) }) : null,
-        h("div", { class: "cta-row" }, h("a", { class: "btn primary", href: "#" + nl.id }, (p.pct ? t(UI.continue) : t(UI.start)) + ": " + t(nl.title) + " →"))),
+        h("div", { class: "cta-row" }, ...moduleCta(m, p, nl))),
       h("div", { class: "mod-prog big" }, h("div", { class: "mp-ring", html: ring(p.pct, 96) }, h("span", null, p.pct + "%")), h("small", null, p.d + " / " + p.n + " " + t(UI.lessonsDone)))));
     wrap.append(lessonPath(m), footer());
     return wrap;
@@ -1295,11 +1321,13 @@ self.onmessage = async (e) => {
     const exDots = h("div", { class: "ex-dots" });
     const exCount = h("span", { class: "ex-count" });
     const ctx = { L, nsName, cells: [], ranUpTo: -1, gen: Py.generation, renderDone };
+    /* Python düğmeleri yalnızca yerel kod hücresi varsa / Python buttons only when there are local code cells */
+    const hasPy = (L.cells || []).some((cell) => !SPECIAL[cell.kind]);
     const labBar = h("div", { class: "labbar" },
       h("div", { class: "lb-left" }, exCount, exDots),
-      h("div", { class: "lb-right" },
+      hasPy ? h("div", { class: "lb-right" },
         h("button", { class: "btn ghost sm", onclick: (e) => runAll(ctx, e.currentTarget) }, h("span", { html: ICON.play }), h("span", { class: "ra-label" }, t(UI.runAll))),
-        h("button", { class: "btn ghost sm", onclick: () => { Py.hardRestart(); ctx.ranUpTo = -1; ctx.gen = Py.generation; ctx.cells.forEach((c) => c.clearOut()); } }, h("span", { html: ICON.reset }), t(UI.restart))));
+        h("button", { class: "btn ghost sm", onclick: () => { Py.hardRestart(); ctx.ranUpTo = -1; ctx.gen = Py.generation; ctx.cells.forEach((c) => c.clearOut()); } }, h("span", { html: ICON.reset }), t(UI.restart))) : null);
     const cellsWrap = h("div", { class: "cells" });
     (L.cells || []).forEach((cell, i) => { const c = buildCell(ctx, cell, i); ctx.cells.push(c); cellsWrap.append(c.el); });
     p2.append(labBar, cellsWrap, stepNav(2));
@@ -1309,9 +1337,20 @@ self.onmessage = async (e) => {
     const doneBox = h("div", { class: "done-box" });
     if (L.quiz && L.quiz.length) p3.append(h("div", { class: "card" }, buildQuiz(L, () => renderDone())));
     const prevL = m.lessons[index - 1], nextL = m.lessons[index + 1];
+    const reqL = requiredLessons(m), nm = nextModuleOf(m);
+    const lastReq = reqL.length && reqL[reqL.length - 1].id === L.id;
+    let fwd;
+    if (lastReq && nm) {
+      /* Son zorunlu ünite: ana geçiş Modül N+1, ek isteğe bağlı / last required unit: main step is the next module, appendix optional */
+      fwd = h("span", { class: "foot-fwd" },
+        nextL ? h("a", { class: "btn ghost", href: "#" + nextL.id }, t(UI.optionalNext) + ": " + t(nextL.title)) : null,
+        h("a", { class: "btn primary", href: "#" + nm.id }, t(UI.nextModule) + ": " + t(UI.module) + " " + nm.num + " →"));
+    } else {
+      fwd = nextL ? h("a", { class: "btn primary", href: "#" + nextL.id }, t(UI.next) + ": " + t(nextL.title) + " →") : h("a", { class: "btn primary", href: "#" + m.id }, t(UI.learningPath) + " →");
+    }
     p3.append(doneBox, h("div", { class: "step-foot" },
       prevL ? h("a", { class: "btn ghost", href: "#" + prevL.id }, "← " + t(UI.prev)) : h("a", { class: "btn ghost", href: "#" + m.id }, "← " + t(UI.learningPath)),
-      nextL ? h("a", { class: "btn primary", href: "#" + nextL.id }, t(UI.next) + ": " + t(nextL.title) + " →") : h("a", { class: "btn primary", href: "#" + m.id }, t(UI.learningPath) + " →")));
+      fwd));
 
     panels.forEach((p) => main.append(p.el));
     main.append(footer());
@@ -1504,15 +1543,18 @@ self.onmessage = async (e) => {
       if (cell.prompt) body.append(h("div", { class: "msg user solo" }, h("span", { class: "who" }, t(UI.you)), h("div", { class: "bubble", html: t(cell.prompt) })));
       const grid = h("div", { class: "cmp-grid" });
       let pick = done() ? cell.answer : null, reason = done() ? cell.reasonAnswer : null;
+      /* Seçenekler yalnızca istekse “İstek A/B” / prompt-only options are labelled “Prompt A/B” */
+      const onlyPrompts = cell.options.every((o) => !o.code && !o.reply);
+      const labA = onlyPrompts ? t(UI.promptA) : t(UI.answerA), labB = onlyPrompts ? t(UI.promptB) : t(UI.answerB);
       const cards = cell.options.map((o, k) => {
         const wrap = h("div", { class: "cmp-col" + (pick === k ? " picked" : "") });
-        wrap.append(aiCard(o, { compact: true, title: (k === 0 ? t(UI.answerA) : t(UI.answerB)) + " · " + t(UI.aiLabel) }));
+        wrap.append(aiCard(o, { compact: true, title: (k === 0 ? labA : labB) + (onlyPrompts ? "" : " · " + t(UI.aiLabel)) }));
         grid.append(wrap);
         return wrap;
       });
       body.append(grid);
-      const pickRow = h("div", { class: "choice-row" }, h("strong", null, t(UI.pickBetter)));
-      [t(UI.answerA), t(UI.answerB)].forEach((lab, k) => pickRow.append(h("button", { class: "opt" + (pick === k ? " sel" : ""), onclick: (e) => {
+      const pickRow = h("div", { class: "choice-row" }, h("strong", null, onlyPrompts ? t(UI.pickPrompt) : t(UI.pickBetter)));
+      [labA, labB].forEach((lab, k) => pickRow.append(h("button", { class: "opt" + (pick === k ? " sel" : ""), onclick: (e) => {
         pick = k; pickRow.querySelectorAll(".opt").forEach((b, j) => b.classList.toggle("sel", j === k)); cards.forEach((c, j) => c.classList.toggle("picked", j === k)); evaluate();
       } }, lab)));
       const reasonBox = h("div", { class: "reason-box" }, h("strong", null, t(UI.pickReason)));
@@ -1522,7 +1564,7 @@ self.onmessage = async (e) => {
       body.append(pickRow, reasonBox, fb);
       function evaluate() {
         if (pick == null) return;
-        if (pick !== cell.answer) { warn(t(UI.compareWrong)); return; }
+        if (pick !== cell.answer) { warn(onlyPrompts ? t(UI.comparePromptWrong) : t(UI.compareWrong)); return; }
         if (reason == null) { fb.innerHTML = ""; return; }
         if (reason !== cell.reasonAnswer) { warn(t(UI.reasonWrong)); return; }
         good(t(UI.pass), cell.explain ? h("p", { html: t(cell.explain) }) : null);
@@ -1652,10 +1694,17 @@ self.onmessage = async (e) => {
   }
 
   function friendlyError(err) {
-    const help = ERR_HELP[err.type] || (err.type === "DataError" ? UI.dataFailed : null);
+    let help = ERR_HELP[err.type] || (err.type === "DataError" ? UI.dataFailed : null);
+    /* Tanınmayan parametre: asıl neden parametre adı / unknown keyword: the real cause is the name */
+    const kw = err.type === "TypeError" && /unexpected keyword argument '([^']+)'/.exec(err.msg || "");
+    if (kw) help = {
+      tr: "Fonksiyon <code>" + kw[1] + "</code> adlı bir parametre tanımıyor (<i>unexpected keyword argument</i>). Parametre adı ya yanlış yazıldı ya da hiç yok; YZ kodlarında uydurma parametreler sık görülür. Belgelere bak ya da <code>help(fonksiyon)</code> ile geçerli parametreleri listele.",
+      en: "The function has no parameter called <code>" + kw[1] + "</code> (<i>unexpected keyword argument</i>). The name is misspelled or does not exist; made-up parameters are common in AI code. Check the documentation or list valid parameters with <code>help(function)</code>."
+    };
     const box = h("div", { class: "fb err" },
       h("strong", null, t(UI.errorTitle) + ": " + err.type),
-      help ? h("p", null, t(help)) : null,
+      help ? h("p", { html: t(help) }) : null,
+      kw ? h("p", { class: "errline" }, h("code", null, err.type + ": " + err.msg)) : null,
       err.line ? h("p", { class: "errline" }, h("span", null, t(UI.errorLine) + " " + err.line + ":"), " ", h("code", null, err.src)) : null,
       h("details", null, h("summary", null, t(UI.rawError)), h("pre", null, err.type + ": " + err.msg))
     );

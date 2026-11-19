@@ -278,6 +278,7 @@ button { font: inherit; color: inherit; }
 .panel { display: flex; flex-direction: column; gap: 18px; animation: fadein 0.25s ease; }
 @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 .step-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding-top: 4px; }
+.foot-fwd { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 
 /* Okuma metni */
 .prose { max-width: 70ch; }
