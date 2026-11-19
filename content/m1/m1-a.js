@@ -15,26 +15,30 @@
 gelir = [18, 22, 25, 31, 35, 40, 44, 52]
 odedi = [0, 0, 0, 1, 0, 1, 1, 1]
 
-# Veriden öğrenmek: her olası eşiği dene, en az hata yapanı seç
+# Veriden öğrenmek: her olası eşiği küçükten büyüğe dene, en az hata yapanı seç
+# Eşitlik kuralı: iki eşik aynı hatayı yaparsa önce bulunan (daha düşük) eşik kalır
 en_iyi_esik, en_az_hata = None, 99
-for esik in gelir:
+for esik in sorted(gelir):
     tahmin = [1 if g >= esik else 0 for g in gelir]
     hata = sum(t != o for t, o in zip(tahmin, odedi))
+    print("eşik", esik, "→ eğitim hatası", hata)
     if hata < en_az_hata:
         en_iyi_esik, en_az_hata = esik, hata
-print("Öğrenilen eşik:", en_iyi_esik, "| hata:", en_az_hata)`;
+print("Öğrenilen eşik:", en_iyi_esik, "| eğitim hatası:", en_az_hata)`;
   const RULE_EN = `# 8 past applications: income (thousands) and whether the loan was repaid (1 = yes)
 income = [18, 22, 25, 31, 35, 40, 44, 52]
 repaid = [0, 0, 0, 1, 0, 1, 1, 1]
 
-# Learning from data: try every possible threshold, keep the one with the fewest errors
+# Learning from data: try every possible threshold from low to high, keep the one with the fewest errors
+# Tie rule: if two thresholds make the same number of errors, the one found first (the lower one) is kept
 best_threshold, fewest_errors = None, 99
-for threshold in income:
+for threshold in sorted(income):
     pred = [1 if g >= threshold else 0 for g in income]
     errors = sum(p != r for p, r in zip(pred, repaid))
+    print("threshold", threshold, "→ training errors", errors)
     if errors < fewest_errors:
         best_threshold, fewest_errors = threshold, errors
-print("Learned threshold:", best_threshold, "| errors:", fewest_errors)`;
+print("Learned threshold:", best_threshold, "| training errors:", fewest_errors)`;
 
   U.push({
     id: "m1-u1",
@@ -74,7 +78,7 @@ print("Learned threshold:", best_threshold, "| errors:", fewest_errors)`;
         { text: { tr: "Geçmiş başvurulardan öğrenilmiş bir modelle yeni başvuruları puanlamak", en: "Scoring new applications with a model learned from past applications" }, cat: "ml", why: { tr: "Karar kuralı veriden öğreniliyor ve yeni gözlemlere uygulanıyor.", en: "The decision rule is learned from data and applied to new observations." } },
         { text: { tr: "Merkez bankası metinlerini özetleyen büyük dil modeli", en: "A large language model that summarises central bank texts" }, cat: "dl", why: { tr: "Büyük dil modelleri çok katmanlı sinir ağlarıdır.", en: "Large language models are many-layered neural networks." } },
         { text: { tr: "Asgari ücretin istihdama etkisini gösteren katsayıyı kestirip yorumlamak", en: "Estimating and interpreting the coefficient that shows the effect of the minimum wage on employment" }, cat: "eco", why: { tr: "Amaç bir katsayıyı ve onun anlamını doğru kestirmek.", en: "The goal is to estimate a coefficient and its meaning correctly." } },
-        { text: { tr: "Uydu görüntülerindeki gece ışıklarından bölgesel ekonomik faaliyeti öngörmek", en: "Predicting regional economic activity from night lights in satellite images" }, cat: "dl", why: { tr: "Görüntü verisi; bu tür işlerde genellikle derin öğrenme kullanılır.", en: "Image data; deep learning is typically used for such tasks." } },
+        { text: { tr: "Ham uydu görüntülerinin piksellerini doğrudan okuyan çok katmanlı bir görüntü modeliyle (evrişimli sinir ağı) bölgesel ekonomik faaliyeti öngörmek", en: "Predicting regional economic activity with a many-layered image model (a convolutional neural network) that reads the raw pixels of satellite images" }, cat: "dl", why: { tr: "Çok katmanlı sinir ağı kullanıldığı için derin öğrenme. Dikkat: belirleyici olan verinin türü değil, yöntemdir. Görüntülerden önce bölge başına ortalama ışık gibi özet göstergeler çıkarılıp bunlarla bir regresyon ya da karar ağacı kurulsaydı, bu klasik makine öğrenmesi olurdu.", en: "Deep learning, because a many-layered neural network is used. Note: what decides is the method, not the type of data. If summary indicators such as average light per region were extracted first and fed to a regression or a decision tree, it would be classical machine learning." } },
         { text: { tr: "Geçmiş aylardan öğrenerek gelecek ayın enflasyonunu öngören model", en: "A model that learns from past months to predict next month's inflation" }, cat: "ml", why: { tr: "Amaç öngörü, kural veriden öğreniliyor.", en: "The goal is prediction, and the rule is learned from data." } }
       ],
       takeaway: { tr: "Her derin öğrenme bir makine öğrenmesidir, her makine öğrenmesi bir yapay zekâdır; tersi doğru değildir.", en: "All deep learning is machine learning and all machine learning is AI; the reverse is not true." }
@@ -83,7 +87,7 @@ print("Learned threshold:", best_threshold, "| errors:", fewest_errors)`;
       {
         id: "m1-u1-c1", kind: "run",
         task: { tr: "Bilgisayar eşiği kendisi seçiyor. Kodu oku ve çalıştırmadan önce tahmin et.", en: "The computer chooses the threshold itself. Read the code and predict before you run it." },
-        predict: { q: { tr: "Öğrenilen eşik kaç olur?", en: "What threshold is learned?" }, options: { tr: ["30", "31", "35"], en: ["30", "31", "35"] }, answer: 1, explain: { tr: "Eşik 31 olunca yalnızca bir hata kalıyor (geliri 35 olan ama ödemeyen kişi). 40 da bir hata yapıyor, ama kod eşit durumda ilk bulduğunu tutuyor. 30 listede yok: kod yalnızca verideki gelirleri deniyor.", en: "With a threshold of 31 only one error remains (the person with 35 who did not repay). 40 also makes one error, but the code keeps the first one it finds when tied. 30 is not in the list: the code only tries incomes that appear in the data." } },
+        predict: { q: { tr: "Öğrenilen eşik kaç olur?", en: "What threshold is learned?" }, options: { tr: ["30", "31", "35"], en: ["30", "31", "35"] }, answer: 1, explain: { tr: "Çıktıda her adayın hatası görünüyor: 31 ve 40 birer hata yapıyor (31'de geliri 35 olup ödemeyen kişi, 40'ta geliri 31 olup ödeyen kişi). Kodun eşitlik kuralı küçükten büyüğe giderken önce bulunanı tutmak, bu yüzden 31 seçiliyor. Başka bir eşitlik kuralı 40'ı seçebilirdi; ikisi de bu veride eşit derecede iyi. 30 listede yok: kod yalnızca verideki gelirleri deniyor.", en: "The output shows every candidate's errors: 31 and 40 each make one error (at 31 the person with 35 who did not repay, at 40 the person with 31 who did). The code's tie rule is to keep the first one found going from low to high, so 31 is chosen. Another tie rule could pick 40; both are equally good on these data. 30 is not in the list: the code only tries incomes that appear in the data." } },
         code: { tr: RULE_TR, en: RULE_EN },
         after: { tr: "Bu, bir makine öğrenmesi yönteminin en sade hâli: aday kuralları dene, veride en iyi sonucu vereni seç. Gerçek yöntemler çok daha fazla değişken ve aday kural kullanır, ama fikir aynı.", en: "This is machine learning in its plainest form: try candidate rules and keep the one that works best on the data. Real methods use many more variables and candidate rules, but the idea is the same." }
       },
@@ -97,7 +101,7 @@ print("Learned threshold:", best_threshold, "| errors:", fewest_errors)`;
           { py: { tr: "len(gelir) == 10 and len(odedi) == 10 and gelir[-2:] == [28, 47] and odedi[-2:] == [1, 0]", en: "len(income) == 10 and len(repaid) == 10 and income[-2:] == [28, 47] and repaid[-2:] == [1, 0]" }, msg: { tr: "İki listenin sonunda da yeni iki gözlem olmalı: gelir 28 ve 47, ödedi 1 ve 0.", en: "Both lists should end with the two new observations: income 28 and 47, repaid 1 and 0." } },
           { py: { tr: "en_iyi_esik == 28", en: "best_threshold == 28" }, msg: { tr: "Yeni veriyle öğrenilen eşik 28 olmalı.", en: "With the new data the learned threshold should be 28." } }
         ],
-        after: { tr: "Eşik 31'den 28'e indi. Kuralı kimse değiştirmedi; veri değişti, kural da onunla değişti. Makine öğrenmesinin gücü de riski de buradan gelir: model, verinin söylediğini öğrenir. Veri yanlı ya da hatalıysa öğrendiği kural da öyle olur.", en: "The threshold fell from 31 to 28. Nobody changed the rule; the data changed and the rule followed. This is both the strength and the risk of machine learning: a model learns what the data say. If the data are biased or wrong, so is the learned rule." }
+        after: { tr: "Eşik 31'den 28'e indi (eğitim hatası 2; artık eşitlik yok). Kuralı kimse değiştirmedi; veri değişti, kural da onunla değişti. Makine öğrenmesinin gücü de riski de buradan gelir: model, verinin söylediğini öğrenir. Veri yanlı ya da hatalıysa öğrendiği kural da öyle olur. Not: buradaki hata, kuralın seçildiği verideki <b>eğitim hatası</b>. Kuralın yeni başvurularda ne kadar iyi çalıştığı, seçimde kullanılmamış gözlemlerde ayrıca ölçülmelidir (Modül 2).", en: "The threshold fell from 31 to 28 (2 training errors; no tie any more). Nobody changed the rule; the data changed and the rule followed. This is both the strength and the risk of machine learning: a model learns what the data say. If the data are biased or wrong, so is the learned rule. Note: the errors here are <b>training errors</b> on the data used to pick the rule. How well the rule works on new applications must be measured separately, on observations not used for the choice (Module 2)." }
       },
       {
         id: "m1-u1-c3", kind: "interpret",
@@ -126,7 +130,7 @@ print("Learned threshold:", best_threshold, "| errors:", fewest_errors)`;
   /* =================================================================== */
   const SIM_TR = (seedExpr) => `import numpy as np
 n, rho = 50, 0.97
-b1_listesi, b2_listesi, ongoru_listesi = [], [], []
+b1_listesi, b2_listesi, ongoru_listesi, ongoru_ters = [], [], [], []
 for i in range(200):
     r = np.random.default_rng(${seedExpr})
     metrekare = r.normal(size=n)
@@ -136,12 +140,14 @@ for i in range(200):
     b = np.linalg.lstsq(X, fiyat, rcond=None)[0]
     b1_listesi.append(b[0])
     b2_listesi.append(b[1])
-    ongoru_listesi.append(b[0] + b[1])
+    ongoru_listesi.append(b[0] + b[1])   # alışılmış ev: x1 = 1, x2 = 1
+    ongoru_ters.append(b[0] - b[1])      # alışılmadık ev: x1 = 1, x2 = -1
 print("β1'in std. sapması:", round(np.std(b1_listesi), 3))
-print("öngörünün std. sapması:", round(np.std(ongoru_listesi), 3))`;
+print("öngörünün std. sapması (1, 1):", round(np.std(ongoru_listesi), 3))
+print("öngörünün std. sapması (1, -1):", round(np.std(ongoru_ters), 3))`;
   const SIM_EN = (seedExpr) => `import numpy as np
 n, rho = 50, 0.97
-b1_list, b2_list, pred_list = [], [], []
+b1_list, b2_list, pred_list, pred_odd = [], [], [], []
 for i in range(200):
     r = np.random.default_rng(${seedExpr})
     size = r.normal(size=n)
@@ -151,9 +157,11 @@ for i in range(200):
     b = np.linalg.lstsq(X, price, rcond=None)[0]
     b1_list.append(b[0])
     b2_list.append(b[1])
-    pred_list.append(b[0] + b[1])
+    pred_list.append(b[0] + b[1])   # a typical house: x1 = 1, x2 = 1
+    pred_odd.append(b[0] - b[1])    # an unusual house: x1 = 1, x2 = -1
 print("std. dev. of β1:", round(np.std(b1_list), 3))
-print("std. dev. of the prediction:", round(np.std(pred_list), 3))`;
+print("std. dev. of the prediction (1, 1):", round(np.std(pred_list), 3))
+print("std. dev. of the prediction (1, -1):", round(np.std(pred_odd), 3))`;
 
   U.push({
     id: "m1-u2",
@@ -169,7 +177,7 @@ print("std. dev. of the prediction:", round(np.std(pred_list), 3))`;
 <li><b>ŷ (y şapka):</b> öngörü. “Bu özelliklere sahip bir evin fiyatı ne olur?”</li>
 </ul>
 <p>İki değişken çok yakından birlikte hareket ettiğinde veri, etkiyi ikisi arasında nasıl paylaştıracağını bilemez. Bir örneklemde metrekareye büyük, odaya küçük katsayı çıkar; başka bir örneklemde tersi. Katsayılar birbirini telafi eder: biri artınca öteki düşer. Buna <b>çoklu doğrusal bağlantı</b> denir.</p>
-<p>Ama iki katsayının <b>toplam etkisi</b>, yani öngörü, istikrarlıdır. Fiyatı öngörmek istiyorsan bu sorun seni pek etkilemez; tek bir katsayıyı yorumlamak istiyorsan ciddi bir sorundur.</p>
+<p>Ama iki katsayının <b>toplam etkisi</b>, yani veride sık görülen bileşimlerdeki öngörü (büyük ev, çok oda), istikrarlıdır. Böyle evlerin fiyatını öngörmek istiyorsan bu sorun seni pek etkilemez; tek bir katsayıyı yorumlamak istiyorsan ciddi bir sorundur. Dikkat: küçük metrekare ama çok oda gibi veride nadir görülen bir bileşimde öngörü de oynaklaşır.</p>
 <div class="box econ"><b>Dersin ana ayrımı:</b> ekonometri çoğunlukla <b>β̂</b> ile, makine öğrenmesi <b>ŷ</b> ile ilgilenir. Bu yüzden makine öğrenmesi modelleri katsayılarının ne kadar “anlamlı” olduğuna göre değil, yeni gözlemlerde ne kadar iyi öngörü yaptıklarına göre değerlendirilir.</div>`,
       en: `<p>Suppose you want to explain a house's price with two variables: <b>floor area</b> and <b>number of rooms</b>. The two move together; big houses have more rooms. A regression produces two things:</p>
 <ul>
@@ -177,7 +185,7 @@ print("std. dev. of the prediction:", round(np.std(pred_list), 3))`;
 <li><b>ŷ (y hat):</b> the prediction. “What is the price of a house with these features?”</li>
 </ul>
 <p>When two variables move very closely together, the data cannot tell how to split the effect between them. In one sample floor area gets a large coefficient and rooms a small one; in another sample the reverse. The coefficients offset each other: when one rises the other falls. This is called <b>multicollinearity</b>.</p>
-<p>But the <b>combined effect</b> of the two coefficients, the prediction, is stable. If you want to predict the price, the problem barely affects you; if you want to interpret a single coefficient, it is a serious problem.</p>
+<p>But the <b>combined effect</b> of the two coefficients, i.e. the prediction for combinations common in the data (a big house with many rooms), is stable. If you want to predict the price of such houses, the problem barely affects you; if you want to interpret a single coefficient, it is a serious problem. Note: for a combination rare in the data, such as a small floor area with many rooms, the prediction becomes unstable too.</p>
 <div class="box econ"><b>The key distinction of the course:</b> econometrics is mostly concerned with <b>β̂</b>, machine learning with <b>ŷ</b>. That is why machine learning models are judged not by how “significant” their coefficients are but by how well they predict new observations.</div>`
     },
     playground: {
@@ -189,7 +197,7 @@ print("std. dev. of the prediction:", round(np.std(pred_list), 3))`;
       {
         id: "m1-u2-c1", kind: "run",
         task: { tr: "Aynı gerçek dünyadan iki örneklem çekip ikisinde de regresyon kuruyoruz (değişkenler standartlaştırılmış birimlerde, gerçek katsayılar 1 ve 1).", en: "We draw two samples from the same true world and run a regression on each (variables in standardised units, true coefficients 1 and 1)." },
-        predict: { q: { tr: "İki örneklem arasında hangisi daha çok değişir?", en: "Which changes more between the two samples?" }, options: { tr: ["Katsayılar (β1, β2)", "Öngörü", "İkisi de aynı ölçüde"], en: ["The coefficients (β1, β2)", "The prediction", "Both equally"] }, answer: 0, explain: { tr: "Katsayılar bir örneklemden ötekine belirgin biçimde oynar ve birbirini telafi eder; toplamları olan öngörü ise 2'ye yakın kalır.", en: "The coefficients move noticeably from one sample to the next and offset each other; their sum, the prediction, stays close to 2." } },
+        predict: { q: { tr: "<b>Bu iki çekilişte</b> hangisi daha çok değişir?", en: "In <b>these two draws</b>, which changes more?" }, options: { tr: ["Katsayılar (β1, β2)", "Öngörü (1, 1)", "İkisi de aynı ölçüde"], en: ["The coefficients (β1, β2)", "The prediction (1, 1)", "Both equally"] }, answer: 0, explain: { tr: "Bu iki çekilişte katsayılar yer değiştiriyor (≈ −0,2 ile 2,2'den ≈ 2,1 ile −0,1'e) ve birbirini telafi ediyor; toplamları olan öngörü 2'ye yakın kalıyor. İki çekiliş yine de yalnızca bir örnek: deneyin genelinde ne kadar değişkenlik olduğunu bir sonraki alıştırmadaki 200 tekrarın standart sapmaları gösterir.", en: "In these two draws the coefficients swap places (≈ −0.2 and 2.2, then ≈ 2.1 and −0.1) and offset each other; their sum, the prediction, stays close to 2. Two draws are still only an example: how variable things are across the whole experiment is shown by the standard deviations of 200 repetitions in the next exercise." } },
         code: {
           tr: `import numpy as np
 def orneklem_cek(tohum, n=50, rho=0.97):
@@ -232,9 +240,10 @@ for seed in [27, 28]:
         solution: { tr: SIM_TR("i"), en: SIM_EN("i") },
         checks: [
           { py: { tr: "np.std(b1_listesi) > 0.1", en: "np.std(b1_list) > 0.1" }, msg: { tr: "Katsayılar hâlâ hiç değişmiyor. Her tur farklı bir örneklem çekiyor mu?", en: "The coefficients still do not vary. Does each round draw a different sample?" } },
-          { py: { tr: "np.std(ongoru_listesi) < np.std(b1_listesi) / 2", en: "np.std(pred_list) < np.std(b1_list) / 2" }, msg: { tr: "Öngörünün değişkenliği katsayınınkinden belirgin biçimde küçük olmalı.", en: "The prediction's variability should be clearly smaller than the coefficient's." } }
+          { py: { tr: "np.std(ongoru_listesi) < np.std(b1_listesi) / 2", en: "np.std(pred_list) < np.std(b1_list) / 2" }, msg: { tr: "Öngörünün değişkenliği katsayınınkinden belirgin biçimde küçük olmalı.", en: "The prediction's variability should be clearly smaller than the coefficient's." } },
+          { py: { tr: "np.std(ongoru_ters) > 3 * np.std(ongoru_listesi)", en: "np.std(pred_odd) > 3 * np.std(pred_list)" }, msg: { tr: "Alışılmadık girdide (1, −1) öngörü çok daha oynak olmalı.", en: "At the unusual input (1, −1) the prediction should be much more variable." } }
         ],
-        after: { tr: "Düzeltilmiş simülasyonda katsayının standart sapması öngörününkinin birkaç katı. YZ'nin “hiçbir sorun yok” sonucu, kodundaki bir hatanın ürünüydü. Bir simülasyon “değişkenlik sıfır” diyorsa önce rastgele sayı üretecine bak.", en: "In the corrected simulation the coefficient's standard deviation is several times the prediction's. The AI's “no problem at all” came from a bug in its code. If a simulation says “zero variability”, check the random number generator first." }
+        after: { tr: "Düzeltilmiş simülasyonda katsayının standart sapması (≈ 0,55) öngörününkinin (≈ 0,14) birkaç katı. YZ'nin “hiçbir sorun yok” sonucu, kodundaki bir hatanın ürünüydü; bir simülasyon “değişkenlik sıfır” diyorsa önce rastgele sayı üretecine bak. Son satıra da dikkat: öngörü istikrarı <b>girdiye bağlı</b>. Veride sık görülen (1, 1) bileşiminde öngörü istikrarlı; küçük metrekare ama çok oda gibi alışılmadık (1, −1) bileşiminde öngörü β̂₁ − β̂₂'ye dayanır ve yayılımı ≈ 1,1'e çıkar. Bu yayılım yalnızca katsayı kestirimlerinden gelir; yeni bir evin toplam öngörü hatasına evin kendi rastgele farkı (u) da eklenir.", en: "In the corrected simulation the coefficient's standard deviation (≈ 0.55) is several times the prediction's (≈ 0.14). The AI's “no problem at all” came from a bug in its code; if a simulation says “zero variability”, check the random number generator first. Note the last line too: prediction stability <b>depends on the input</b>. At the common combination (1, 1) the prediction is stable; at an unusual combination such as (1, −1), a small floor area but many rooms, the prediction rests on β̂₁ − β̂₂ and its spread rises to ≈ 1.1. This spread comes only from the coefficient estimates; the total prediction error for a new house also includes that house's own random deviation (u)." }
       },
       {
         id: "m1-u2-c3", kind: "fill",
@@ -321,16 +330,16 @@ for seed in [27, 28]:
     cells: [
       {
         id: "m1-u3-c1", kind: "interpret",
-        task: { tr: "Bir banka kredi temerrüdünü öngören bir model kurdu ve YZ'den sonuçları yöneticiler için yorumlamasını istedi. Hangi cümleler öngörü modelinden nedensel sonuç çıkarıyor?", en: "A bank built a model that predicts loan default and asked the AI to interpret it for managers. Which sentences draw causal conclusions from a prediction model?" },
-        prompt: { tr: "Temerrüt modelimizde en güçlü öngörücü 'son 3 aydaki nakit avans sayısı'. Model yeni müşterilerin %85'ini doğru sınıflandırıyor. Yönetim için yorumlar mısın?", en: "In our default model the strongest predictor is 'number of cash advances in the last 3 months'. The model classifies 85% of new customers correctly. Can you interpret this for management?" },
+        task: { tr: "Bir banka kredi temerrüdünü öngören bir model kurdu ve YZ'den sonuçları yöneticiler için yorumlamasını istedi. Hangi cümleler öngörü modelinden nedensel sonuç çıkarıyor ya da verinin desteklemediği bir iddiada bulunuyor?", en: "A bank built a model that predicts loan default and asked the AI to interpret it for managers. Which sentences draw causal conclusions from a prediction model or make a claim the data do not support?" },
+        prompt: { tr: "Temerrüt modelimizde en güçlü öngörücü 'son 3 aydaki nakit avans sayısı'. Son 3 ayda en az 3 avans çekenlerde temerrüt oranı %18, diğerlerinde %6. Müşterilerin %12'si temerrüde düşüyor. Model yeni müşterilerin %85'ini doğru sınıflandırıyor. Yönetim için yorumlar mısın?", en: "In our default model the strongest predictor is 'number of cash advances in the last 3 months'. Among customers with at least 3 advances in the last 3 months the default rate is 18%, among the others 6%. 12% of customers default. The model classifies 85% of new customers correctly. Can you interpret this for management?" },
         sentences: {
-          tr: ["Son aylarda sık nakit avans çeken müşteriler daha yüksek temerrüt riski taşıyor.", "Model, risk değerlendirmesinde yararlı bir araç olabilir.", "Nakit avans limitlerini düşürürsek temerrüt oranı azalır.", "Nakit avans, müşterilerin borcunu ödeyememesinin temel nedenidir.", "Nakit avans sayısı, müşterinin zaten yaşadığı mali sıkıntının bir belirtisi olabilir."],
-          en: ["Customers who took frequent cash advances recently carry a higher default risk.", "The model may be a useful tool for risk assessment.", "If we lower cash advance limits, the default rate will fall.", "Cash advances are the main reason customers fail to repay.", "The number of cash advances may be a symptom of financial distress the customer is already in."]
+          tr: ["Son aylarda sık nakit avans çeken müşteriler daha yüksek temerrüt riski taşıyor.", "Model, risk değerlendirmesinde yararlı bir araç olabilir.", "Nakit avans limitlerini düşürürsek temerrüt oranı azalır.", "Nakit avans, müşterilerin borcunu ödeyememesinin temel nedenidir.", "Nakit avans sayısı, müşterinin zaten yaşadığı mali sıkıntının bir belirtisi olabilir.", "%85 doğruluk, modelin temerrüdü çok başarılı öngördüğünü gösteriyor."],
+          en: ["Customers who took frequent cash advances recently carry a higher default risk.", "The model may be a useful tool for risk assessment.", "If we lower cash advance limits, the default rate will fall.", "Cash advances are the main reason customers fail to repay.", "The number of cash advances may be a symptom of financial distress the customer is already in.", "85% accuracy shows that the model predicts default very successfully."]
         },
-        bad: [2, 3],
+        bad: [2, 3, 5],
         explain: {
-          tr: ["Doğru: bir öngörü ilişkisini tarif ediyor.", "Doğru: modelin amacına uygun.", "<b>Nedensel iddia:</b> limitleri düşürmek mali sıkıntıyı ortadan kaldırmayabilir; müşteri başka yollara başvurabilir.", "<b>Nedensel iddia:</b> iyi öngörücü olmak neden olmak demek değildir.", "Doğru ve önemli: nakit avans bir neden değil, bir belirti olabilir (ortak neden)."],
-          en: ["Fine: it describes a predictive relationship.", "Fine: consistent with the model's purpose.", "<b>Causal claim:</b> lowering limits may not remove the financial distress; the customer may turn elsewhere.", "<b>Causal claim:</b> being a good predictor is not being a cause.", "Fine and important: cash advances may be a symptom, not a cause (a common cause)."]
+          tr: ["Doğru: yönü gösteren veri var (%18'e karşı %6). Dikkat: “en güçlü öngörücü” bilgisi tek başına ilişkinin yönünü söylemez; yön için grup oranları gibi bir veri gerekir.", "Doğru, temkinli bir ifade: modelin amacına uygun. Ne kadar yararlı olduğu, doğruluğun bir temel modelle karşılaştırılmasına bağlı (son cümleye bak).", "<b>Nedensel iddia:</b> limitleri düşürmek mali sıkıntıyı ortadan kaldırmayabilir; müşteri başka yollara başvurabilir.", "<b>Nedensel iddia:</b> iyi öngörücü olmak neden olmak demek değildir.", "Doğru ve önemli: nakit avans bir neden değil, bir belirti olabilir (ortak neden).", "<b>Bağlamsız ölçüt:</b> müşterilerin %12'si temerrüde düştüğü için herkese “ödeyecek” diyen bir kural bile %88 doğru olurdu. Doğruluk, sınıf dağılımı ve bir temel modelle birlikte okunmalı (Modül 2)."],
+          en: ["Fine: there are data showing the direction (18% vs 6%). Note: “strongest predictor” alone does not tell the direction of the relationship; that needs data such as group rates.", "Fine, a cautious statement consistent with the model's purpose. How useful it is depends on comparing its accuracy with a baseline (see the last sentence).", "<b>Causal claim:</b> lowering limits may not remove the financial distress; the customer may turn elsewhere.", "<b>Causal claim:</b> being a good predictor is not being a cause.", "Fine and important: cash advances may be a symptom, not a cause (a common cause).", "<b>Measure without context:</b> since 12% of customers default, even a rule that says “will repay” to everyone would be 88% accurate. Accuracy must be read with the class distribution and a baseline model (Module 2)."]
         }
       },
       {
@@ -490,7 +499,7 @@ print(problem_type(None))`;
       },
       {
         id: "m1-u4-c3", kind: "challenge",
-        task: { tr: "Bir hedef sütununa bakıp problem türünü söyleyen bir fonksiyon yaz. Kural: hedef <code>None</code> ise <code>\"denetimsiz\"</code>; hedef metin içeriyorsa (<code>dtype == object</code>) ya da en fazla 10 farklı değer alıyorsa <code>\"sınıflandırma\"</code>; aksi hâlde <code>\"regresyon\"</code>.", en: "Write a function that looks at a target column and names the problem type. Rule: if the target is <code>None</code>, return <code>\"unsupervised\"</code>; if it holds text (<code>dtype == object</code>) or takes at most 10 distinct values, return <code>\"classification\"</code>; otherwise <code>\"regression\"</code>." },
+        task: { tr: "Bir hedef sütununa bakıp problem türünü söyleyen bir fonksiyon yaz. Aşağıdaki kural bu alıştırma için yapılmış <b>basitleştirici bir varsayımdır</b>, genel bir yasa değil (sınırlarını alıştırmanın sonunda göreceksin). Kural: hedef <code>None</code> ise <code>\"denetimsiz\"</code>; hedef metin içeriyorsa (<code>dtype == object</code>) ya da en fazla 10 farklı değer alıyorsa <code>\"sınıflandırma\"</code>; aksi hâlde <code>\"regresyon\"</code>.", en: "Write a function that looks at a target column and names the problem type. The rule below is a <b>simplifying assumption made for this exercise</b>, not a general law (you will see its limits at the end). Rule: if the target is <code>None</code>, return <code>\"unsupervised\"</code>; if it holds text (<code>dtype == object</code>) or takes at most 10 distinct values, return <code>\"classification\"</code>; otherwise <code>\"regression\"</code>." },
         code: { tr: TYPE_STARTER_TR, en: TYPE_STARTER_EN },
         solution: { tr: TYPE_SOL_TR, en: TYPE_SOL_EN },
         hints: [
@@ -503,11 +512,11 @@ print(problem_type(None))`;
           { py: { tr: "problem_turu(pd.Series([\"A\", \"B\", \"A\", \"C\"])) == \"sınıflandırma\"", en: "problem_type(pd.Series([\"A\", \"B\", \"A\", \"C\"])) == \"classification\"" }, msg: { tr: "Metin hedef için \"sınıflandırma\" dönmeli.", en: "A text target should give \"classification\"." } },
           { py: { tr: "problem_turu(pd.Series([float(x) / 7 for x in range(40)])) == \"regresyon\"", en: "problem_type(pd.Series([float(x) / 7 for x in range(40)])) == \"regression\"" }, msg: { tr: "Çok sayıda farklı sayısal değer alan hedef için \"regresyon\" dönmeli.", en: "A target with many distinct numeric values should give \"regression\"." } }
         ],
-        after: { tr: "Bu kural bir başparmak kuralıdır, kesin bir yasa değil. Örneğin 1–5 arası müşteri memnuniyet puanı 5 farklı değer alır; sınıflandırma da regresyon da savunulabilir. Son kararı sorunun kendisi verir.", en: "This rule is a rule of thumb, not a law. For example a 1–5 customer satisfaction score takes 5 distinct values; both classification and regression can be defended. The question itself has the final say." }
+        after: { tr: "Bu kural yalnızca bir alıştırma varsayımı. İki hedefi yan yana koy: 6 evlik küçük bir örneklemde fiyatlar (1,2; 1,5; 1,5; 2,0; 2,0; 2,4 milyon TL) yalnızca 4 farklı değer alır ve kural “sınıflandırma” der; oysa hedef sürekli bir fiyattır, yani problem regresyondur. 0/1 temerrüt etiketi ise 2 değer alır ve gerçekten sınıflandırmadır. Türü değer sayısı değil, <b>hedefin anlamı</b> belirler; 1–5 arası memnuniyet puanında ikisi de savunulabilir. Ayrıca “hedef sütunu yok” bilgisi denetimsiz öğrenmeyi pekiştirmeli öğrenmeden ayırmaz: pekiştirmeli öğrenmede de hedef sütunu yoktur, ama sistem eylemlerine verilen <b>ödülle</b> öğrenir.", en: "This rule is only an exercise assumption. Put two targets side by side: in a small sample of 6 houses the prices (1.2, 1.5, 1.5, 2.0, 2.0, 2.4 million) take only 4 distinct values and the rule says “classification”, yet the target is a continuous price, so the problem is regression. A 0/1 default label takes 2 values and really is classification. What decides is <b>what the target means</b>, not how many values it takes; for a 1–5 satisfaction score both can be defended. Also, “no target column” does not separate unsupervised from reinforcement learning: reinforcement learning has no target column either, but the system learns from the <b>reward</b> given to its actions." }
       }
     ],
     quiz: [
-      { q: { tr: "Hedef sütunu olmayan bir problem hangi türdür?", en: "A problem with no target column is of which type?" }, options: { tr: ["Regresyon", "Sınıflandırma", "Denetimsiz öğrenme"], en: ["Regression", "Classification", "Unsupervised learning"] }, answer: 2, explain: { tr: "Denetimsiz öğrenme hedef olmadan verideki yapıyı arar.", en: "Unsupervised learning looks for structure without a target." } },
+      { q: { tr: "Hedef sütunu olmayan ve ödülle geri bildirim de almayan, yalnızca verideki yapıyı arayan bir problem hangi türdür?", en: "A problem with no target column and no reward feedback, which only looks for structure in the data, is of which type?" }, options: { tr: ["Regresyon", "Sınıflandırma", "Denetimsiz öğrenme"], en: ["Regression", "Classification", "Unsupervised learning"] }, answer: 2, explain: { tr: "Denetimsiz öğrenme hedef olmadan verideki yapıyı arar.", en: "Unsupervised learning looks for structure without a target." } },
       { q: { tr: "Konut fiyatını öngörmek hangi problem türüdür?", en: "Predicting a house price is which problem type?" }, options: { tr: ["Regresyon", "Sınıflandırma", "Pekiştirmeli öğrenme"], en: ["Regression", "Classification", "Reinforcement learning"] }, answer: 0, explain: { tr: "Hedef sayısal.", en: "The target is numeric." } },
       { q: { tr: "Makine öğrenmesinde “regresyon” kelimesi neyi anlatır?", en: "What does the word “regression” mean in machine learning?" }, options: { tr: ["Yalnızca doğrusal regresyon yöntemini", "Sayısal hedefi olan problem türünü", "Verinin geriye doğru sıralanmasını"], en: ["Only the linear regression method", "The problem type with a numeric target", "Sorting the data backwards"] }, answer: 1, explain: { tr: "Doğrusal regresyon bu problem türü için kullanılabilecek yöntemlerden biridir.", en: "Linear regression is one of the methods that can be used for this problem type." } }
     ]
@@ -601,11 +610,11 @@ print(problem_type(None))`;
           { py: { tr: "\"temerrut\" not in X.columns and \"musteri\" not in X.columns", en: "\"default\" not in X.columns and \"customer\" not in X.columns" }, msg: { tr: "X'te ne hedef ne de kimlik sütunu olmalı.", en: "X should contain neither the target nor the ID column." } },
           { py: { tr: "len(X) == len(y) == 10 and X.shape[1] == 4", en: "len(X) == len(y) == 10 and X.shape[1] == 4" }, msg: { tr: "X'te 10 satır ve 4 özellik (yaş, gelir, kart harcaması, bölge) olmalı.", en: "X should have 10 rows and 4 features (age, income, card spending, region)." } }
         ],
-        after: { tr: "YZ isteği harfiyen uyguladı: kimlik sütununu çıkar dedin, çıkardı. Hedefi de çıkarmayı söylemedin. İyi bir istek, beklediğin X sütunlarını açıkça listeler.", en: "The AI followed the prompt to the letter: you said drop the ID column, and it did. You did not say drop the target. A good prompt lists the X columns you expect explicitly." }
+        after: { tr: "YZ isteği harfiyen uyguladı: kimlik sütununu çıkar dedin, çıkardı. Hedefi de çıkarmayı söylemedin. İyi bir istek, beklediğin X sütunlarını açıkça listeler. X ile y'yi ayırmak yalnızca <b>ilk adım</b>: X'te hâlâ metin olan <code>bolge</code> sütunu ve eksik gelirler var; çoğu model bunları olduğu gibi kabul etmez. Eksikleri Ünite 7'de, kategorileri Ünite 9'da hazırlayacaksın.", en: "The AI followed the prompt to the letter: you said drop the ID column, and it did. You did not say drop the target. A good prompt lists the X columns you expect explicitly. Splitting X and y is only the <b>first step</b>: X still holds the text column <code>region</code> and missing incomes; most models will not accept these as they are. You will prepare gaps in Unit 7 and categories in Unit 9." }
       },
       {
         id: "m1-u5-c3", kind: "debug",
-        task: { tr: "Gelirler bir dosyadan metin olarak gelmiş. Ortalama hesaplanamıyor. Sütunu sayıya çevir ve ortalamayı yazdır.", en: "The incomes came from a file as text. The mean cannot be computed. Convert the column to numbers and print the mean." },
+        task: { tr: "Gelirler bir dosyadan metin olarak gelmiş. Ortalama hesaplanamıyor. Kaynak biçim: Türkçe yazım, <b>nokta binlik ayırıcı</b> (30.000 = otuz bin), ondalık kısım yok. Sütunu sayıya çevir ve ortalamayı yazdır.", en: "The incomes came from a file as text. The mean cannot be computed. Source format: <b>comma as the thousands separator</b> (30,000 = thirty thousand), no decimal part. Convert the column to numbers and print the mean." },
         code: {
           tr: `import pandas as pd
 basvuru = pd.DataFrame({"gelir": ["30.000", "52.000", "41.000"]})
@@ -632,7 +641,7 @@ print(applications["income"].mean())`
           { py: { tr: "basvuru[\"gelir\"].dtype.kind in \"if\"", en: "applications[\"income\"].dtype.kind in \"if\"" }, msg: { tr: "Sütun hâlâ metin. Sayıya çevirip aynı sütuna atadın mı?", en: "The column is still text. Did you convert it and assign it back?" } },
           { py: { tr: "abs(basvuru[\"gelir\"].mean() - 41000) < 1e-9", en: "abs(applications[\"income\"].mean() - 41000) < 1e-9" }, msg: { tr: "Ortalama 41.000 olmalı. Noktayı ondalık ayırıcı sanmadın mı? (30.000 → 30 olmamalı)", en: "The mean should be 41,000. Did the separator get treated as a decimal point?" } }
         ],
-        after: { tr: "Dikkat: noktayı silmeden doğrudan <code>astype(float)</code> deseydin, “30.000” sayısı 30 olurdu ve kod hata vermeden yanlış çalışırdı. Binlik ve ondalık ayırıcılar dile göre değişir; YZ'ye verinin hangi biçimde yazıldığını söyle.", en: "Note: in some languages the dot is the thousands separator and the comma the decimal mark. Converting without handling this would silently turn 30.000 into 30. Tell the AI how the numbers in your data are written." }
+        after: { tr: "Dikkat: noktayı silmeden doğrudan <code>astype(float)</code> deseydin, “30.000” sayısı 30 olurdu ve kod hata vermeden yanlış çalışırdı. <code>regex=False</code> da önemli: düzenli ifade modunda <code>.</code> “herhangi bir karakter” demektir ve metnin tamamını silerdi. Bu çözüm yalnızca bu kaynak biçim için geçerli. Ondalık virgül de varsa (“45.250,75”) önce binlik noktayı sil, sonra virgülü noktaya çevir: <code>.str.replace(\".\", \"\", regex=False).str.replace(\",\", \".\", regex=False).astype(float)</code> → 45250,75. Binlik ve ondalık ayırıcılar dile göre değişir; YZ'ye verinin hangi biçimde yazıldığını söyle.", en: "Note: converting without removing the commas fails, and in some languages the dot is the thousands separator, where a careless conversion would silently turn 30.000 into 30. <code>regex=False</code> matters too: in regular-expression mode <code>.</code> means “any character”. This fix only holds for this source format. If there is also a decimal part written the Turkish way (“45.250,75”), remove the thousands dot first, then turn the comma into a point: <code>.str.replace(\".\", \"\", regex=False).str.replace(\",\", \".\", regex=False).astype(float)</code> → 45250.75. Separators vary by language; tell the AI how the numbers in your data are written." }
       }
     ],
     quiz: [

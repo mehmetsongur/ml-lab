@@ -52,9 +52,9 @@ def u1_rings(lang):
 
 def u1_rules(lang):
     f = Fig(660, 200)
-    T = L(dict(a="Geleneksel programlama", b="Makine öğrenmesi", r="Kurallar", d="Veri", p="Program", ans="Cevaplar", lr="Öğrenme", m="Kurallar\n(model)",
+    T = L(dict(a="Geleneksel programlama", b="Denetimli makine öğrenmesi", r="Kurallar", d="Veri", p="Program", ans="Cevaplar", lr="Öğrenme", m="Kurallar\n(model)",
                ea="insan yazar", eb="bilgisayar çıkarır"),
-          dict(a="Traditional programming", b="Machine learning", r="Rules", d="Data", p="Program", ans="Answers", lr="Learning", m="Rules\n(model)",
+          dict(a="Traditional programming", b="Supervised machine learning", r="Rules", d="Data", p="Program", ans="Answers", lr="Learning", m="Rules\n(model)",
                ea="a person writes them", eb="the computer infers them"))[lang]
     for k, (ttl, i1, i2, mid, out, cls, note) in enumerate([(T["a"], T["r"], T["d"], T["p"], T["ans"], "c1s", T["ea"]), (T["b"], T["d"], T["ans"], T["lr"], T["m"], "c0s", T["eb"])]):
         x0 = 10 + k * 330

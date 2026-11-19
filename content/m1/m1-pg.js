@@ -68,7 +68,7 @@
     function normal(u) { let a = 0, b = 0; while (a === 0) a = u(); b = u(); return Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b); }
     function sim() {
       const u = rng(seed * 7919 + Math.round(rho * 1000));
-      const b1s = [], b2s = [], yh = [];
+      const b1s = [], b2s = [], yh = [], yo = [];
       for (let r = 0; r < R; r++) {
         let s11 = 0, s12 = 0, s22 = 0, s1y = 0, s2y = 0;
         for (let i = 0; i < N; i++) {
@@ -79,9 +79,9 @@
         }
         const det = s11 * s22 - s12 * s12;
         const b1 = (s22 * s1y - s12 * s2y) / det, b2 = (s11 * s2y - s12 * s1y) / det;
-        b1s.push(b1); b2s.push(b2); yh.push(b1 * 1 + b2 * 1);
+        b1s.push(b1); b2s.push(b2); yh.push(b1 * 1 + b2 * 1); yo.push(b1 * 1 - b2 * 1);
       }
-      return { b1s, b2s, yh };
+      return { b1s, b2s, yh, yo };
     }
     const sd = (a) => { const m = a.reduce((x, y) => x + y, 0) / a.length; return Math.sqrt(a.reduce((x, y) => x + (y - m) * (y - m), 0) / (a.length - 1)); };
     const corr = (a, b) => { const ma = a.reduce((x, y) => x + y, 0) / a.length, mb = b.reduce((x, y) => x + y, 0) / b.length; let sab = 0, saa = 0, sbb = 0; for (let i = 0; i < a.length; i++) { sab += (a[i] - ma) * (b[i] - mb); saa += (a[i] - ma) ** 2; sbb += (b[i] - mb) ** 2; } return sab / Math.sqrt(saa * sbb); };
@@ -96,11 +96,12 @@
     const note = h("p", { class: "pg-note" });
     function draw() {
       rhoLab.textContent = fmt(rho, 2, lang);
-      const { b1s, b2s, yh } = sim();
+      const { b1s, b2s, yh, yo } = sim();
       tiles.innerHTML = "";
       tiles.append(
         tile(h, t({ tr: "β̂₁'in standart sapması", en: "Std. dev. of β̂₁" }), fmt(sd(b1s), 2, lang)),
-        tile(h, t({ tr: "ŷ'nin standart sapması", en: "Std. dev. of ŷ" }), fmt(sd(yh), 2, lang)),
+        tile(h, t({ tr: "ŷ'nin std. sapması, (1, 1)", en: "Std. dev. of ŷ, (1, 1)" }), fmt(sd(yh), 2, lang)),
+        tile(h, t({ tr: "ŷ'nin std. sapması, (1, −1)", en: "Std. dev. of ŷ, (1, −1)" }), fmt(sd(yo), 2, lang)),
         tile(h, t({ tr: "β̂₁ ile β̂₂ korelasyonu", en: "Correlation of β̂₁ and β̂₂" }), fmt(corr(b1s, b2s), 2, lang)));
       while (chart.firstChild) chart.removeChild(chart.firstChild);
       // sol: (b1, b2) bulutu; sağ: ŷ şeridi
@@ -121,7 +122,7 @@
       const u = rng(99);
       yh.forEach((v) => svg("circle", { cx: Rr.x + 20 + u() * (Rr.w - 40), cy: ry(v), r: 2.4, class: "pg-dot alt" }, chart));
       svg("text", { x: Rr.x + Rr.w / 2, y: H - 4, "text-anchor": "middle", class: "pg-lbl" }, chart).textContent = t({ tr: "ŷ (x₁ = 1, x₂ = 1 için öngörü)", en: "ŷ (prediction at x₁ = 1, x₂ = 1)" });
-      note.textContent = t({ tr: "Gerçek değerler: β₁ = β₂ = 1, gerçek ortalama sonuç = 2 (kesikli çizgiler). Her nokta 50 gözlemlik bir örneklemden.", en: "True values: β₁ = β₂ = 1, true mean outcome = 2 (dashed lines). Each dot is one sample of 50 observations." });
+      note.textContent = t({ tr: "Gerçek değerler: β₁ = β₂ = 1, gerçek ortalama sonuç = 2 (kesikli çizgiler). Her nokta 50 gözlemlik bir örneklemden. Sağdaki öngörü, veride sık görülen (1, 1) bileşimi için. Alışılmadık (1, −1) bileşiminde öngörü β̂₁ − β̂₂'ye dayanır; korelasyon yükseldikçe onun yayılımı da büyür (kutucuk). Gösterilen yayılım yalnızca katsayı kestiriminden gelir; yeni bir gözlemin toplam hatasına gözlemin kendi gürültüsü de eklenir.", en: "True values: β₁ = β₂ = 1, true mean outcome = 2 (dashed lines). Each dot is one sample of 50 observations. The prediction on the right is for the common combination (1, 1). At the unusual combination (1, −1) the prediction rests on β̂₁ − β̂₂, and its spread grows with the correlation (tile). The spread shown comes only from estimating the coefficients; the total error for a new observation also includes its own noise." });
     }
     host.append(ctrls, tiles, chart, note);
     draw();
@@ -210,7 +211,7 @@
         tile(h, t({ tr: "Ortalama gelir", en: "Mean income" }), fmtInt(out.reduce((a, r) => a + r.income, 0) / n, lang)),
         tile(h, t({ tr: "Temerrüt oranı", en: "Default rate" }), fmt(rate * 100, 0, lang) + "%"));
       note.innerHTML = t([
-        { tr: "İki satır gitti ve ikisi de temerrüde düşen müşterilerdi: temerrüt oranı olduğundan düşük görünüyor.", en: "Two rows are gone, and both were customers who defaulted: the default rate now looks lower than it is." },
+        { tr: "İki satır gitti ve ikisi de temerrüde düşen müşterilerdi: bu tabloda temerrüt oranı %40'tan %25'e indi. Bu tabloda iki durum birlikte görüldü (gelir eksik ve temerrüt); 10 gözlemlik bir örneklem eksikliğin mekanizmasını kanıtlamaz, ama silmenin sonucu değiştirebildiğini gösterir.", en: "Two rows are gone, and both were customers who defaulted: in this table the default rate fell from 40% to 25%. In this table the two things occurred together (missing income and default); a sample of 10 does not prove the missingness mechanism, but it shows that dropping can change the result." },
         { tr: "Ortalama, gelirin uç değerlerine duyarlıdır. Doldurulan satırlar sarıyla işaretli.", en: "The mean is sensitive to extreme incomes. Filled rows are highlighted." },
         { tr: "Medyan uç değerlere daha az duyarlıdır. Ama doldurduktan sonra hangi gelirin gerçek, hangisinin tahmin olduğu kayboldu.", en: "The median is less sensitive to extremes. But after filling, you can no longer tell real incomes from filled ones." },
         { tr: "Gösterge sütunu “gelirini bildirmedi” bilgisini saklar. Bu tabloda gelirini bildirmeyen iki müşterinin ikisi de temerrüde düşmüş: eksiklik kendi başına bilgi taşıyor olabilir.", en: "The flag keeps the information “did not report income”. In this table both customers who did not report income defaulted: missingness itself may carry information." }
@@ -258,8 +259,10 @@
       tbl.innerHTML = "";
       tbl.append(h("table", { class: "pg-table" }, h("thead", null, h("tr", null, head.map((x) => h("th", null, x)))),
         h("tbody", null, P0.map((p) => { const c = coords(p); return h("tr", null, h("td", null, p.name), h("td", null, mode ? fmt(c[0], 2, lang) : String(p.age)), h("td", null, mode ? fmt(c[1], 2, lang) : (unit === 1 ? fmtInt(p.income, lang) : fmt(p.income / 1000, 0, lang)))); }))));
-      note.innerHTML = mode === 0
-        ? t({ tr: "Ham birimlerde gelirin rakamları yaşınkinden çok büyük; uzaklığı neredeyse yalnızca gelir belirliyor. Birimi “bin TL” yapınca sonuç tersine dönüyor: <b>karar, verinin değil birimin eseri</b>.", en: "In raw units the income numbers are far larger than the ages, so income almost alone decides the distance. Switch to thousands and the answer flips: <b>the result is an artefact of the unit, not of the data</b>." })
+      note.innerHTML = mode === 0 && unit === 1
+        ? t({ tr: "Ham birimlerde gelirin rakamları yaşınkinden çok büyük; uzaklığı neredeyse yalnızca gelir belirliyor ve A'ya en yakın B çıkıyor. Birimi “bin TL” yapmayı dene.", en: "In raw units the income numbers are far larger than the ages, so income almost alone decides the distance and B comes out closest to A. Try switching income to thousands." })
+        : mode === 0
+        ? t({ tr: "Gelir bin TL ile yazılınca gelir farkları küçüldü (1 ve 15) ve bu kez yaş farkı (35) uzaklığı belirliyor: A'ya en yakın C. Veri aynı, yalnızca birim değişti ve <b>karar tersine döndü</b>: sonuç verinin değil birimin eseri.", en: "With income in thousands the income gaps shrink (1 and 15), and now the age gap (35) decides the distance: C is closest to A. The data are the same, only the unit changed, and <b>the answer flipped</b>: the result is an artefact of the unit, not of the data." })
         : t({ tr: "Her değişken kendi ortalamasından kaç standart sapma uzakta? Bu ölçekte iki değişken eşit söz hakkına sahip ve A, yaşça çok yakın olduğu C'ye benziyor. Referans: müşteri tabanında yaş ortalaması " + R.ageMean + " (s = " + R.ageSd + "), gelir ortalaması " + fmtInt(R.incMean, lang) + " (s = " + fmtInt(R.incSd, lang) + ").", en: "How many standard deviations is each value from its mean? On this scale both variables have an equal say, and A resembles C, who is almost the same age. Reference: in the customer base, mean age " + R.ageMean + " (sd = " + R.ageSd + "), mean income " + fmtInt(R.incMean, lang) + " (sd = " + fmtInt(R.incSd, lang) + ")." });
     }
     host.append(tabs, unitWrap, tiles, tbl, note);
