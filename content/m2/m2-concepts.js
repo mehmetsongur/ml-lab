@@ -26,6 +26,7 @@
 
   /* ------------------------------------------------------------ Ünite 1 */
   const u1 = N.u1 || { me: 0, mae: 0.174, mse: 0.405, rmse: 0.636 };
+  const u5 = N.u5 || { 1: { b2: 0.0225, var: 0.0067, toplam: 0.0916 }, 2: { b2: 0, var: 0.0061, toplam: 0.0686 } };
   C["m2-u1"] = {
     tr: wrap(`
 <p class="c-lead">Bir modelin iyi olup olmadığını söylemenin tek yolu, yaptığı hataları ölçmektir. Ama yüzlerce hatayı tek bir sayıya indirmenin birden çok yolu var ve her biri farklı bir soruyu yanıtlar. Bu ünitede dört ölçüyü gerçek bir seri üzerinde tanıyacağız: ABD işsizlik oranı.</p>
@@ -39,7 +40,7 @@ ${fig("u1_errors", "tr", "<b>Şekil 2.</b> Saf öngörünün aylık hataları. H
 ${sec(3, 2, "Dört ölçü, dört farklı soru", `
 ${cards([
       [0, "∑", "Ortalama hata", "Model sistematik olarak bir yöne mi kayıyor? Sıfıra yakınsa sapma yok demektir; doğruluk hakkında bir şey söylemez.", "ortalama(hata)"],
-      [1, "|·|", "Ortalama mutlak hata", "Model tipik bir gözlemde kaç birim yanılıyor? Birimi verinin birimiyle aynı (puan).", "ortalama(|hata|)"],
+      [1, "|·|", "Ortalama mutlak hata", "Model ortalamada, mutlak olarak kaç birim yanılıyor? Bir ortalamadır; tipik gözlem için medyana bak. Birimi verinin birimiyle aynı (yüzde puan).", "ortalama(|hata|)"],
       [2, "²", "Hata kareleri ortalaması (HKO)", "Kare alma büyük hataları çok ağır cezalandırır. Birimi verinin biriminin karesi (puan²).", "ortalama(hata²)"],
       [3, "√", "Kök HKO", "HKO'yu verinin birimine geri getirir; büyük hatalara duyarlılığını korur. En sık raporlanan ölçü.", "√HKO"]
     ])}
@@ -55,18 +56,18 @@ ${sec(4, 3, "Çözümlü örnek: ilk beş ay elle", `
 <tr class="hl"><td>Ortalama</td><td></td><td></td><td class="n">0,00</td><td class="n">0,12</td><td class="n">0,02</td></tr></tbody></table>
 <ol class="c-steps">
 <li><p><b>Ortalama hata</b> = (0,1 − 0,1 − 0,2 + 0,2 + 0) / 5 = <b>0</b>. Beş ayda dört kez yanıldık ama ortalama hata sıfır.</p></li>
-<li><p><b>Ortalama mutlak hata</b> = (0,1 + 0,1 + 0,2 + 0,2 + 0) / 5 = <b>0,12 puan</b>: tipik ayda 0,12 puan yanılıyoruz.</p></li>
+<li><p><b>Ortalama mutlak hata</b> = (0,1 + 0,1 + 0,2 + 0,2 + 0) / 5 = <b>0,12 puan</b>: mutlak hataların ortalaması 0,12 puan.</p></li>
 <li><p><b>HKO</b> = (0,01 + 0,01 + 0,04 + 0,04 + 0) / 5 = <b>0,02 puan²</b>; <b>kök HKO</b> = √0,02 ≈ <b>0,14 puan</b>.</p></li>
 </ol>`)}
 ${sec(5, 4, "Bütün seri: ölçüler ne söylüyor?", `
 <div class="c-two">${fig("u1_measures", "tr", "<b>Şekil 3.</b> 2000'den bu yana saf öngörünün dört ölçüsü.")}
-<div><p>Ortalama hata <b>sıfır</b>: 26 yılın artıları ve eksileri birbirini götürüyor. Ortalama mutlak hata <b>${nf(u1.mae, 2, "tr")}</b>, kök HKO ise <b>${nf(u1.rmse, 2, "tr")}</b> puan.</p><p>Kök HKO neden neredeyse dört kat büyük? Çünkü kare alma, 2020'deki birkaç dev hatayı büyütüyor. <b>İki ölçü arasındaki büyük fark, birkaç aşırı hatanın işaretidir.</b> Hangisini raporlayacağın sorduğun soruya bağlı: “tipik ay” için ortalama mutlak hata, “büyük hatalar pahalı” ise kök HKO.</p></div></div>`)}
+<div><p>Ortalama hata <b>sıfır</b>: 26 yılın artıları ve eksileri birbirini götürüyor. Mutlak hataların ortalaması <b>${nf(u1.mae, 2, "tr")}</b>, kök HKO ise <b>${nf(u1.rmse, 2, "tr")}</b> yüzde puan${u1.n ? ` (${u1.n} geçerli ay üzerinden)` : ""}. Bütün dönemde sıfır olması, alt dönemlerde bir yöne sapma olmadığı anlamına gelmez.</p><p>Kök HKO neden neredeyse dört kat büyük? Çünkü kare alma, 2020'deki birkaç dev hatayı büyütüyor. <b>İki ölçü arasındaki büyük fark, birkaç aşırı hatanın işaretidir.</b> Hangisini raporlayacağın sorduğun soruya bağlı: “ortalamada mutlak olarak ne kadar” için ortalama mutlak hata, “büyük hatalar pahalı” ise kök HKO. “Tipik ay” için medyan mutlak hataya bak.</p></div></div>`)}
 ${sec(6, 0, "Sık yapılan hatalar", pit([
       ["“Ortalama hata sıfır, model mükemmel”", "Artı ve eksi hatalar birbirini götürür. Ortalama hata yalnızca sistematik sapmayı ölçer.", "Doğruluk için ortalama mutlak hata ya da kök HKO kullan."],
-      ["Kök HKO'yu “ortalama hata” diye okumak", "Kök HKO büyük hatalara ağırlık verir; tipik hatadan büyüktür.", "“Ortalama kaç puan yanılıyor?” sorusunun yanıtı ortalama mutlak hatadır."],
+      ["Kök HKO'yu “ortalama hata” diye okumak", "Kök HKO büyük hatalara ağırlık verir; ortalama mutlak hatadan büyüktür.", "“Ortalama kaç puan yanılıyor?” sorusunun yanıtı ortalama mutlak hatadır."],
       ["Birimleri karıştırmak", "HKO'nun birimi puan²'dir; doğrudan veriyle karşılaştırılmaz.", "Veriyle karşılaştırmak için kök HKO'ya bak."]
     ]))}
-${sum("Akılda kalsın", ["Hata = gerçek − öngörü. Artı ve eksi hatalar toplandığında birbirini götürür.", "Ortalama mutlak hata tipik hatayı, kök HKO büyük hatalara duyarlı doğruluğu ölçer.", "Saf öngörü (“geçen ay ne idiyse”) her modelin yenmesi gereken basit bir kıyas ölçütüdür."])}
+${sum("Akılda kalsın", ["Hata = gerçek − öngörü. Artı ve eksi hatalar toplandığında birbirini götürür.", "Ortalama mutlak hata mutlak hataların ortalamasını, kök HKO büyük hatalara duyarlı doğruluğu ölçer. Ölçüyü paydasıyla (kaç gözlem) raporla.", "Saf öngörü (“geçen ay ne idiyse”) her modelin yenmesi gereken basit bir kıyas ölçütüdür."])}
 ${link("tr", "model başarısını ölçmek")}`),
     en: wrap(`
 <p class="c-lead">The only way to say whether a model is good is to measure its errors. But there is more than one way to reduce hundreds of errors to a single number, and each answers a different question. In this unit we meet four measures on a real series: the US unemployment rate.</p>
@@ -80,7 +81,7 @@ ${fig("u1_errors", "en", "<b>Figure 2.</b> The naive forecast's monthly errors. 
 ${sec(3, 2, "Four measures, four different questions", `
 ${cards([
       [0, "∑", "Mean error", "Does the model lean systematically one way? Near zero means no bias; it says nothing about accuracy.", "mean(error)"],
-      [1, "|·|", "Mean absolute error", "By how many units does the model miss on a typical observation? Same unit as the data (points).", "mean(|error|)"],
+      [1, "|·|", "Mean absolute error", "On average, by how many units in absolute terms does the model miss? It is a mean; for a typical observation look at the median. Same unit as the data (percentage points).", "mean(|error|)"],
       [2, "²", "Mean squared error (MSE)", "Squaring punishes large errors very heavily. Its unit is the square of the data's unit (points²).", "mean(error²)"],
       [3, "√", "Root MSE (RMSE)", "Brings the MSE back to the data's unit while keeping its sensitivity to large errors. The most commonly reported measure.", "√MSE"]
     ])}
@@ -96,18 +97,18 @@ ${sec(4, 3, "Worked example: the first five months by hand", `
 <tr class="hl"><td>Average</td><td></td><td></td><td class="n">0.00</td><td class="n">0.12</td><td class="n">0.02</td></tr></tbody></table>
 <ol class="c-steps">
 <li><p><b>Mean error</b> = (0.1 − 0.1 − 0.2 + 0.2 + 0) / 5 = <b>0</b>. We were wrong in four of five months, yet the mean error is zero.</p></li>
-<li><p><b>Mean absolute error</b> = (0.1 + 0.1 + 0.2 + 0.2 + 0) / 5 = <b>0.12 points</b>: in a typical month we miss by 0.12 points.</p></li>
+<li><p><b>Mean absolute error</b> = (0.1 + 0.1 + 0.2 + 0.2 + 0) / 5 = <b>0.12 points</b>: the mean of the absolute errors is 0.12 points.</p></li>
 <li><p><b>MSE</b> = (0.01 + 0.01 + 0.04 + 0.04 + 0) / 5 = <b>0.02 points²</b>; <b>RMSE</b> = √0.02 ≈ <b>0.14 points</b>.</p></li>
 </ol>`)}
 ${sec(5, 4, "The whole series: what do the measures say?", `
 <div class="c-two">${fig("u1_measures", "en", "<b>Figure 3.</b> The four measures for the naive forecast since 2000.")}
-<div><p>The mean error is <b>zero</b>: 26 years of pluses and minuses cancel. The mean absolute error is <b>${nf(u1.mae, 2, "en")}</b> and the RMSE <b>${nf(u1.rmse, 2, "en")}</b> points.</p><p>Why is the RMSE almost four times larger? Because squaring magnifies the few giant errors of 2020. <b>A large gap between the two measures signals a few extreme errors.</b> Which to report depends on your question: the mean absolute error for “a typical month”, the RMSE if “large errors are costly”.</p></div></div>`)}
+<div><p>The mean error is <b>zero</b>: 26 years of pluses and minuses cancel. The mean of the absolute errors is <b>${nf(u1.mae, 2, "en")}</b> and the RMSE <b>${nf(u1.rmse, 2, "en")}</b> percentage points${u1.n ? ` (over ${u1.n} valid months)` : ""}. Zero over the whole period does not rule out drift in one direction within sub-periods.</p><p>Why is the RMSE almost four times larger? Because squaring magnifies the few giant errors of 2020. <b>A large gap between the two measures signals a few extreme errors.</b> Which to report depends on your question: the mean absolute error for “on average, how much in absolute terms”, the RMSE if “large errors are costly”. For “a typical month” look at the median absolute error.</p></div></div>`)}
 ${sec(6, 0, "Common mistakes", pit([
       ["“The mean error is zero, so the model is perfect”", "Positive and negative errors cancel. The mean error only measures systematic bias.", "Use the mean absolute error or RMSE for accuracy."],
-      ["Reading RMSE as the “average error”", "RMSE weights large errors; it is larger than the typical error.", "The answer to “by how much does it miss on average?” is the mean absolute error."],
+      ["Reading RMSE as the “average error”", "RMSE weights large errors; it is larger than the mean absolute error.", "The answer to “by how much does it miss on average?” is the mean absolute error."],
       ["Mixing up units", "MSE is in points²; it cannot be compared directly with the data.", "Look at RMSE to compare with the data."]
     ]))}
-${sum("Remember", ["Error = actual − forecast. Added up, positive and negative errors cancel.", "The mean absolute error measures the typical error; RMSE measures accuracy with sensitivity to large errors.", "The naive forecast (“whatever last month was”) is a simple benchmark every model must beat."])}
+${sum("Remember", ["Error = actual − forecast. Added up, positive and negative errors cancel.", "The mean absolute error measures the average absolute error; RMSE measures accuracy with sensitivity to large errors. Report a measure with its denominator (how many observations).", "The naive forecast (“whatever last month was”) is a simple benchmark every model must beat."])}
 ${link("en", "measuring model performance")}`)
   };
 
@@ -125,7 +126,7 @@ ${cards([
       [2, "🎯", "Genelleme", "Modelin yeni verilerde de iyi çalışması. Makine öğrenmesinin asıl amacı budur, eğitim verisini açıklamak değil."]
     ])}`)}
 ${sec(3, 2, "Örneğimiz: deneyim ve ücret", `
-<p>Dersin 3. haftasındaki örneği kullanıyoruz. Log ücret, deneyimle önce artar, sonra düzleşir (Mincer tipi bir ücret denklemi). Gerçek ilişkiyi biz belirliyoruz ve her kişiye rastgele bir sapma ekliyoruz:</p>
+<p>Dersin 3. haftasındaki örneği kullanıyoruz. Log ücret, deneyimle önce artar, yaklaşık 28,6 yılda (0,08 / (2 × 0,0014)) tepe yapar, sonra hafifçe geriler (Mincer tipi bir ücret denklemi). Gerçek ilişkiyi biz belirliyoruz ve her kişiye rastgele bir sapma ekliyoruz:</p>
 <div class="c-formula"><div class="eq">log ücret = 2,0 + 0,08 · <i>e</i> − 0,0014 · <i>e</i>² + <i>u</i></div>
 <dl><dt>e</dt><dd>deneyim (yıl), 0–40 arası</dd><dt>u</dt><dd>rastgele sapma; ortalaması 0, standart sapması 0,25. Hiçbir model öngöremez: <b>indirgenemez hata</b> = 0,25² = 0,0625</dd></dl></div>
 <p>Tek aracımız <b>polinom regresyon</b>: log ücreti deneyimin 1., 2., …, d. kuvvetleriyle açıklamak. Derece ne kadar yüksekse eğri o kadar kıvrılabilir.</p>`)}
@@ -135,20 +136,21 @@ ${fig("u2_fits", "tr", "<b>Şekil 2.</b> Gri noktalar 30 kişilik eğitim verisi
 <tr><td>Derece 1</td><td class="n">0,102</td><td class="n">0,127</td><td>İkisi de yüksek: ilişkinin eğriliğini kaçırıyor</td></tr>
 <tr class="hl"><td>Derece 2</td><td class="n">0,070</td><td class="n">0,076</td><td>İkisi de düşük ve yakın: iyi genelliyor</td></tr>
 <tr class="bad"><td>Derece 12</td><td class="n">0,032</td><td class="n">18,227</td><td>Eğitimde en iyi, testte felaket: ezberlemiş</td></tr></tbody></table>
-<p>Derece 12'nin eğitim hatası (0,032) <b>indirgenemez hatadan (0,0625) bile düşük</b>. Bu imkânsız bir başarı: hiçbir model, tahmin edilemez sapmayı öngöremez. Model gürültüyü ezberlemiştir.</p>`)}
+<p>Derece 12'nin eğitim hatası (0,032) <b>indirgenemez hatanın (0,0625) yarısı kadar</b>. 0,0625 yeni gözlemlerdeki beklenen hatanın alt sınırıdır; eğitim verisinde bunun bu kadar altına inmek, modelin gürültüyü de öğrendiğine dair güçlü bir uyarıdır. Kanıt ise test HKO'sunun 18,2'ye çıkmasıdır: aşırı uyumu bağımsız testteki bozulma gösterir.</p>`)}
 ${sec(5, 4, "Veriyi nasıl bölersin?", `
 <ol class="c-steps">
 <li><p>Elinde tek bir veri seti varsa gözlemleri <b>karıştır</b> (sıralı veri sistematik bir bölme yaratır).</p></li>
 <li><p>Tipik oran: <b>%70–80 eğitim, %20–30 test</b>. Veri az ise teste ayırabileceğin pay da azalır; bunun çözümü Ünite 6'da.</p></li>
 <li><p>Test verisini bir kenara koy ve model hazır olana kadar <b>dokunma</b>.</p></li>
-<li><p>İstisna: zaman serilerinde karıştırma yapılmaz; geçmiş eğitim, gelecek test olur (Ünite 8).</p></li>
+<li><p>İstisna 1 — <b>tekrarlı gözlemler:</b> aynı firmanın ya da kişinin birden çok ölçümü varsa satırları değil <b>grupları</b> böl (bir firmanın bütün yılları ya eğitimde ya testte). Yoksa model, testteki firmayı eğitimdeki yıllarından “tanır” ve hata olduğundan küçük çıkar. scikit-learn'de <code>GroupShuffleSplit</code> ya da <code>GroupKFold</code>.</p></li>
+<li><p>İstisna 2 — <b>zaman serileri:</b> karıştırma yapılmaz; geçmiş eğitim, gelecek test olur (Ünite 8).</p></li>
 </ol>`)}
 ${sec(6, 0, "Sık yapılan hatalar", pit([
       ["Başarıyı eğitim verisinde raporlamak", "Model bu veriyi görmüştür; hata olduğundan küçük çıkar.", "Her zaman “hangi veride?” diye sor; test hatasını raporla."],
       ["Gürültüden düşük hatayı başarı sanmak", "İndirgenemez hatanın altına inen bir eğitim hatası, ezberin işaretidir.", "Eğitim ve test hatası arasındaki farka bak."],
       ["Sıralı veriyi karıştırmadan bölmek", "Gelire göre sıralı bir tabloda ilk %80 düşük gelirliler olur.", "Bağımsız gözlemlerde önce karıştır, sonra böl."]
     ]))}
-${sum("Akılda kalsın", ["Model eğitim verisiyle kurulur, test verisiyle değerlendirilir.", "Eğitimdeki başarı genellemeyi garanti etmez; derece 12 bunu en uç biçimde gösteriyor.", "İndirgenemez hata, hiçbir modelin aşamayacağı bir alt sınırdır."])}
+${sum("Akılda kalsın", ["Model eğitim verisiyle kurulur, test verisiyle değerlendirilir.", "Eğitimdeki başarı genellemeyi garanti etmez; derece 12 bunu en uç biçimde gösteriyor.", "İndirgenemez hata, yeni gözlemlerdeki beklenen hatanın alt sınırıdır; aşırı uyumu bağımsız testteki bozulmayla değerlendir."])}
 ${link("tr", "eğitim ve test verisi")}`),
     en: wrap(`
 <p class="c-lead">A model's success on the data it was built on says nothing about its success on new data. In this unit we meet the most basic rule of machine learning: build the model on one set of data, test it on another.</p>
@@ -162,7 +164,7 @@ ${cards([
       [2, "🎯", "Generalisation", "Working well on new data too. This, not explaining the training data, is the real goal of machine learning."]
     ])}`)}
 ${sec(3, 2, "Our example: experience and wages", `
-<p>We use the example from week 3 of the course. Log wages first rise with experience, then level off (a Mincer-type wage equation). We set the true relationship and add a random deviation for each person:</p>
+<p>We use the example from week 3 of the course. Log wages first rise with experience, peak at about 28.6 years (0.08 / (2 × 0.0014)), then decline slightly (a Mincer-type wage equation). We set the true relationship and add a random deviation for each person:</p>
 <div class="c-formula"><div class="eq">log wage = 2.0 + 0.08 · <i>e</i> − 0.0014 · <i>e</i>² + <i>u</i></div>
 <dl><dt>e</dt><dd>experience (years), between 0 and 40</dd><dt>u</dt><dd>random deviation with mean 0 and standard deviation 0.25. No model can predict it: <b>irreducible error</b> = 0.25² = 0.0625</dd></dl></div>
 <p>Our only tool is <b>polynomial regression</b>: explaining log wage with powers 1, 2, …, d of experience. The higher the degree, the more the curve can bend.</p>`)}
@@ -172,20 +174,21 @@ ${fig("u2_fits", "en", "<b>Figure 2.</b> Grey dots: the 30-person training data;
 <tr><td>Degree 1</td><td class="n">0.102</td><td class="n">0.127</td><td>Both high: misses the curvature</td></tr>
 <tr class="hl"><td>Degree 2</td><td class="n">0.070</td><td class="n">0.076</td><td>Both low and close: generalises well</td></tr>
 <tr class="bad"><td>Degree 12</td><td class="n">0.032</td><td class="n">18.227</td><td>Best in training, disastrous in test: memorised</td></tr></tbody></table>
-<p>Degree 12's training error (0.032) is <b>lower even than the irreducible error (0.0625)</b>. That is an impossible success: no model can predict an unpredictable deviation. The model has memorised the noise.</p>`)}
+<p>Degree 12's training error (0.032) is <b>half the irreducible error (0.0625)</b>. 0.0625 bounds the expected error on new observations; dropping this far below it on the training data is a strong warning that the model has learned the noise too. The evidence is the test MSE rising to 18.2: overfitting shows up as deterioration on independent test data.</p>`)}
 ${sec(5, 4, "How do you split the data?", `
 <ol class="c-steps">
 <li><p>If you have a single data set, <b>shuffle</b> the observations (sorted data create a systematic split).</p></li>
 <li><p>Typical ratio: <b>70–80% training, 20–30% test</b>. With little data, the share you can hold out shrinks; the remedy comes in Unit 6.</p></li>
 <li><p>Put the test data aside and <b>do not touch them</b> until the model is ready.</p></li>
-<li><p>Exception: time series are not shuffled; the past is training, the future is test (Unit 8).</p></li>
+<li><p>Exception 1 — <b>repeated observations:</b> if the same firm or person is measured several times, split <b>groups</b>, not rows (all of a firm's years go either to training or to test). Otherwise the model “recognises” a test firm from its training years and the error comes out too small. In scikit-learn: <code>GroupShuffleSplit</code> or <code>GroupKFold</code>.</p></li>
+<li><p>Exception 2 — <b>time series:</b> they are not shuffled; the past is training, the future is test (Unit 8).</p></li>
 </ol>`)}
 ${sec(6, 0, "Common mistakes", pit([
       ["Reporting performance on the training data", "The model has seen these data; the error comes out too small.", "Always ask “on which data?”; report the test error."],
       ["Taking an error below the noise as success", "A training error below the irreducible error is a sign of memorisation.", "Look at the gap between training and test error."],
       ["Splitting sorted data without shuffling", "In a table sorted by income, the first 80% are the low earners.", "With independent observations, shuffle first, then split."]
     ]))}
-${sum("Remember", ["A model is built on training data and evaluated on test data.", "Success in training does not guarantee generalisation; degree 12 shows this in the extreme.", "The irreducible error is a floor that no model can beat."])}
+${sum("Remember", ["A model is built on training data and evaluated on test data.", "Success in training does not guarantee generalisation; degree 12 shows this in the extreme.", "The irreducible error is the floor of the expected error on new observations; judge overfitting by the deterioration on independent test data."])}
 ${link("en", "training and test data")}`)
   };
 
@@ -204,7 +207,7 @@ ${cards([
 ${sec(3, 2, "Esneklik arttıkça iki hata", `
 ${fig("u3_curve", "tr", "<b>Şekil 1.</b> Aynı 30 kişilik eğitim verisiyle kurulan 12 modelin eğitim ve test hataları. Eğitim hatası hiç artmıyor; test hatası derece 2 civarında dibe vurup sonra yükseliyor.")}
 <p>Grafikteki iki eğri, modülün en önemli derslerinden birini anlatıyor:</p>
-<ul><li><b>Eğitim hatası esneklikle hiç artmaz.</b> Derece 3 polinom, derece 2'nin yapabildiği her şeyi (ve fazlasını) yapabilir; eğitim verisine en az aynı ölçüde uyar.</li>
+<ul><li><b>İç içe modellerde, aynı eğitim verisinde aynı kayıp en aza indirildiğinde eğitim hatası esneklikle artmaz.</b> Derece 3 polinom, derece 2'nin yapabildiği her şeyi (ve fazlasını) yapabilir; eğitim verisine en az aynı ölçüde uyar. İki derece eşit hata verirse hangisinin seçileceği ayrı bir karardır (yaygın tercih daha yalın olan).</li>
 <li><b>Test hatası bir noktaya kadar düşer, sonra yükselir.</b> Düşüş, modelin gerçek yapıyı yakalamasından; yükseliş, gürültüyü öğrenmesinden gelir.</li>
 <li><b>Aradaki açıklık ezberin ölçüsüdür.</b> Derece 2'de açıklık küçük (0,070 / 0,076), derece 12'de devasa (0,032 / 18,2).</li></ul>`)}
 ${sec(4, 3, "Çözümlü örnek: en iyi dereceyi seçmek", `
@@ -224,7 +227,7 @@ ${sec(6, 0, "Sık yapılan hatalar", pit([
       ["Daha karmaşık modeli “daha gerçekçi” sanmak", "Daha fazla terim daha fazla esneklik demektir, daha fazla doğruluk değil.", "Karmaşıklığı ancak yeni veride başarıyı artırıyorsa artır."],
       ["Tek bir örneklemden kesin sonuç çıkarmak", "Başka 30 kişiyle en iyi derece değişebilir.", "Sonucun değişkenliğine bak (Ünite 4)."]
     ]))}
-${sum("Akılda kalsın", ["Eksik uyum: iki hata da yüksek. Aşırı uyum: eğitim hatası düşük, test hatası yüksek.", "Eğitim hatası esneklikle hiç artmaz; bu yüzden model seçmek için kullanılamaz.", "Eğitim ile test hatası arasındaki açıklık, modelin ne kadar ezberlediğini gösterir."])}
+${sum("Akılda kalsın", ["Eksik uyum: iki hata da yüksek. Aşırı uyum: eğitim hatası düşük, test hatası yüksek.", "İç içe modellerde eğitim hatası esneklikle artmaz; bu yüzden model seçmek için kullanılamaz.", "Eğitim ile test hatası arasındaki açıklık, modelin ne kadar ezberlediğini gösterir."])}
 ${link("tr", "eksik ve aşırı uyum")}`),
     en: wrap(`
 <p class="c-lead">How flexible should a model be? A model that is too simple misses the truth; one that is too flexible learns the noise. These two mistakes are called underfitting and overfitting.</p>
@@ -237,9 +240,9 @@ ${cards([
       [4, "🌀", "Overfitting", "The model learns the noise along with the structure. Training error very low, test error very high. Example: degree 12."]
     ])}`)}
 ${sec(3, 2, "The two errors as flexibility grows", `
-${fig("u3_curve", "en", "<b>Figure 1.</b> Training and test errors of 12 models built on the same 30-person training data. Training error never rises; test error bottoms out around degree 2 and then climbs.")}
+${fig("u3_curve", "en", "<b>Figure 1.</b> Training and test errors of 12 models built on the same 30-person training data. Training error does not rise (nested models, same training data); test error bottoms out around degree 2 and then climbs.")}
 <p>The two curves tell one of the most important lessons of the module:</p>
-<ul><li><b>Training error never rises with flexibility.</b> A degree-3 polynomial can do everything degree 2 can (and more); it fits the training data at least as well.</li>
+<ul><li><b>For nested models minimising the same loss on the same training data, training error does not rise with flexibility.</b> A degree-3 polynomial can do everything degree 2 can (and more); it fits the training data at least as well. If two degrees give equal error, which to choose is a separate decision (the usual choice is the simpler one).</li>
 <li><b>Test error falls up to a point, then rises.</b> The fall comes from capturing the real structure; the rise from learning the noise.</li>
 <li><b>The gap between them measures memorisation.</b> At degree 2 the gap is small (0.070 / 0.076); at degree 12 it is enormous (0.032 / 18.2).</li></ul>`)}
 ${sec(4, 3, "Worked example: choosing the best degree", `
@@ -259,32 +262,32 @@ ${sec(6, 0, "Common mistakes", pit([
       ["Thinking a more complex model is “more realistic”", "More terms mean more flexibility, not more accuracy.", "Add complexity only if it improves success on new data."],
       ["Drawing firm conclusions from one sample", "With another 30 people the best degree could change.", "Look at how variable the result is (Unit 4)."]
     ]))}
-${sum("Remember", ["Underfitting: both errors high. Overfitting: training error low, test error high.", "Training error never rises with flexibility, so it cannot be used to choose a model.", "The gap between training and test error shows how much the model has memorised."])}
+${sum("Remember", ["Underfitting: both errors high. Overfitting: training error low, test error high.", "For nested models training error does not rise with flexibility, so it cannot be used to choose a model.", "The gap between training and test error shows how much the model has memorised."])}
 ${link("en", "underfitting and overfitting")}`)
   };
 
   /* ------------------------------------------------------------ Ünite 4 */
   C["m2-u4"] = {
     tr: wrap(`
-<p class="c-lead">Ünite 3'teki sonuçlar tek bir 30 kişilik örnekleme dayanıyordu. Şansın etkisini ayıklamak için deneyi yüzlerce kez tekrarlayıp ortalama hatalara bakarız. Ortaya çıkan şekil, makine öğrenmesinin belki de en ünlü grafiğidir: U biçimli eğri.</p>
+<p class="c-lead">Ünite 3'teki sonuçlar tek bir 30 kişilik örnekleme dayanıyordu. Şansın etkisini ayıklamak için deneyi yüzlerce kez tekrarlayıp ortalama hatalara bakarız. Bu deneyde ortaya çıkan şekil, makine öğrenmesinin belki de en ünlü grafiğidir: U biçimli eğri. Unutma: bu şekil, gösterilen polinom ailesi, veri üretim süreci ve örneklem büyüklüğü için elde edilen bir bulgudur.</p>
 ${sec(1, 0, "Sezgi: tek maç mı, sezon mu?", `
 ${analogy("⚽", "Bir takımın gücünü tek bir maçla ölçmek yanıltıcıdır: şanslı bir gol sonucu değiştirebilir. Bir sezonun ortalaması ise takımın gerçek düzeyini gösterir. Modeller de böyledir: tek bir örneklemdeki test hatası şansa bağlıdır, <b>yüzlerce örneklemin ortalaması</b> modelin gerçek davranışını gösterir.")}`)}
 ${sec(2, 1, "U biçimli eğri", `
-${fig("u4_u", "tr", "<b>Şekil 1.</b> Her derece için 150 farklı 30 kişilik örneklemle model kuruldu; çizgiler ortalama hatalar. Kesikli çizgi indirgenemez hata (0,0625).")}
+${fig("u4_u", "tr", "<b>Şekil 1.</b> Her derece için 150 farklı 30 kişilik örneklemle model kuruldu; çizgiler ortalama hatalar. Kesikli çizgi indirgenemez hata (0,0625). Her tekrarda yeni bir eğitim örneklemi çekildi; test hatası hep aynı 2.000 kişilik örneklemde ölçüldü (dereceler adilce karşılaştırılır, ortalama bu test çekilişine koşullu).")}
 <p>Eğriyi soldan sağa oku:</p>
 <ol class="c-steps">
 <li><p><b>Sol kol (eksik uyum):</b> derece 1'de model ilişkinin eğriliğini yakalayamıyor; test hatası yüksek.</p></li>
 <li><p><b>Dip:</b> derece 2 civarında model gerçek yapıyı yakalıyor ama henüz gürültüyü öğrenmiyor. En düşük ortalama test hatası burada.</p></li>
 <li><p><b>Sağ kol (aşırı uyum):</b> derece arttıkça model her örneklemin gürültüsüne uyuyor; test hatası hızla yükseliyor.</p></li>
-<li><p><b>Alt sınır:</b> test hatası hiçbir zaman kesikli çizginin (indirgenemez hata) altına inmiyor.</p></li>
+<li><p><b>Alt sınır:</b> ortalama test hatası kesikli çizginin (indirgenemez hata) altına inmiyor.</p></li>
 </ol>`)}
 ${sec(3, 2, "Test hatası neden indirgenemez hatanın altına inemez?", `
 <div class="c-formula"><div class="eq">log ücret = <i>f</i>(deneyim) + <i>u</i></div>
 <dl><dt>f</dt><dd>gerçek ilişki: veriden öğrenilebilen kısım</dd><dt>u</dt><dd>kişiye özgü, öngörülemez kısım (şans, ölçülmeyen özellikler). Varyansı 0,0625</dd></dl></div>
-<p>En iyi model bile ancak <i>f</i>'yi mükemmel öğrenebilir; <i>u</i>'yu asla. Bu yüzden test hatasının <b>0,0625'in altına inmesi imkânsızdır</b>. Eğitim hatası bu sınırın altına inerse (Ünite 2'deki derece 12), model <i>u</i>'yu ezberlemiştir.</p>`)}
+<p>En iyi model bile ancak <i>f</i>'yi mükemmel öğrenebilir; <i>u</i>'yu asla. Bu yüzden <b>beklenen test HKO'su 0,0625'in altına inemez</b>. Tek bir test örnekleminde ölçülen değer şans eseri biraz altına düşebilir (gerçek eğri bile 2.000 kişide ≈ 0,062 verebilir); sınır, çok sayıda yeni gözlemin ortalaması içindir. Eğitim hatası bu değerin çok altına inerse (Ünite 2'deki derece 12) bu bir uyarıdır; aşırı uyumun kanıtı bağımsız testteki bozulmadır.</p>`)}
 ${sec(4, 3, "Veri miktarı U'yu nasıl değiştirir?", `
 <div class="c-two">${fig("u4_n", "tr", "<b>Şekil 2.</b> Aynı deney, 30 ve 150 kişilik eğitim verisiyle.")}
-<div><p>Daha çok veriyle iki şey olur:</p><ul><li>Her derecede test hatası <b>azalır</b>: model daha az şansa bağlıdır.</li><li>Sağ kol <b>daha yavaş yükselir</b>: esnek modeller daha güvenli kullanılabilir hâle gelir.</li></ul><p><b>Ders:</b> “Doğru esneklik” sabit bir sayı değildir; elindeki veri miktarına bağlıdır. Az veriyle sade modeller, çok veriyle daha esnek modeller tercih edilir.</p></div></div>`)}
+<div><p>Bu deneyde daha çok veriyle şunlar olur:</p><ul><li>Esnek derecelerde test hatası <b>azalır</b>: model daha az şansa bağlıdır.</li><li>Sağ kol <b>daha yavaş yükselir</b>: esnek modellerin cezası küçülür.</li><li>Dip <b>derece 2'de kalır</b>: gerçek ilişki 2. dereceden olduğu için daha esnek bir model kazanacak bir yapı bulamaz.</li></ul><p><b>Ders:</b> veri arttıkça aşırı uyum riski azalır. Gerçek ilişki daha karmaşıksa daha çok veri dibi daha esnek modellere kaydırabilir; bu deneyde ise kaydırmıyor.</p></div></div>`)}
 ${sec(5, 4, "Tek örneklem ne kadar yanıltabilir?", `
 <table class="c-table"><thead><tr><th>Yaklaşım</th><th>Sonuç</th><th>Güvenilirlik</th></tr></thead><tbody>
 <tr class="bad"><td>Tek bir 30 kişilik örneklem</td><td>En iyi derece 2, 3, 4 ya da 5 çıkabilir</td><td>Düşük: yakın modellerin sırası şansa bağlı</td></tr>
@@ -295,28 +298,28 @@ ${sec(6, 0, "Sık yapılan hatalar", pit([
       ["Test hatasının sıfıra inebileceğini sanmak", "İndirgenemez hata her zaman kalır.", "Modelin başarısını bu alt sınıra olan uzaklıkla değerlendir."],
       ["Esnekliği veri miktarından bağımsız seçmek", "Az veriyle esnek modeller hızla aşırı uyar.", "Veri azsa sade başla."]
     ]))}
-${sum("Akılda kalsın", ["Ortalama test hatası esnekliğe karşı U çizer: önce eksik uyum azalır, sonra aşırı uyum artar.", "Test hatası indirgenemez hatanın altına inemez.", "Daha çok veri, U'nun dibini sağa kaydırır: esnek modeller daha güvenli olur."])}
+${sum("Akılda kalsın", ["Bu deneyde ortalama test hatası esnekliğe karşı U çizer: önce eksik uyum azalır, sonra aşırı uyum artar.", "Beklenen test hatası indirgenemez hatanın altına inemez.", "Bu deneyde daha çok veri dibi değiştirmez (derece 2), sağ kolu yumuşatır: esnek modellerin cezası azalır."])}
 ${link("tr", "U biçimli eğri")}`),
     en: wrap(`
-<p class="c-lead">The results in Unit 3 rested on a single sample of 30 people. To strip out luck we repeat the experiment hundreds of times and look at the average errors. The shape that emerges is perhaps the most famous chart in machine learning: the U-shaped curve.</p>
+<p class="c-lead">The results in Unit 3 rested on a single sample of 30 people. To strip out luck we repeat the experiment hundreds of times and look at the average errors. The shape that emerges in this experiment is perhaps the most famous chart in machine learning: the U-shaped curve. Remember: it is a finding for the polynomial family, data-generating process and sample size shown.</p>
 ${sec(1, 0, "Intuition: one match or a season?", `
 ${analogy("⚽", "Judging a team by a single match is misleading: a lucky goal can change the result. A season's average shows the team's real level. Models are the same: the test error in a single sample depends on luck; <b>the average over hundreds of samples</b> shows the model's real behaviour.")}`)}
 ${sec(2, 1, "The U-shaped curve", `
-${fig("u4_u", "en", "<b>Figure 1.</b> For each degree, models were built on 150 different 30-person samples; the lines are average errors. Dashed line: the irreducible error (0.0625).")}
+${fig("u4_u", "en", "<b>Figure 1.</b> For each degree, models were built on 150 different 30-person samples; the lines are average errors. Dashed line: the irreducible error (0.0625). Each repetition drew a new training sample; test error was always measured on the same 2,000-person sample (a fair comparison of the degrees; the average is conditional on that test draw).")}
 <p>Read the curve from left to right:</p>
 <ol class="c-steps">
 <li><p><b>Left arm (underfitting):</b> at degree 1 the model cannot capture the curvature; the test error is high.</p></li>
 <li><p><b>Bottom:</b> around degree 2 the model captures the real structure but does not yet learn the noise. The lowest average test error is here.</p></li>
 <li><p><b>Right arm (overfitting):</b> as the degree rises, the model follows each sample's noise; the test error climbs fast.</p></li>
-<li><p><b>Floor:</b> the test error never goes below the dashed line (the irreducible error).</p></li>
+<li><p><b>Floor:</b> the average test error does not go below the dashed line (the irreducible error).</p></li>
 </ol>`)}
 ${sec(3, 2, "Why can test error not go below the irreducible error?", `
 <div class="c-formula"><div class="eq">log wage = <i>f</i>(experience) + <i>u</i></div>
 <dl><dt>f</dt><dd>the true relationship: the part that can be learned from data</dd><dt>u</dt><dd>the person-specific, unpredictable part (luck, unmeasured traits). Its variance is 0.0625</dd></dl></div>
-<p>Even the best model can at most learn <i>f</i> perfectly, never <i>u</i>. So it is <b>impossible for the test error to go below 0.0625</b>. If the training error goes below this floor (degree 12 in Unit 2), the model has memorised <i>u</i>.</p>`)}
+<p>Even the best model can at most learn <i>f</i> perfectly, never <i>u</i>. So the <b>expected test MSE cannot go below 0.0625</b>. The value measured on a single test sample can dip slightly below it by chance (even the true curve can give ≈ 0.062 on 2,000 people); the bound is for the average over many new observations. If the training error falls far below it (degree 12 in Unit 2), that is a warning; the evidence of overfitting is the deterioration on independent test data.</p>`)}
 ${sec(4, 3, "How does the amount of data change the U?", `
 <div class="c-two">${fig("u4_n", "en", "<b>Figure 2.</b> The same experiment with 30-person and 150-person training data.")}
-<div><p>With more data two things happen:</p><ul><li>Test error <b>falls</b> at every degree: the model depends less on luck.</li><li>The right arm <b>rises more slowly</b>: flexible models become safer to use.</li></ul><p><b>Lesson:</b> the “right flexibility” is not a fixed number; it depends on how much data you have. With little data, simple models; with lots of data, more flexible ones.</p></div></div>`)}
+<div><p>In this experiment more data do the following:</p><ul><li>Test error <b>falls</b> at the flexible degrees: the model depends less on luck.</li><li>The right arm <b>rises more slowly</b>: the penalty on flexible models shrinks.</li><li>The bottom <b>stays at degree 2</b>: since the true relationship is quadratic, a more flexible model finds no structure to gain from.</li></ul><p><b>Lesson:</b> more data reduce the risk of overfitting. If the true relationship is more complex, more data can move the bottom to more flexible models; in this experiment it does not.</p></div></div>`)}
 ${sec(5, 4, "How misleading can a single sample be?", `
 <table class="c-table"><thead><tr><th>Approach</th><th>Result</th><th>Reliability</th></tr></thead><tbody>
 <tr class="bad"><td>One 30-person sample</td><td>The best degree may come out as 2, 3, 4 or 5</td><td>Low: the ranking of similar models depends on luck</td></tr>
@@ -327,7 +330,7 @@ ${sec(6, 0, "Common mistakes", pit([
       ["Thinking test error can reach zero", "The irreducible error always remains.", "Judge a model by its distance from this floor."],
       ["Choosing flexibility regardless of data size", "With little data flexible models overfit quickly.", "With little data, start simple."]
     ]))}
-${sum("Remember", ["Average test error traces a U against flexibility: underfitting falls first, then overfitting rises.", "Test error cannot go below the irreducible error.", "More data move the bottom of the U to the right: flexible models become safer."])}
+${sum("Remember", ["In this experiment average test error traces a U against flexibility: underfitting falls first, then overfitting rises.", "Expected test error cannot go below the irreducible error.", "In this experiment more data do not move the bottom (degree 2) but soften the right arm: the penalty on flexible models falls."])}
 ${link("en", "the U-shaped curve")}`)
   };
 
@@ -349,9 +352,9 @@ ${fig("u5_curves", "tr", "<b>Şekil 2.</b> Her ince çizgi 30 kişilik farklı b
 <tr><td>Derece 12</td><td>Düşük: ortalamada gerçeğe yakın</td><td>Çok yüksek: her örneklemde bambaşka</td><td>Merkez etrafında ama çok dağınık</td></tr></tbody></table>`)}
 ${sec(3, 2, "Ayrıştırma: test hatasının üç parçası", `
 <div class="c-formula"><div class="eq">beklenen test hatası = yanlılık² + varyans + indirgenemez hata</div>
-<dl><dt>yanlılık²</dt><dd>öngörülerin ortalamasının gerçek değerden uzaklığının karesi</dd><dt>varyans</dt><dd>öngörülerin örneklemden örnekleme ne kadar oynadığı</dd><dt>indirgenemez</dt><dd>hiçbir modelin öngöremeyeceği sapmanın varyansı (0,0625)</dd></dl></div>
+<dl><dt>yanlılık²</dt><dd>öngörülerin ortalamasının gerçek değerden uzaklığının karesi</dd><dt>varyans</dt><dd>öngörülerin örneklemden örnekleme ne kadar oynadığı</dd><dt>indirgenemez</dt><dd>hiçbir modelin öngöremeyeceği sapmanın varyansı (0,0625)</dd><dt>koşullar</dt><dd>bu ayrıştırma <b>kare kayıp</b> (HKO) için ve modelin eğitiminde kullanılmamış <b>yeni, bağımsız</b> bir gözlem için geçerlidir. Belirli bir girdide (ör. 20 yıl deneyim) hesaplanabilir ya da girdiler üzerinden ortalanabilir; ikisi farklı sayılar verir.</dd></dl></div>
 ${fig("u5_decomp", "tr", "<b>Şekil 3.</b> Her derece için beklenen test hatasının parçaları (300 örneklem, 2–38 yıl arası deneyim üzerinden ortalama). Derece arttıkça yanlılık eriyor, varyans büyüyor.")}
-<p>Grafiği oku: derece 1'de çubuğun büyük kısmı <b>yanlılık</b>. Derece 2'de yanlılık neredeyse sıfır, varyans küçük: toplam en düşük. Derece 6'dan sonra <b>varyans</b> patlıyor. U eğrisinin dibi, bu iki parçanın toplamının en küçük olduğu yer: <b>yanlılık–varyans dengesi</b>.</p>`)}
+<p>Grafiği oku (çubukların üstündeki sayı toplam beklenen hata). Her çubuğun tabanı aynı: 0,0625'lik indirgenemez hata; derece 1'de bile toplamın (${nf(u5[1].toplam, 3, "tr")}) büyük kısmı odur. Fark <b>azaltılabilir</b> iki parçada: derece 1'de yanlılık² ${nf(u5[1].b2, 3, "tr")}, varyans ${nf(u5[1].var, 3, "tr")}; yani azaltılabilir hatanın çoğu yanlılıktan geliyor. Derece 2'de yanlılık neredeyse sıfır, varyans küçük: toplam en düşük (${nf(u5[2].toplam, 3, "tr")}). Bu sayılar 2–38 yıl arası deneyim üzerinden ortalamadır; atölyedeki 20 yıl deneyimli tek bir kişi için hesap farklı sayılar verir. Derece 6'dan sonra <b>varyans</b> patlıyor. U eğrisinin dibi, bu iki parçanın toplamının en küçük olduğu yer: <b>yanlılık–varyans dengesi</b>.</p>`)}
 ${sec(4, 3, "Çözümlü örnek: 20 yıl deneyimli bir kişi", `
 <ol class="c-steps">
 <li><p>200 farklı 30 kişilik örneklemle aynı dereceden model kur; her birinden 20 yıl deneyimli biri için öngörü al. Elinde 200 öngörü olur.</p></li>
@@ -388,9 +391,9 @@ ${fig("u5_curves", "en", "<b>Figure 2.</b> Each thin line is a model built on a 
 <tr><td>Degree 12</td><td>Low: close to the truth on average</td><td>Very high: different in every sample</td><td>Around the centre but very scattered</td></tr></tbody></table>`)}
 ${sec(3, 2, "The decomposition: three parts of test error", `
 <div class="c-formula"><div class="eq">expected test error = bias² + variance + irreducible error</div>
-<dl><dt>bias²</dt><dd>the squared distance between the average prediction and the true value</dd><dt>variance</dt><dd>how much predictions swing from sample to sample</dd><dt>irreducible</dt><dd>the variance of the deviation no model can predict (0.0625)</dd></dl></div>
+<dl><dt>bias²</dt><dd>the squared distance between the average prediction and the true value</dd><dt>variance</dt><dd>how much predictions swing from sample to sample</dd><dt>irreducible</dt><dd>the variance of the deviation no model can predict (0.0625)</dd><dt>conditions</dt><dd>this decomposition holds for <b>squared loss</b> (MSE) and for a <b>new, independent</b> observation not used in training. It can be computed at a given input (e.g. 20 years of experience) or averaged over inputs; the two give different numbers.</dd></dl></div>
 ${fig("u5_decomp", "en", "<b>Figure 3.</b> The parts of expected test error for each degree (300 samples, averaged over experience from 2 to 38 years). As the degree rises, bias melts away and variance grows.")}
-<p>Read the chart: at degree 1 most of the bar is <b>bias</b>. At degree 2 bias is almost zero and variance small: the total is lowest. From degree 6 on, <b>variance</b> explodes. The bottom of the U curve is where the sum of these two parts is smallest: the <b>bias–variance trade-off</b>.</p>`)}
+<p>Read the chart (the number above each bar is the total expected error). Every bar has the same base: the irreducible error of 0.0625; even at degree 1 it is most of the total (${nf(u5[1].toplam, 3, "en")}). The difference lies in the two <b>reducible</b> parts: at degree 1 bias² is ${nf(u5[1].b2, 3, "en")} and variance ${nf(u5[1].var, 3, "en")}, so most of the reducible error comes from bias. At degree 2 bias is almost zero and variance small: the total is lowest (${nf(u5[2].toplam, 3, "en")}). These numbers are averaged over experience from 2 to 38 years; for the single person with 20 years in the workshop the calculation gives different numbers. From degree 6 on, <b>variance</b> explodes. The bottom of the U curve is where the sum of these two parts is smallest: the <b>bias–variance trade-off</b>.</p>`)}
 ${sec(4, 3, "Worked example: a person with 20 years of experience", `
 <ol class="c-steps">
 <li><p>Build a model of the same degree on 200 different 30-person samples; from each, get a prediction for someone with 20 years of experience. You now have 200 predictions.</p></li>
@@ -441,10 +444,11 @@ ${sec(4, 3, "Çözümlü örnek: 5-katlı çapraz doğrulamayla derece seçmek",
 <p>Not: küçük örneklemde çapraz doğrulama hatası gürültülüdür; derece 3–6'nın test hatası derece 2'ye yakın olduğu hâlde çapraz doğrulama onları olduğundan kötü gösteriyor. Yine de modelleri sıralamak ve iyi olanı seçmek için işini görüyor.</p>`)}
 ${sec(5, 4, "k nasıl seçilir?", `
 ${cards([
-      [0, "5️⃣", "k = 5", "Yaygın ve hızlı. Her turda verinin %80'iyle model kurulur."],
-      [1, "🔟", "k = 10", "Daha az yanlı, biraz daha yavaş. Veri yeterliyse yaygın tercih."],
-      [2, "1️⃣", "k = n (birini dışarıda bırak)", "Her turda tek gözlem doğrulanır. Çok küçük veride kullanılır; hesap yükü yüksek."]
-    ])}`)}
+      [0, "5️⃣", "k = 5", "Her turda verinin %80'iyle model kurulur. Hızlı; kat hataları arasındaki farkı görmek kolay."],
+      [1, "🔟", "k = 10", "Her turda %90 eğitim: tam veriyle kurulacak modele daha yakın. Ama eğitim parçaları birbirine çok benzediği için kat hataları ilişkili olur; ortalamanın değişkenliği her zaman azalmaz. Hesap iki kat."],
+      [2, "1️⃣", "k = n (birini dışarıda bırak)", "Her turda tek gözlem doğrulanır. Eğitim payı en yüksek, ama sonuç tek gözlemlere çok duyarlı olabilir; hesap yükü yüksek."]
+    ])}
+<p>Tek bir “doğru k” yok: <b>eğitim payı</b>, <b>kat hatalarının değişkenliği</b> ve <b>hesap maliyeti</b> birlikte tartılır. Kat hatalarını da raporla; bir uç kat ortalamayı tek başına yukarı çekebilir. Katlar eşit büyüklükte değilse (ör. 32 gözlem 5 kata) katların basit ortalaması ile gözlem sayısıyla ağırlıklı HKO biraz farklıdır; hangisini kullandığını yaz.</p>`)}
 ${sec(6, 0, "Sık yapılan hatalar", pit([
       ["Doğrulama katını eğitime de katmak", "Model, sınandığı gözlemleri görmüş olur; çapraz doğrulama hatası eğitim hatasına dönüşür.", "Her turda eğitim ve doğrulama ortak gözlem içermesin; bunu bir kontrolle sına."],
       ["Test sonucuna göre modeli değiştirmek", "Test verisi model seçimine karışır; raporlanan hata iyimser olur.", "Model seçimini yalnızca çapraz doğrulamayla yap."],
@@ -473,10 +477,11 @@ ${sec(4, 3, "Worked example: choosing the degree with 5-fold cross-validation", 
 <p>Note: in small samples the cross-validation error is noisy; degrees 3–6 have test errors close to degree 2, yet cross-validation makes them look worse than they are. Still, it does the job of ranking models and picking a good one.</p>`)}
 ${sec(5, 4, "How do you choose k?", `
 ${cards([
-      [0, "5️⃣", "k = 5", "Common and fast. Each round builds the model on 80% of the data."],
-      [1, "🔟", "k = 10", "Less biased, a little slower. A common choice when there are enough data."],
-      [2, "1️⃣", "k = n (leave one out)", "Each round validates a single observation. Used with very small data; computationally heavy."]
-    ])}`)}
+      [0, "5️⃣", "k = 5", "Each round builds the model on 80% of the data. Fast; differences between fold errors are easy to see."],
+      [1, "🔟", "k = 10", "90% training in each round: closer to the model that will be built on all the data. But the training parts are very similar, so fold errors are correlated; the variability of the average does not always fall. Twice the computation."],
+      [2, "1️⃣", "k = n (leave one out)", "Each round validates a single observation. The highest training share, but the result can be very sensitive to single observations; computationally heavy."]
+    ])}
+<p>There is no single “right k”: weigh the <b>training share</b>, the <b>variability of the fold errors</b> and the <b>computational cost</b> together. Report the fold errors too; one extreme fold can pull the average up on its own. If the folds are not of equal size (e.g. 32 observations in 5 folds), the simple mean of the folds and the observation-weighted MSE differ slightly; state which one you use.</p>`)}
 ${sec(6, 0, "Common mistakes", pit([
       ["Including the validation fold in training", "The model sees the observations it is evaluated on; cross-validation error turns into training error.", "Make sure training and validation share no observation in any round; test this with a check."],
       ["Changing the model after seeing the test result", "The test data leak into model choice; the reported error becomes optimistic.", "Choose the model with cross-validation only."],
@@ -494,7 +499,7 @@ ${sec(1, 0, "Sezgi: sınav kâğıdının arkası", `
 ${analogy("🔍", "Bir öğrencinin deneme sınavında %100 aldığını düşün. Sonra cevap anahtarının sınav kâğıdının arkasına basıldığı ortaya çıkıyor. Öğrenci bir şey öğrenmiş mi? Hayır; asıl sınavda kâğıdın arkası boş olacak. Sızıntılı bir modelin test başarısı da böyledir: cevap, sorunun içine gizlice sızmıştır.")}`)}
 ${sec(2, 1, "Üç tür sızıntı", `
 ${fig("u7_types", "tr", "<b>Şekil 1.</b> Sızıntının üç yaygın türü ve örnekleri.")}
-<div class="c-formula"><div class="eq">Altın soru: “Bu bilgi, öngörüyü yapacağım anda elimde olur muydu?”</div><dl><dt>Hayır ise</dt><dd>sızıntı var. Özelliği çıkar ya da öngörü anında bilinen bir sürümünü kullan.</dd></dl></div>`)}
+<div class="c-formula"><div class="eq">Altın soru: “Bu bilgi, öngörüyü yapacağım anda elimde olur muydu?”</div><dl><dt>Hayır ise</dt><dd>sızıntı var. Özelliği çıkar ya da öngörü anında bilinen bir sürümünü kullan.</dd><dt>Öngörü anı</dt><dd>Soruyu sormadan önce <b>öngörünün ne zaman yapıldığını</b> yaz. “Önceki ayın oranı” takvimde önceki aydır, ama öngörü ay başında, o rakam yayımlanmadan yapılıyorsa elde değildir (ABD işsizlik oranı ayın ilk cuması açıklanır). İlk açıklanan rakam sonradan revize de edilebilir: bugünkü veri tabanındaki değer, o gün bilinen değer olmayabilir.</dd><dt>Çapraz doğrulamada</dt><dd>Doldurma ve ölçekleme gibi adımların değerleri her katta <b>yalnızca o turun eğitim parçasından</b> öğrenilir ve doğrulama katına aynen uygulanır. Tüm eğitim kümesinden bir kez hesaplanan medyan ya da std, iç doğrulama katlarına bilgi sızdırır. scikit-learn'de <code>Pipeline</code> bunu kendiliğinden yapar.</dd></dl></div>`)}
 ${sec(3, 2, "Test bilgisinin eğitime sızması: zaman çizelgesi", `
 ${fig("u7_timeline", "tr", "<b>Şekil 2.</b> Ölçekleme, doldurma gibi hazırlık adımlarının değerleri yalnızca eğitim döneminden öğrenilmeli.")}
 <table class="c-table"><thead><tr><th>Adım</th><th>✗ Sızıntılı</th><th>✓ Doğru</th></tr></thead><tbody>
@@ -528,7 +533,7 @@ ${sec(1, 0, "Intuition: the back of the exam paper", `
 ${analogy("🔍", "Imagine a student scoring 100% in a mock exam. Then it turns out the answer key was printed on the back of the paper. Has the student learned anything? No; in the real exam the back will be blank. A leaky model's test success is the same: the answer has secretly leaked into the question.")}`)}
 ${sec(2, 1, "Three kinds of leakage", `
 ${fig("u7_types", "en", "<b>Figure 1.</b> The three common kinds of leakage, with examples.")}
-<div class="c-formula"><div class="eq">The golden question: “Would I have this information at the moment I make the prediction?”</div><dl><dt>If not</dt><dd>there is leakage. Drop the feature or use a version known at prediction time.</dd></dl></div>`)}
+<div class="c-formula"><div class="eq">The golden question: “Would I have this information at the moment I make the prediction?”</div><dl><dt>If not</dt><dd>there is leakage. Drop the feature or use a version known at prediction time.</dd><dt>Forecast time</dt><dd>Before asking the question, write down <b>when the forecast is made</b>. “Last month's rate” is the previous calendar month, but if the forecast is made at the start of the month before that figure is published, it is not available (the US unemployment rate is released on the first Friday of the month). The first release can also be revised later: the value in today's database may not be the value known on the day.</dd><dt>In cross-validation</dt><dd>The values used in steps such as filling and scaling are learned in each fold <b>from that round's training part only</b> and applied as they are to the validation fold. A median or sd computed once from the whole training set leaks information into the inner validation folds. In scikit-learn, a <code>Pipeline</code> does this automatically.</dd></dl></div>`)}
 ${sec(3, 2, "Test information leaking into training: a timeline", `
 ${fig("u7_timeline", "en", "<b>Figure 2.</b> The values used in preparation steps such as scaling and filling must be learned from the training period only.")}
 <table class="c-table"><thead><tr><th>Step</th><th>✗ Leaky</th><th>✓ Right</th></tr></thead><tbody>
@@ -565,11 +570,12 @@ ${link("en", "data leakage")}`)
 ${sec(1, 0, "Sezgi: dünün gazetesiyle bugünü tahmin etmek", `
 ${analogy("📰", "Bugünün hava durumunu tahmin etmek için yarının gazetesine bakabilseydin, mükemmel bir tahminci olurdun. Ama gerçekte yarının gazetesi yoktur. Rastgele bölme, modele tam olarak bunu verir: öngördüğü ayın <b>sonrasını</b> da eğitimde görür.")}`)}
 ${sec(2, 1, "İki bölme, gerçek veri", `
-${fig("u8_split", "tr", "<b>Şekil 1.</b> ABD işsizlik oranı (FRED, 2000'den bu yana). Pembe noktalar test ayları. Model, bir ayı eğitimde zamanca ona en yakın ayın değeriyle öngörüyor.")}
+${fig("u8_split", "tr", "<b>Şekil 1.</b> ABD işsizlik oranı (FRED, 2000'den bu yana). Pembe noktalar test ayları. Model, bir ayı eğitimde takvimde ona en yakın ayın değeriyle öngörüyor. Rastgele bölme tohum 2026 ile çekildi.")}
 <table class="c-table"><thead><tr><th>Bölme</th><th>Test ayları</th><th>Model neyi biliyor?</th><th class="n">Test hatası (kök HKO)</th></tr></thead><tbody>
-<tr class="bad"><td>Rastgele</td><td>Serinin her yerine dağılmış</td><td>Her test ayının hemen öncesini ve sonrasını</td><td class="n">≈ 0,19</td></tr>
-<tr class="hl"><td>Zamana göre</td><td>Serinin son %20'si</td><td>Yalnızca geçmişi</td><td class="n">≈ 1,82</td></tr></tbody></table>
-<p>Aynı model, aynı veri; hata yaklaşık <b>on kat</b> farklı. Fark modelden değil, değerlendirme yönteminden geliyor. Ücret örneğinde gözlemler birbirinden bağımsızdı; işsizlikte bu ay geçen aya ve gelecek aya çok benzer. Bu benzerlik, rastgele bölmede “kopya çekmeyi” mümkün kılıyor.</p>`)}
+<tr class="bad"><td>Rastgele (tohum 2026)</td><td>Serinin her yerine dağılmış</td><td>Her test ayının hemen öncesini ve sonrasını: araya değer koyma</td><td class="n">≈ 0,19</td></tr>
+<tr class="hl"><td>Tek kesim</td><td>Serinin son %20'si (64 ay)</td><td>Yalnızca kesimden önceki geçmişi; ufuk 1–64 ay</td><td class="n">≈ 1,82</td></tr>
+<tr><td>Aynı son %20, bir ay ileri</td><td>Serinin son %20'si (64 ay)</td><td>Her ay için yalnızca o aydan önceki geçmişi; ufuk 1 ay</td><td class="n">≈ 0,15</td></tr></tbody></table>
+<p>İlk iki satırda hata yaklaşık on kat farklı, ama bu fark yalnızca sızıntıdan gelmiyor: iki bölme <b>farklı ayları</b> ve <b>farklı ufukları</b> değerlendiriyor. Rastgele bölme serinin içindeki aylara iki yandaki komşulardan değer koyuyor; tek kesim, son 64 ayın hepsine aynı son eğitim değerini veriyor. Üçüncü satır aynı son 64 ayı, her seferinde yalnızca geçmişle ve bir ay ileri öngörüyor: hata küçük. Ders: zaman serisinde rastgele bölme geleceği gösterir ve kabul edilemez; yöntemleri karşılaştırırken de hedef ayları ve ufku aynı tut.</p>`)}
 ${sec(3, 2, "Zaman serisinde çapraz doğrulama: genişleyen pencere", `
 ${fig("u8_window", "tr", "<b>Şekil 2.</b> Katlar karıştırılmaz. Her turda eğitim penceresi uzar, hemen sonraki dönem doğrulamaya ayrılır.")}
 <p>Her doğrulama, kendi geçmişinden öğrenmiş bir modelle yapılır; tıpkı gerçek hayatta her ay yeniden öngörü yapan bir analist gibi. Turların hatalarının ortalaması, modelin öngörü başarısının dürüst bir ölçüsüdür.</p>`)}
@@ -582,7 +588,7 @@ ${sec(4, 3, "Çözümlü örnek: doğru bölme nasıl kurulur?", `
 </ol>`)}
 ${sec(5, 4, "Test döneminin seçimi de sonucu etkiler", `
 ${cards([
-      [3, "🦠", "Şoklar", "Test döneminde pandemi gibi bir şok varsa hata büyür. Bu bir model kusuru değil, gerçeğin bir parçasıdır."],
+      [3, "🦠", "Şoklar ve ufuk", "Test döneminde büyük bir şok ya da kesimden sonra uzun bir düşüş varsa, uzun ufuklu sabit bir öngörünün hatası büyür. Hatayı açıklarken son eğitim değerine, tahminin nasıl üretildiğine ve test dönemine bak."],
       [1, "📆", "Tek kesim tarihi", "Sonuç tek bir bölmeye dayanır; farklı bir tarihle hata değişebilir. Genişleyen pencere bu yüzden tercih edilir."],
       [2, "🧭", "Kıyas ölçütü", "Hata büyük çıktığında “bu kötü mü?” sorusunun yanıtı, saf öngörüyle karşılaştırmadır (Ünite 9)."]
     ])}`)}
@@ -591,18 +597,19 @@ ${sec(6, 0, "Sık yapılan hatalar", pit([
       ["“Standart yöntem” diye train_test_split kullanmak", "Varsayılan olarak karıştırır; bağımsız gözlemler için tasarlanmıştır.", "Zaman serisinde karıştırmayı kapat ya da tarih filtresi kullan."],
       ["Sıralamayı unutmak", "Satırlar indirildikleri sırada değilse “son %20” gelecek değildir.", "Bölmeden önce tarihe göre sırala ve kontrol et."]
     ]))}
-${sum("Akılda kalsın", ["Zaman serisinde rastgele bölme geleceği gösterir; hata olduğundan çok küçük çıkar.", "Geçmişle eğit, gelecekle sına: bir kesim tarihi ya da genişleyen pencere kullan.", "Gerçek veride aynı model, iki bölmeyle yaklaşık on kat farklı hata verdi."])}
+${sum("Akılda kalsın", ["Zaman serisinde rastgele bölme geleceği gösterir; hata olduğundan çok küçük çıkar.", "Geçmişle eğit, gelecekle sına: bir kesim tarihi ya da genişleyen pencere kullan.", "İki bölme farklı ayları ve ufukları ölçer; yöntemleri karşılaştırırken hedef ayları ve ufku aynı tut."])}
 ${link("tr", "zaman serisinde doğrulama")}`),
     en: wrap(`
 <p class="c-lead">Most economic and financial data are time series: inflation, unemployment, exchange rates, interest rates. In time series a random split lets the model see the future. The rule is simple: train on the past, test on the future.</p>
 ${sec(1, 0, "Intuition: forecasting today with tomorrow's paper", `
 ${analogy("📰", "If you could read tomorrow's newspaper to forecast today's weather, you would be a perfect forecaster. In reality there is no tomorrow's paper. A random split gives the model exactly that: it sees, in training, what came <b>after</b> the month it predicts.")}`)}
 ${sec(2, 1, "Two splits, real data", `
-${fig("u8_split", "en", "<b>Figure 1.</b> US unemployment rate (FRED, since 2000). Pink dots are test months. The model predicts a month with the value of the month closest to it in time in the training data.")}
+${fig("u8_split", "en", "<b>Figure 1.</b> US unemployment rate (FRED, since 2000). Pink dots are test months. The model predicts a month with the value of the calendar-closest month in the training data. The random split was drawn with seed 2026.")}
 <table class="c-table"><thead><tr><th>Split</th><th>Test months</th><th>What does the model know?</th><th class="n">Test error (RMSE)</th></tr></thead><tbody>
-<tr class="bad"><td>Random</td><td>Scattered across the series</td><td>The months right before and after each test month</td><td class="n">≈ 0.19</td></tr>
-<tr class="hl"><td>By time</td><td>The last 20% of the series</td><td>Only the past</td><td class="n">≈ 1.82</td></tr></tbody></table>
-<p>Same model, same data; the error differs about <b>tenfold</b>. The difference comes not from the model but from the evaluation method. In the wage example observations were independent; in unemployment this month is very similar to last month and next month. That similarity makes “copying” possible under a random split.</p>`)}
+<tr class="bad"><td>Random (seed 2026)</td><td>Scattered across the series</td><td>The months right before and after each test month: filling in between</td><td class="n">≈ 0.19</td></tr>
+<tr class="hl"><td>Single cut</td><td>The last 20% of the series (64 months)</td><td>Only the past before the cut; horizon 1–64 months</td><td class="n">≈ 1.82</td></tr>
+<tr><td>Same last 20%, one month ahead</td><td>The last 20% of the series (64 months)</td><td>For each month, only the past before it; horizon 1 month</td><td class="n">≈ 0.15</td></tr></tbody></table>
+<p>In the first two rows the error differs about tenfold, but the gap does not come from leakage alone: the two splits evaluate <b>different months</b> and <b>different horizons</b>. The random split fills in months inside the series from their neighbours on both sides; the single cut gives all of the last 64 months the same last training value. The third row forecasts the same last 64 months one month ahead, each time using only the past: the error is small. Lesson: in time series a random split shows the future and is unacceptable; and when comparing methods, keep the target months and the horizon the same.</p>`)}
 ${sec(3, 2, "Cross-validation for time series: the expanding window", `
 ${fig("u8_window", "en", "<b>Figure 2.</b> Folds are not shuffled. In each round the training window grows and the period right after it is held out for validation.")}
 <p>Each validation uses a model that learned only from its own past, just like an analyst who forecasts again every month. The average of the rounds' errors is an honest measure of forecasting performance.</p>`)}
@@ -615,7 +622,7 @@ ${sec(4, 3, "Worked example: how to set up the right split", `
 </ol>`)}
 ${sec(5, 4, "The choice of test period matters too", `
 ${cards([
-      [3, "🦠", "Shocks", "If the test period contains a shock like the pandemic, the error grows. That is not a model flaw but part of reality."],
+      [3, "🦠", "Shocks and horizon", "If the test period contains a big shock or a long decline after the cut, the error of a constant long-horizon forecast grows. When explaining the error, look at the last training value, how the forecast is produced and the test period."],
       [1, "📆", "A single cut-off", "The result rests on one split; a different date may change the error. That is why the expanding window is preferred."],
       [2, "🧭", "Benchmark", "When the error is large, the answer to “is this bad?” is a comparison with the naive forecast (Unit 9)."]
     ])}`)}
@@ -624,7 +631,7 @@ ${sec(6, 0, "Common mistakes", pit([
       ["Using train_test_split as the “standard method”", "It shuffles by default; it is designed for independent observations.", "Turn shuffling off for time series or filter by date."],
       ["Forgetting to sort", "If rows are not in date order, “the last 20%” is not the future.", "Sort by date before splitting, and check."]
     ]))}
-${sum("Remember", ["In time series a random split shows the future; the error comes out far too small.", "Train on the past, test on the future: use a cut-off date or an expanding window.", "On real data, the same model gave errors about ten times apart under the two splits."])}
+${sum("Remember", ["In time series a random split shows the future; the error comes out far too small.", "Train on the past, test on the future: use a cut-off date or an expanding window.", "The two splits measure different months and horizons; when comparing methods, keep the target months and the horizon the same."])}
 ${link("en", "validating time series")}`)
   };
 

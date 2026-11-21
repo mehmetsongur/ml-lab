@@ -196,6 +196,10 @@ def three_fits(lang, degs=(1, 2, 12)):
         p.curve(grid, gercek(grid), "ref")
         p.dots(e_egt, y_egt, "d0", 2.6)
         p.curve(grid, np.clip(ongor(k, grid), 1.4, 3.6), "l1 thick")
+        if d == 2:
+            tepe = 0.08 / (2 * 0.0014)   # gerçek eğrinin tepesi ≈ 28,6 yıl / peak of the true curve
+            p.dots([tepe], [gercek(tepe)], "d3", 3.4)
+            f.text(p.sx(tepe), p.sy(gercek(tepe)) - 9, L("tepe ≈ 28,6 yıl", "peak ≈ 28.6 yrs")[lang], "ann")
         egt, tst = hko(ongor(k, e_egt), y_egt), hko(ongor(k, e_tst), y_tst)
         f.text(p.x + 90, 20, names[d], "lb")
         f.text(p.x + 90, 230, L("eğitim ", "training ")[lang] + num(egt, 3, lang) + L(" · test ", " · test ")[lang] + (num(tst, 1, lang) if tst > 1 else num(tst, 3, lang)), "val")
@@ -300,6 +304,9 @@ def u5_curves(lang):
     return f.svg("curves25")
 
 
+U5_ROWS = {}
+
+
 def u5_decomp(lang):
     r = np.random.default_rng(5)
     xs = np.linspace(2, 38, 19)
@@ -308,6 +315,7 @@ def u5_decomp(lang):
         P = np.array([ongor(kur(*orneklem(30, r), d), xs) for _ in range(300)])
         b2 = float(np.mean((P.mean(0) - gercek(xs)) ** 2)); var = float(np.mean(P.var(0)))
         rows.append((d, b2, min(var, 0.2)))
+        U5_ROWS[d] = {"b2": b2, "var": var, "toplam": b2 + var + SIG ** 2}
     f = Fig(640, 270)
     p = Panel(f, 60, 20, 540, 196, (0.5, 8.5), (0, 0.16))
     p.frame(xt=list(range(1, 9)), yt=[0, 0.04, 0.08, 0.12, 0.16], xl=L("polinom derecesi", "polynomial degree")[lang], yl=L("beklenen test hatası", "expected test error")[lang], yfmt=lambda v: num(v, 2, lang))
@@ -319,6 +327,8 @@ def u5_decomp(lang):
             top = min(base + val, 0.16)
             f.rect(x, p.sy(top), 44, p.sy(base) - p.sy(top), "bar " + cls)
             base = top
+        tot = U5_ROWS[d]["toplam"]   # kesilmemiş toplam / unclipped total
+        f.text(p.sx(d), p.sy(min(base, 0.16)) - 4, num(tot, 3, lang) if tot < 10 else "> 10", "val")
     legend(f, p.x + 95, 30, [("d6", L("indirgenemez hata (0,0625)", "irreducible error (0.0625)")[lang]), ("d4", L("yanlılık²", "bias²")[lang]), ("d1", L("varyans", "variance")[lang])])
     f.text(p.sx(7.6), p.sy(0.16) + 14, L("↑ kesildi", "↑ clipped")[lang], "ann")
     return f.svg("decomp")
@@ -412,9 +422,10 @@ def u7_timeline(lang):
 def u8_split(lang):
     d = ur2000.dropna().reset_index(drop=True)
     s = d["v"].to_numpy(); T = len(s); n = T // 5
+    mon = (d["t"].dt.year * 12 + d["t"].dt.month).to_numpy()   # takvim ayı / calendar month
     perm = np.random.default_rng(2026).permutation(T)
     f = Fig(660, 250)
-    for i, (te, name) in enumerate([(set(perm[:n]), L("Rastgele bölme", "Random split")[lang]), (set(range(T - n, T)), L("Zamana göre bölme", "Split by time")[lang])]):
+    for i, (te, name) in enumerate([(set(perm[:n]), L("Rastgele bölme (tohum 2026)", "Random split (seed 2026)")[lang]), (set(range(T - n, T)), L("Tek kesim: son %20", "Single cut: last 20%")[lang])]):
         p = Panel(f, 40 + i * 320, 30, 290, 170, (0, T - 1), (0, 16))
         p.frame(yt=[0, 5, 10, 15] if i == 0 else None)
         tr = [j for j in range(T) if j not in te]
@@ -424,7 +435,7 @@ def u8_split(lang):
         for yr in (2000, 2010, 2020):
             j = int(np.argmax(d["t"].dt.year.to_numpy() >= yr)); f.text(p.sx(j), 216, str(yr), "tk")
         tri = np.array(tr)
-        pred = np.array([s[tri[np.argmin(np.abs(tri - t))]] for t in tt])
+        pred = np.array([s[tri[np.argmin(np.abs(mon[tri] - mon[t]))]] for t in tt])
         rm = float(np.sqrt(np.mean((pred - s[tt]) ** 2)))
         f.text(p.x + 145, 240, L("test hatası (kök HKO): ", "test error (RMSE): ")[lang] + num(rm, 2, lang), "val")
     return f.svg("tsplit")
@@ -471,9 +482,10 @@ for name, fn in [("u1_series", u1_series), ("u1_errors", u1_errors), ("u1_measur
 # Tablolar için sayılar
 h = (ur2000["v"] - ur2000["v"].shift(1)).dropna()
 NUMS = {
-    "u1": {"me": float(h.mean()), "mae": float(h.abs().mean()), "mse": float((h ** 2).mean()), "rmse": float(math.sqrt((h ** 2).mean())),
+    "u1": {"n": int(len(h)), "me": float(h.mean()), "mae": float(h.abs().mean()), "medae": float(h.abs().median()), "mse": float((h ** 2).mean()), "rmse": float(math.sqrt((h ** 2).mean())),
            "first5": [[str(t.date()), float(v)] for t, v in zip(ur2000["t"][:6], ur2000["v"][:6])]},
     "u6": u6_table_rows(),
+    "u5": U5_ROWS,
     "u4_best30": int(np.argmin(A30[1])) + 1, "u4_best150": int(np.argmin(A150[1])) + 1,
 }
 

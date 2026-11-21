@@ -68,16 +68,18 @@
     const { h, t, lang } = ctx;
     const actual = [4.0, 4.1, 3.9, 4.2, 4.0, 4.1];
     const base = [0.1, -0.2, 0.1, -0.1, 0.2, -0.1];
-    let big = 0;
+    /* Kaydırıcı doğrudan 6. ayın hatasını ayarlar; başlangıç −0,1 / the slider sets month 6's error directly */
+    let big = base[5];
     const lab = h("b");
-    const ctrls = h("div", { class: "pg-ctrls" }, h("label", null, h("span", null, t({ tr: "6. ayın öngörü hatası = ", en: "Forecast error in month 6 = " }), lab),
-      slider(h, -3, 3, 0.1, big, (v) => { big = v; ctx.touch(); draw(); })));
+    const sl = slider(h, -3, 3, 0.1, big, (v) => { big = Math.round(v * 10) / 10; ctx.touch(); draw(); });
+    const ctrls = h("div", { class: "pg-ctrls" }, h("label", null, h("span", null, t({ tr: "6. ayın öngörü hatası = ", en: "Forecast error in month 6 = " }), lab), sl));
     const tbl = h("div", { class: "pg-tablewrap" });
     const tiles = h("div", { class: "tiles" });
     const note = h("p", { class: "pg-note" });
     function draw() {
-      const err = base.slice(); err[5] = big === 0 ? base[5] : big;
+      const err = base.slice(); err[5] = big;
       lab.textContent = fmt(err[5], 1, lang);
+      sl.setAttribute("aria-valuetext", fmt(err[5], 1, lang));
       const fc = actual.map((a, i) => a - err[i]);
       const me = err.reduce((a, b) => a + b, 0) / 6;
       const mae = err.reduce((a, b) => a + Math.abs(b), 0) / 6;
@@ -104,14 +106,14 @@
    * ===================================================================== */
   P.polyFit = function (host, cfg, ctx) {
     const { h, t, lang } = ctx;
-    let deg = 2, seed = 1;
+    let deg = 2, seed = 1, prev = null;
     let train, test;
     function newData() { const u = rng(seed * 104729); train = sample(u, 30); test = sample(rng(999), 2000); }
     newData();
     const lab = h("b");
     const ctrls = h("div", { class: "pg-ctrls" },
       h("label", null, h("span", null, t({ tr: "Polinom derecesi = ", en: "Polynomial degree = " }), lab), slider(h, 1, 12, 1, deg, (v) => { deg = v; ctx.touch(); draw(); })),
-      h("button", { class: "btn sm", onclick: () => { seed++; newData(); ctx.touch(); draw(); } }, t({ tr: "Yeni 30 kişi çek", en: "Draw 30 new people" })));
+      h("button", { class: "btn sm", onclick: () => { prev = { seed, deg, te: mse(polyfit(train.e, train.y, deg), test) }; seed++; newData(); ctx.touch(); draw(); } }, t({ tr: "Yeni 30 kişi çek", en: "Draw 30 new people" })));
     const tiles = h("div", { class: "tiles" });
     const box = h("div");
     function draw() {
@@ -119,14 +121,17 @@
       const c = polyfit(train.e, train.y, deg);
       const tr = mse(c, train), te = mse(c, test);
       tiles.innerHTML = "";
-      tiles.append(tile(h, t({ tr: "Eğitim HKO", en: "Training MSE" }), fmt(tr, 3, lang)), tile(h, t({ tr: "Test HKO (2.000 yeni kişi)", en: "Test MSE (2,000 new people)" }), te > 99 ? "> 99" : fmt(te, 3, lang), te < 0.08 ? "win" : ""));
+      const teTxt = te > 99 ? fmt(te, 0, lang) : fmt(te, 3, lang);
+      tiles.append(tile(h, t({ tr: "Çekiliş no", en: "Draw no." }), String(seed)),
+        tile(h, t({ tr: "Eğitim HKO", en: "Training MSE" }), fmt(tr, 3, lang)), tile(h, t({ tr: "Test HKO (2.000 yeni kişi)", en: "Test MSE (2,000 new people)" }), teTxt, te < 0.08 ? "win" : ""));
+      if (prev) tiles.append(tile(h, t({ tr: `Önceki çekiliş (${prev.seed}), derece ${prev.deg}`, en: `Previous draw (${prev.seed}), degree ${prev.deg}` }), prev.te > 99 ? fmt(prev.te, 0, lang) : fmt(prev.te, 3, lang)));
       const g = wageChart(560, 250);
       g.frame();
       g.curve(truth, "pg-true");
       train.e.forEach((e, i) => svg("circle", { cx: g.sx(e), cy: g.sy(train.y[i]), r: 3.5, class: "pg-dot alt" }, g.chart));
       g.curve((e) => polyval(c, e), "pg-fit");
       box.innerHTML = ""; box.append(g.chart,
-        h("p", { class: "pg-note" }, t({ tr: "Kesikli çizgi gerçek ilişki (log ücret), mavi çizgi model, noktalar 30 kişilik eğitim verisi. İndirgenemez hata (gürültü) = 0,0625.", en: "Dashed line: the true relationship (log wage); blue line: the model; dots: the 30-person training data. Irreducible error (noise) = 0.0625." })));
+        h("p", { class: "pg-note" }, t({ tr: "Kesikli çizgi gerçek ilişki (log ücret), mavi çizgi model, noktalar 30 kişilik eğitim verisi. İndirgenemez hata (gürültü) = 0,0625. Bu oyun alanı kendi rastgele çekilişlerini kullanır (çekiliş 1, 2, …); atölyedeki sabit örnekle (tohum 2026) aynı değildir. Atölyede derece 12'nin test HKO'su 18,2; burada aynı derece çekilişe göre 0,1 ile yüzlerce arasında değişebilir. Bu oynaklığın kendisi derecenin yüksek varyansını gösterir.", en: "Dashed line: the true relationship (log wage); blue line: the model; dots: the 30-person training data. Irreducible error (noise) = 0.0625. This playground uses its own random draws (draw 1, 2, …); they are not the fixed workshop sample (seed 2026). In the workshop degree 12's test MSE is 18.2; here the same degree can range from 0.1 to hundreds depending on the draw. That volatility itself shows the degree's high variance." })));
     }
     host.append(ctrls, tiles, box);
     draw();
@@ -165,7 +170,11 @@
         h("span", { class: "lg a" }, t({ tr: "Ortalama eğitim hatası", en: "Average training error" })),
         h("span", { class: "lg b" }, t({ tr: "Ortalama test hatası", en: "Average test error" })),
         h("span", { class: "lg r" }, t({ tr: "İndirgenemez hata (0,0625)", en: "Irreducible error (0.0625)" }))),
-        h("p", { class: "pg-note" }, t({ tr: "Yatay eksen: polinom derecesi (esneklik). En düşük ortalama test hatası: derece " + best + ". Test hatası grafikte 0,3'te kesilmiştir.", en: "Horizontal axis: polynomial degree (flexibility). Lowest average test error: degree " + best + ". Test error is clipped at 0.3 in the chart." })));
+        h("div", { class: "pg-tablewrap" }, h("table", { class: "pg-table" },
+          h("thead", null, h("tr", null, h("th", null, t({ tr: "Derece", en: "Degree" })), ...te.map((_, i) => h("th", null, String(i + 1))))),
+          h("tbody", null,
+            h("tr", null, h("td", null, t({ tr: "Ort. test HKO", en: "Avg test MSE" })), ...te.map((v, i) => h("td", { class: i + 1 === best ? "filled" : "" }, v >= 1 ? fmt(v, 1, lang) : fmt(v, 3, lang))))))),
+        h("p", { class: "pg-note" }, t({ tr: "Yatay eksen: polinom derecesi (esneklik). En düşük ortalama test hatası: derece " + best + ". Grafikte test hatası okunurluk için 0,3'te kesilir; gerçek ortalamalar tablodadır. Tek bir çekilişin aşırı büyük hatasının ortalamayı yutmaması için her çekilişte test HKO'su 5'te kırpılır. Bu deneyde (gerçek ilişki 2. dereceden) örneklem büyüdükçe dip derece 2'de kalıyor; değişen, sağ kolun dikliği.", en: "Horizontal axis: polynomial degree (flexibility). Lowest average test error: degree " + best + ". In the chart test error is clipped at 0.3 for readability; the actual averages are in the table. So that one draw's huge error does not swamp the average, each draw's test MSE is capped at 5. In this experiment (the true relationship is quadratic) the bottom stays at degree 2 as the sample grows; what changes is how steep the right arm is." })));
     }
     host.append(ctrls, box);
     draw();
@@ -257,11 +266,12 @@
     fetch("data/fred/UNRATE.csv").then((r) => r.text()).then((txt) => {
       const rows = txt.trim().split("\n").slice(1).map((l) => l.split(",")).filter((r) => r[1] !== "" && r[1] !== "." && r[0] >= "2000-01-01");
       const dates = rows.map((r) => r[0]), s = rows.map((r) => +r[1]);
+      const mon = dates.map((d) => +d.slice(0, 4) * 12 + +d.slice(5, 7));   // takvim ayı / calendar month
       const T = s.length, nTe = Math.floor(T * 0.2);
       const u = rng(11); const perm = Array.from({ length: T }, (_, i) => i);
       for (let i = T - 1; i > 0; i--) { const j = Math.floor(u() * (i + 1)); [perm[i], perm[j]] = [perm[j], perm[i]]; }
       const splits = [
-        { te: perm.slice(0, nTe).sort((a, b) => a - b), label: { tr: "Rastgele bölme", en: "Random split" } },
+        { te: perm.slice(0, nTe).sort((a, b) => a - b), label: { tr: "Rastgele bölme (tohum 11)", en: "Random split (seed 11)" } },
         { te: Array.from({ length: nTe }, (_, i) => T - nTe + i), label: { tr: "Zamana göre bölme", en: "Split by time" } }
       ];
       const tabs = h("div", { class: "tabs" });
@@ -272,7 +282,7 @@
         tabs.innerHTML = "";
         splits.forEach((sp, i) => tabs.append(h("button", { class: i === mode ? "on" : "", onclick: () => { mode = i; ctx.touch(); draw(); } }, t(sp.label))));
         const te = new Set(splits[mode].te), tr = []; for (let i = 0; i < T; i++) if (!te.has(i)) tr.push(i);
-        let se = 0; splits[mode].te.forEach((i) => { let best = tr[0]; tr.forEach((j) => { if (Math.abs(j - i) < Math.abs(best - i)) best = j; }); se += (s[best] - s[i]) ** 2; });
+        let se = 0; splits[mode].te.forEach((i) => { let best = tr[0]; tr.forEach((j) => { if (Math.abs(mon[j] - mon[i]) < Math.abs(mon[best] - mon[i])) best = j; }); se += (s[best] - s[i]) ** 2; });
         const rmse = Math.sqrt(se / splits[mode].te.length);
         tiles.innerHTML = ""; tiles.append(tile(h, t({ tr: "Test hatası (kök HKO, puan)", en: "Test error (RMSE, points)" }), fmt(rmse, 2, lang)), tile(h, t({ tr: "Eğitim / test gözlemi", en: "Training / test obs." }), tr.length + " / " + te.size));
         const W = 560, H = 220, L = 34, R = W - 10, Tp = 10, B = H - 26, hi = 15;
@@ -284,11 +294,11 @@
         for (let i = 0; i < T; i++) svg("circle", { cx: sx(i), cy: sy(s[i]), r: te.has(i) ? 2.8 : 1.8, class: "pg-dot" + (te.has(i) ? " hot" : " alt") }, chart);
         holder.innerHTML = ""; holder.append(chart);
         note.textContent = mode === 0
-          ? t({ tr: "Test ayları serinin her yerine dağılmış. Model bir test ayını, hemen önceki ve sonraki aylara bakarak “öngörüyor”: geleceği görüyor. Hata yanıltıcı biçimde küçük.", en: "Test months are scattered across the series. The model “predicts” a test month by looking at the months just before and after it: it sees the future. The error is misleadingly small." })
-          : t({ tr: "Test ayları serinin sonunda. Model yalnızca geçmişi biliyor, tıpkı gerçek bir öngörüde olduğu gibi. Hata çok daha büyük ve gerçekçi.", en: "Test months are at the end of the series. The model knows only the past, just as in a real forecast. The error is much larger and realistic." });
+          ? t({ tr: "Test ayları serinin her yerine dağılmış. Model bir test ayını, hemen önceki ve sonraki aylara bakarak dolduruyor (araya değer koyma): geleceği görüyor. Bu tohumla hata ≈ 0,17; atölyedeki farklı rastgele bölme (tohum 2026) ≈ 0,19 verir.", en: "Test months are scattered across the series. The model fills a test month in from the months just before and after it (filling in between): it sees the future. With this seed the error is ≈ 0.17; the different random split in the workshop (seed 2026) gives ≈ 0.19." })
+          : t({ tr: "Test ayları serinin sonunda (son %20). Model yalnızca geçmişi biliyor ve kesimden sonraki her aya aynı son eğitim değerini veriyor: öngörü ufku 1'den 64 aya uzuyor. Farkın bir kısmı sızıntıdan, bir kısmı farklı hedef aylardan ve uzayan ufuktan geliyor.", en: "Test months are at the end of the series (the last 20%). The model knows only the past and gives every month after the cut the same last training value: the forecast horizon stretches from 1 to 64 months. Part of the gap comes from leakage, part from different target months and the longer horizon." });
       }
       box.innerHTML = "";
-      box.append(tabs, tiles, holder, note, h("p", { class: "pg-src" }, t({ tr: "Veri: ABD işsizlik oranı (UNRATE), FRED, aylık, 2000'den bu yana. Model: bir ayı, eğitim verisinde zamanca ona en yakın ayın değeriyle öngörür.", en: "Data: US unemployment rate (UNRATE), FRED, monthly, since 2000. Model: predicts a month with the value of the month closest to it in time in the training data." })));
+      box.append(tabs, tiles, holder, note, h("p", { class: "pg-src" }, t({ tr: "Veri: ABD işsizlik oranı (UNRATE), FRED, aylık, 2000'den bu yana; eksik Ekim 2025 çıkarıldı. Model: bir ayı, eğitim verisinde takvimde ona en yakın ayın değeriyle öngörür.", en: "Data: US unemployment rate (UNRATE), FRED, monthly, since 2000; the missing October 2025 is dropped. Model: predicts a month with the value of the calendar-closest month in the training data." })));
       draw();
     }).catch(() => { box.innerHTML = ""; box.append(h("p", { class: "muted" }, t({ tr: "Veri yüklenemedi.", en: "The data could not be loaded." }))); });
   };
